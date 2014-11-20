@@ -39,9 +39,12 @@ class Kite:
 	_timeout = 5
 	_session_hook = None
 
-	def __init__(self, user_id, token=None):
+	def __init__(self, user_id, token=None, root=None):
 		self.user_id = user_id
 		self.token = token
+
+		if root:
+			self.root = root
 
 	def session_hook(self, method):
 		"""
