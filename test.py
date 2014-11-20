@@ -17,10 +17,14 @@ if not token:
 	# for testing, both answers are set to 'a'
 	user = kite.do2fa({questions[0]["id"]: "a", questions[1]["id"]: "a"})
 
+	print "Logged in:"
+	print user
+
 	# logged in, we have the token now
 	kite.set_token(user["token"])
 
 # send an order
+"""
 print kite.order_place(
 	exchange="NSE",
 	tradingsymbol="RELIANCE-EQ",
@@ -30,11 +34,7 @@ print kite.order_place(
 	order_type="LIMIT",
 	product="MIS",
 )
+"""
+# normal order = 141119000062604, amo = 141119000077821
 
-# normal order = 141119000062604
-# amo = 141119000077821
-
-#res = kite.quote("MCX", "GOLD14DECFUT")
-#pp = pprint.PrettyPrinter(indent=4)
-#pp.pprint(res)
-
+print kite.quote("MCX", "GOLD14DECFUT")
