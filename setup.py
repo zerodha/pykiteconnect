@@ -12,5 +12,6 @@ setup(
 	version="1.0",
 	author="Kailash Nadh",
 	description="Client for the Kite REST trade API",
-	install_requires=install_requires
+	install_requires=install_requires,
+	packages=["kiteclient"]
 )
