@@ -507,7 +507,7 @@ class Kite:
 					timeout=self._timeout
 				)
 		except Exception as e:
-			raise ex.NetworkError(e.message, code=504)
+			raise ex.NetworkException(e.message, code=504)
 
 		# content types
 		if r.headers["content-type"] == "application/json":
