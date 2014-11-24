@@ -3,7 +3,7 @@ from kiteclient import Kite
 
 # initialize kite for the first time
 # if the user has already logged in, 'token' has to be passed
-token = "5878556786"
+token = None
 
 kite = Kite("DM0002", token=token)
 
@@ -37,4 +37,4 @@ print kite.order_place(
 """
 # normal order = 141119000062604, amo = 141119000077821
 
-print kite.quote("MCX", "GOLD14DECFUT")
+print kite.order_info("1411190062604")
