@@ -226,7 +226,7 @@ class Kite:
 		return self._get("order_info", {"order_id": order_id})
 
 	def order_place(self, exchange, tradingsymbol, transaction_type,
-					quantity, price, order_type, product,
+					order_type, quantity, price, product,
 					validity="DAY", disclosed_quantity=0,
 					trigger_price=0,
 					):
