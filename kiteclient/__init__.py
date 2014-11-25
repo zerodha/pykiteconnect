@@ -121,7 +121,7 @@ class Kite:
 			params["question[]"].append(question)
 			params["answer[]"].append(qa[question])
 
-		return self._put("update_2fa", params)
+		return self._put("2fa", params)
 
 	def logout(self):
 		"""Log the user out by invalidating the token"""
@@ -482,6 +482,7 @@ class Kite:
 
 	def _request(self, route, method, params={}):
 		"""Make an HTTP request"""
+
 		# user id has to go with every request
 		params["user_id"] = self.user_id
 
@@ -494,13 +495,12 @@ class Kite:
 		# 'RESTful' URLs
 		if "{" in uri:
 			for k in params:
-				uri = uri.replace("{" + k + "}", params[k])
-
+				uri = uri.replace("{" + k + "}", str(params[k]))
 		try:
 			r = requests.request(
 					method,
 					self._root + uri,
-					data=params,
+					data=params if method == "POST" else None,
 					params=params if method != "POST" else None,
 					verify=False,
 					allow_redirects=True,
@@ -528,6 +528,9 @@ class Kite:
 
 				elif data["error_type"] == "UserException":
 					raise(ex.UserException(data["message"]))
+
+				elif data["error_type"] == "TwoFAException":
+					raise(ex.TwoFAException(data["message"], questions=data["questions"]))
 
 				elif data["error_type"] == "OrderException":
 					raise(ex.OrderException(data["message"]))
