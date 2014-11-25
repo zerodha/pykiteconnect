@@ -13,6 +13,11 @@ class GeneralException(KiteException):
 class UserException(KiteException):
 	pass
 
+class TwoFAException(KiteException):
+	def __init__(self, message, questions = None, code = 401):
+		super(TwoFAException, self).__init__(message, code)
+		self.questions = questions
+
 class OrderException(KiteException):
 	pass
 
