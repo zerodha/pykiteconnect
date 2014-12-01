@@ -32,8 +32,15 @@ class Kite:
 		"order": "/orders/{order_id}",
 		"trades": "/trades",
 
+		"positions": "/positions",
+		"holdings": "/holdings",
+		"holdings_t1": "/holdings/t1",
+
 		"scrips": "/scrips/{exchange}",
-		"quote": "/quote/{exchange}/{tradingsymbol}"
+		"quote": "/quote/{exchange}/{tradingsymbol}",
+
+		"messages_admin": "/messages/admin",
+		"messages_exchange": "/messages/exchange"
 	}
 
 	_timeout = 5
@@ -143,10 +150,10 @@ class Kite:
 				phone: 98362716273,
 				email: test@zerodha.com,
 				pan: BPALQ5996K,
-		    }
+			}
 
-	    Raises:
-	    	UserException: if the profile fetching failed
+		Raises:
+			UserException: if the profile fetching failed
 		"""
 		return self._get("profile")
 
@@ -387,6 +394,55 @@ class Kite:
 		"""
 		return self._get("trades")
 
+	# positions and holdings
+	def positions(self, exchange, period_type="", product=""):
+		"""
+		Get the list of positions
+		"""
+		params = {	"exchange": exchange,
+					"period_type": period_type,
+					"product": product }
+
+		return self._get("positions", params)
+
+	def holdings(self):
+		"""
+		Get the list of demat holdings
+
+		Returns:
+			[
+				{
+					product: CNC,
+					account_id: DM1594,
+					price: 0.0,
+					last_price: 961.6,
+					collateral_quantity: 0,
+					collateraltype: None,
+					tradingsymbol: RELIANCE-EQ,
+					t1_quantity: 5,
+					quantity: 0
+				}
+				...
+			]
+		"""
+		return self._get("holdings")
+
+	def holdings_t1(self):
+		"""
+		Get the list of demat holdings
+
+		Returns:
+			[
+				{
+					product: CNC,
+					quantity: 5,
+					tradingsymbol: RELIANCE-EQ,
+					account_id: DM1594
+				}
+			]
+		"""
+		return self._get("holdings_t1")
+
 	# scrips
 	def scrips(self, exchange, search=None):
 		"""
@@ -422,38 +478,64 @@ class Kite:
 
 	def quote(self, exchange, tradingsymbol):
 		"""
-			Get quote and market depth for an instrument
+		Get quote and market depth for an instrument
 
-			Returns:
-				{   name: FUTCOM-GOLD,
-					symbol: GOLD,
-					buys: 722,
-					sells: 751,
-					change: 0.39,
-					change_percent: 106.0,
-					depth: {   buy: [   {   orders: 1, price: 26706.0, quantity: 1},
-										{   orders: 1, price: 26705.0, quantity: 1},
-											  ...
-								],
-								  sell: [   {   orders: 1, price: 26713.0, quantity: 1},
-											{   orders: 2, price: 26714.0, quantity: 2},
-											  ...
-								]
-							},
-					last_price: 26702.0,
-					last_quantity: 1,
-					last_time: 2014-11-19 20:40:55,
-					ohlc: { close: 26596.0,
-							high: 26810.0,
-							low: 26553.0,
-							open: 26575.0},
-					open_interest: 9066,
-					series: None,
-					volume: 12899
-				}
-
+		Returns:
+			{   name: FUTCOM-GOLD,
+				symbol: GOLD,
+				buys: 722,
+				sells: 751,
+				change: 0.39,
+				change_percent: 106.0,
+				depth: {   buy: [   {   orders: 1, price: 26706.0, quantity: 1},
+									{   orders: 1, price: 26705.0, quantity: 1},
+										  ...
+							],
+							  sell: [   {   orders: 1, price: 26713.0, quantity: 1},
+										{   orders: 2, price: 26714.0, quantity: 2},
+										  ...
+							]
+						},
+				last_price: 26702.0,
+				last_quantity: 1,
+				last_time: 2014-11-19 20:40:55,
+				ohlc: { close: 26596.0,
+						high: 26810.0,
+						low: 26553.0,
+						open: 26575.0},
+				open_interest: 9066,
+				series: None,
+				volume: 12899
+			}
 		"""
 		return self._get("quote", {"exchange": exchange, "tradingsymbol": tradingsymbol})
+
+	# messages
+	def messages_admin(self):
+		"""
+		Get messages posted by the admin
+
+		Returns:
+		[
+			{"message": "Message 1 here"},
+			{"message": "Message 2 here"}
+			...
+		]
+		"""
+		return self._get("messages_admin")
+
+	def messages_exchange(self):
+		"""
+		Get messages posted by the admin
+
+		Returns:
+		[
+			{"exchange": "NSE", "message": "Message 1 here"},
+			{"exchange": "MCX", "message": "Message 2 here"}
+			...
+		]
+		"""
+		return self._get("messages_exchange")
 
 	# __ private methods
 	def _get(self, route, params={}):

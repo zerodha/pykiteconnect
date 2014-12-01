@@ -5,7 +5,7 @@ from kiteclient import Kite
 # if the user has already logged in, 'token' has to be passed
 token = None
 
-kite = Kite("DM0002", token=token)
+kite = Kite("DM1594", token=token)
 
 if not token:
 	# login and get the 2fa questions
@@ -14,10 +14,14 @@ if not token:
 	# there will be two 2fa questions
 	questions = questions["questions"]
 
+	# set 2fa
+	#print kite.update_2fa({
+	#	questions[0]["id"]: "a", questions[1]["id"]: "a"
+	#})
+
 	# for testing, both answers are set to 'a'
 	user = kite.do2fa({questions[0]["id"]: "a", questions[1]["id"]: "a"})
 
-	print "Logged in:"
 	print user
 
 	# logged in, we have the token now
@@ -37,4 +41,4 @@ print kite.order_place(
 """
 # normal order = 141119000062604, amo = 141119000077821
 
-print kite.order_info("1411190062604")
+print kite.holdings_t1()
