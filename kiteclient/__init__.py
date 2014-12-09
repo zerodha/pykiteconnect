@@ -46,9 +46,10 @@ class Kite:
 	_timeout = 5
 	_session_hook = None
 
-	def __init__(self, user_id, token=None, root=None):
+	def __init__(self, user_id, token=None, root=None, debug=False):
 		self.user_id = user_id
 		self.token = token
+		self.debug = debug
 
 		if root:
 			self.root = root
@@ -578,10 +579,17 @@ class Kite:
 		if "{" in uri:
 			for k in params:
 				uri = uri.replace("{" + k + "}", str(params[k]))
+
+		url = self._root + uri
+
+		if self.debug:
+			print "Request: ", url
+			print params, "\n"
+
 		try:
 			r = requests.request(
 					method,
-					self._root + uri,
+					url,
 					data=params if method == "POST" else None,
 					params=params if method != "POST" else None,
 					verify=False,
@@ -590,6 +598,9 @@ class Kite:
 				)
 		except Exception as e:
 			raise ex.NetworkException(e.message, code=504)
+
+		if self.debug:
+			print "Response :", r.content, "\n"
 
 		# content types
 		if r.headers["content-type"] == "application/json":

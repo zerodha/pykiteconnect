@@ -5,11 +5,11 @@ from kiteclient import Kite
 # if the user has already logged in, 'token' has to be passed
 token = None
 
-kite = Kite("DM1594", token=token)
+kite = Kite("DM1594", token=token, debug=True)
 
 if not token:
 	# login and get the 2fa questions
-	questions = kite.login(password="abc123", ip="127.0.0.1")
+	questions = kite.login(password="abc122323", ip="127.0.0.1")
 
 	# there will be two 2fa questions
 	questions = questions["questions"]
@@ -23,7 +23,7 @@ if not token:
 	user = kite.do2fa({questions[0]["id"]: "a", questions[1]["id"]: "a"})
 
 	print user
-
+	quit()
 	# logged in, we have the token now
 	kite.set_token(user["token"])
 
