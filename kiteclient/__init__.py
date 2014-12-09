@@ -395,7 +395,7 @@ class Kite:
 		return self._get("trades")
 
 	# positions and holdings
-	def positions(self, exchange, period_type="", product=""):
+	def positions(self, exchange=None, period_type=None, product=None):
 		"""
 		Get the list of positions
 		"""
