@@ -277,7 +277,7 @@ class Kite:
 			order_id: NEST order id of the existing order
 			Rest of the parameters are same as order_place
 		"""
-		return self._post("order_modify", {
+		return self._put("order_modify", {
 			"order_id": order_id,
 			"exchange": exchange,
 			"tradingsymbol": tradingsymbol,
