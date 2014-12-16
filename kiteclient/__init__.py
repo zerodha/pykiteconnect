@@ -16,8 +16,8 @@ class Kite:
 		"2fa": "/user/2fa",
 		"logout": "/user/logout",
 		"profile": "/user/profile",
-		"password_update": "/user/password_update",
-		"transpassword_update": "/user/transpassword_update",
+		"password_update": "/user/password",
+		"transpassword_update": "/user/transpassword",
 		"margins": "/user/margins/{segment}",
 
 		"orders": "/orders",
@@ -614,6 +614,7 @@ class Kite:
 				if r.status_code == 401: # session / auth error
 					if self._session_hook:
 						self._session_hook()
+						return
 
 				# native Kite errors
 				if data["error_type"] == "GeneralException":
