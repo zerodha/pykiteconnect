@@ -320,7 +320,7 @@ class Kite:
 					validity="DAY", disclosed_quantity=0,
 					trigger_price=0):
 		"""Modify an after market order and return the NEST order number if successful"""
-		return self._post("amo_modify", {
+		return self._put("amo_modify", {
 			"order_id": order_id,
 			"exchange": exchange,
 			"tradingsymbol": tradingsymbol,
