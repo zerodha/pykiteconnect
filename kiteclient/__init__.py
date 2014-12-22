@@ -16,8 +16,8 @@ class Kite:
 		"2fa": "/user/2fa",
 		"logout": "/user/logout",
 		"profile": "/user/profile",
-		"password_update": "/user/password_update",
-		"transpassword_update": "/user/transpassword_update",
+		"password": "/user/password",
+		"transpassword": "/user/transpassword",
 		"margins": "/user/margins/{segment}",
 
 		"orders": "/orders",
@@ -160,14 +160,14 @@ class Kite:
 
 	def password_update(self, old_password, new_password):
 		"""Change the login password"""
-		return self._put("password_update", {
+		return self._put("password", {
 					"old_password": old_password,
 					"new_password": new_password
 				})
 
 	def transpassword_update(self, old_password, new_password):
 		"""Change the transaction password"""
-		return self._put("transpassword_update", {
+		return self._put("transpassword", {
 					"old_password": old_password,
 					"new_password": new_password
 				})
