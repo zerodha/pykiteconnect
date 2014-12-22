@@ -102,7 +102,8 @@ class Kite:
 				  and corresponding answer received from the user
 
 		Raises:
-			UserException: if 2FA fails
+			TwoFAException: if the user has entered the wrong answers
+			UserException: if 2FA failures exceed and the account is blocked
 		"""
 		params = {"question[]": [], "answer[]": []}
 
@@ -130,6 +131,22 @@ class Kite:
 			params["answer[]"].append(qa[question])
 
 		return self._put("2fa", params)
+
+	def reset_2fa(self, email, identification):
+		"""
+		Reset the user's 2FA questions and answers so they're
+		prompted for a fresh set during the next login
+
+		Args:
+			email: account email
+			identification: the required form of identification (eg: PAN)
+
+		Raises:
+			TwoFAException: if the update fails for some reason
+		"""
+		params = {"email": email, "identification": identification}
+
+		return self._delete("2fa", params)
 
 	def logout(self):
 		"""Log the user out by invalidating the token"""
@@ -171,6 +188,21 @@ class Kite:
 					"old_password": old_password,
 					"new_password": new_password
 				})
+
+	def reset_password(self, email, identification):
+		"""
+		Reset the user's primary password
+
+		Args:
+			email: account email
+			identification: the required form of identification (eg: PAN)
+
+		Raises:
+			TwoFAException: if the update fails for some reason
+		"""
+		params = {"email": email, "identification": identification}
+
+		return self._delete("password", params)
 
 	def margins(self, segment):
 		"""
