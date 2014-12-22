@@ -309,7 +309,7 @@ class Kite:
 			order_id: NEST order id of the existing order
 			Rest of the parameters are same as order_place
 		"""
-		return self._post("order_modify", {
+		return self._put("order_modify", {
 			"order_id": order_id,
 			"exchange": exchange,
 			"tradingsymbol": tradingsymbol,
@@ -352,7 +352,7 @@ class Kite:
 					validity="DAY", disclosed_quantity=0,
 					trigger_price=0):
 		"""Modify an after market order and return the NEST order number if successful"""
-		return self._post("amo_modify", {
+		return self._put("amo_modify", {
 			"order_id": order_id,
 			"exchange": exchange,
 			"tradingsymbol": tradingsymbol,
@@ -646,6 +646,7 @@ class Kite:
 				if r.status_code == 401: # session / auth error
 					if self._session_hook:
 						self._session_hook()
+						return
 
 				# native Kite errors
 				if data["error_type"] == "GeneralException":
