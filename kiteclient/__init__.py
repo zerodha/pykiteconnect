@@ -35,6 +35,7 @@ class Kite:
 		"positions": "/positions",
 		"holdings": "/holdings",
 		"holdings_t1": "/holdings/t1",
+		"product_modify": "/product_modify/{order_id}/{trade_id}",
 
 		"scrips": "/scrips/{exchange}",
 		"quote": "/quote/{exchange}/{tradingsymbol}",
@@ -228,6 +229,7 @@ class Kite:
 						m2m_unrealised: -0.00,
 						turnover: 0.00,
 						option_premium: 0.00,
+						holding_sales: 0.00
 					}
 				}
 
@@ -475,6 +477,17 @@ class Kite:
 			]
 		"""
 		return self._get("holdings_t1")
+
+
+
+	def product_modify(self, order_id, trade_id, old_product, new_product):
+		"""Modify a position's product"""
+		return self._put("product_modify", {
+			"order_id": order_id,
+			"trade_id": trade_id,
+			"old_product": old_product,
+			"new_product": new_product
+		})
 
 	# scrips
 	def scrips(self, exchange, search=None):
