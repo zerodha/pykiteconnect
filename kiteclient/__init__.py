@@ -188,6 +188,12 @@ class Kite:
 					"old_password": old_password,
 					"new_password": new_password
 				})
+		
+	def transpassword_check(self, password):
+		"""Check the transaction password"""
+		return self._get("transpassword", {
+					"password": password
+				})
 
 	def reset_password(self, email, identification):
 		"""
