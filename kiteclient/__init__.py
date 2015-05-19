@@ -192,7 +192,7 @@ class Kite:
 		
 	def transpassword_check(self, password):
 		"""Check the transaction password"""
-		return self._get("transpassword", {
+		return self._post("transpassword", {
 					"password": password
 				})
 
