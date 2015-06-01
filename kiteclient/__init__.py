@@ -147,7 +147,7 @@ class Kite:
 		"""
 		params = {"email": email, "identification": identification}
 
-		return self._delete("2fa", params)
+		return self._post("2fa", params)
 
 	def logout(self):
 		"""Log the user out by invalidating the token"""
@@ -209,7 +209,7 @@ class Kite:
 		"""
 		params = {"email": email, "identification": identification}
 
-		return self._delete("password", params)
+		return self._post("password", params)
 
 	def margins(self, segment):
 		"""
