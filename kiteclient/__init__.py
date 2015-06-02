@@ -662,7 +662,7 @@ class Kite:
 
 			# api error
 			if data["status"] == "error":
-				if r.status_code == 401: # session / auth error
+				if r.status_code == 403: # session / auth error
 					if self._session_hook:
 						self._session_hook()
 						return
