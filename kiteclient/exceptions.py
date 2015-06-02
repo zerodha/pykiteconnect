@@ -14,7 +14,7 @@ class UserException(KiteException):
 	pass
 
 class TwoFAException(KiteException):
-	def __init__(self, message, questions = None, code = 401):
+	def __init__(self, message, questions = None, code = 403):
 		super(TwoFAException, self).__init__(message, code)
 		self.questions = questions
 
