@@ -99,7 +99,7 @@ class Kite:
 		Do 2FA authentication and login
 
 		Args:
-			qa: dict of question_id received from the login() call 
+			qa: dict of question_id received from the login() call
 				  and corresponding answer received from the user
 
 		Raises:
@@ -119,7 +119,7 @@ class Kite:
 		Set the user's choice of 2FA questions and answers
 
 		Args:
-			qa: dict of question_id received from the login() call 
+			qa: dict of question_id received from the login() call
 				and corresponding answer received from the user
 
 		Raises:
@@ -189,7 +189,7 @@ class Kite:
 					"old_password": old_password,
 					"new_password": new_password
 				})
-		
+
 	def transpassword_check(self, password):
 		"""Check the transaction password"""
 		return self._post("transpassword", {
@@ -592,25 +592,25 @@ class Kite:
 	# __ private methods
 	def _get(self, route, params={}):
 		"""Alias for sending a GET request"""
-		return self._request(route, 
+		return self._request(route,
 							"GET",
 							params)
 
 	def _post(self, route, params={}):
 		"""Alias for sending a POST request"""
-		return self._request(route, 
+		return self._request(route,
 							"POST",
 							params)
 
 	def _put(self, route, params={}):
 		"""Alias for sending a PUT request"""
-		return self._request(route, 
+		return self._request(route,
 							"PUT",
 							params)
 
 	def _delete(self, route, params={}):
 		"""Alias for sending a DELETE request"""
-		return self._request(route, 
+		return self._request(route,
 							"DELETE",
 							params)
 
@@ -651,7 +651,7 @@ class Kite:
 			raise ex.NetworkException(e.message, code=504)
 
 		if self.debug:
-			print "Response :", r.content, "\n"
+			print "Response :", r.status_code, r.content, "\n"
 
 		# content types
 		if r.headers["content-type"] == "application/json":
@@ -669,29 +669,29 @@ class Kite:
 
 				# native Kite errors
 				if data["error_type"] == "GeneralException":
-					raise(ex.GeneralException(data["message"]))
+					raise(ex.GeneralException(data["message"], code=r.status_code))
 
 				elif data["error_type"] == "UserException":
-					raise(ex.UserException(data["message"]))
+					raise(ex.UserException(data["message"], code=r.status_code))
 
 				elif data["error_type"] == "TwoFAException":
-					raise(ex.TwoFAException(data["message"], questions=data["questions"]))
+					raise(ex.TwoFAException(data["message"], questions=data["questions"], code=r.status_code))
 
 				elif data["error_type"] == "OrderException":
-					raise(ex.OrderException(data["message"]))
+					raise(ex.OrderException(data["message"], code=r.status_code))
 
 				elif data["error_type"] == "GeneralException":
-					raise(ex.GeneralException(data["message"]))
+					raise(ex.GeneralException(data["message"], code=r.status_code))
 
 				elif data["error_type"] == "DataException":
-					raise(ex.DataException(data["message"]))
+					raise(ex.DataException(data["message"], code=r.status_code))
 
 				elif data["error_type"] == "NetworkException":
-					raise(ex.NetworkException(data["message"]))
+					raise(ex.NetworkException(data["message"], code=r.status_code))
 
 				else:
-					raise(Exception(data["message"]))
-			
+					raise(ex.GeneralException(data["message"], code=r.status_code))
+
 			return data["data"]
 		# non json content (images for 2FA)
 		elif r.headers["content-type"] in ("image/jpeg", "image/jpg"):
