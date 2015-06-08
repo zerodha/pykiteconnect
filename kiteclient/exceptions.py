@@ -10,6 +10,10 @@ class KiteException(Exception):
 class GeneralException(KiteException):
 	pass
 
+class TokenException(KiteException):
+	def __init__(self, message, code=403):
+		super(TokenException, self).__init__(message, code)
+
 class UserException(KiteException):
 	pass
 
