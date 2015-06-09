@@ -19,6 +19,7 @@ class Kite:
 		"password": "/user/password",
 		"transpassword": "/user/transpassword",
 		"margins": "/user/margins/{segment}",
+		"session_hash": "/user/session_hash",
 
 		"orders": "/orders",
 		"order_info": "/orders/{order_id}",
@@ -148,6 +149,14 @@ class Kite:
 		params = {"email": email, "identification": identification}
 
 		return self._delete("2fa", params)
+
+	def session_hash(self):
+		"""
+		Generates a session hash for non-login routines such as 
+		payment gateway authentication
+		"""
+
+		return self._get("session_hash")
 
 	def logout(self):
 		"""Log the user out by invalidating the token"""
