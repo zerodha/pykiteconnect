@@ -445,15 +445,11 @@ class Kite:
 		return self._get("trades")
 
 	# positions and holdings
-	def positions(self, exchange=None, period_type=None, product=None):
+	def positions(self):
 		"""
 		Get the list of positions
 		"""
-		params = {	"exchange": exchange,
-					"period_type": period_type,
-					"product": product }
-
-		return self._get("positions", params)
+		return self._get("positions")
 
 	def holdings(self):
 		"""
@@ -492,8 +488,6 @@ class Kite:
 			]
 		"""
 		return self._get("holdings_t1")
-
-
 
 	def product_modify(self, order_id, trade_id, old_product, new_product):
 		"""Modify a position's product"""
