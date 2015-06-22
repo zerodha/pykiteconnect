@@ -152,7 +152,7 @@ class Kite:
 
 	def session_hash(self):
 		"""
-		Generates a session hash for non-login routines such as 
+		Generates a session hash for non-login routines such as
 		payment gateway authentication
 		"""
 
@@ -650,8 +650,14 @@ class Kite:
 					allow_redirects=True,
 					timeout=self._timeout
 				)
+		except requests.ConnectionError:
+			raise ex.NetworkException("Gateway connection error", codes=503)
+		except requests.Timeout:
+			raise ex.NetworkException("Gateway timed out", codes=504)
+		except requests.HTTPError:
+			raise ex.NetworkException("Invalid response from gatway", codes=502)
 		except Exception as e:
-			raise ex.NetworkException(e.message, code=504)
+			raise ex.NetworkException(e.message, code=500)
 
 		if self.debug:
 			print "Response :", r.status_code, r.content, "\n"
@@ -661,7 +667,7 @@ class Kite:
 			try:
 				data = json.loads(r.content)
 			except:
-				raise ex.DataException("Invalid response")
+				raise ex.DataException("Unparsable response")
 
 			# api error
 			if data["status"] == "error":
@@ -700,4 +706,4 @@ class Kite:
 		elif r.headers["content-type"] in ("image/jpeg", "image/jpg"):
 			return r.content
 		else:
-			raise ex.DataException("Invalid response")
+			raise ex.DataException("Invalid response format")
