@@ -651,11 +651,11 @@ class Kite:
 					timeout=self._timeout
 				)
 		except requests.ConnectionError:
-			raise ex.NetworkException("Gateway connection error", codes=503)
+			raise ex.NetworkException("Gateway connection error", code=503)
 		except requests.Timeout:
-			raise ex.NetworkException("Gateway timed out", codes=504)
+			raise ex.NetworkException("Gateway timed out", code=504)
 		except requests.HTTPError:
-			raise ex.NetworkException("Invalid response from gatway", codes=502)
+			raise ex.NetworkException("Invalid response from gatway", code=502)
 		except Exception as e:
 			raise ex.NetworkException(e.message, code=500)
 
