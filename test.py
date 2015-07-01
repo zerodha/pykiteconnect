@@ -1,15 +1,17 @@
 import pprint 
 from kiteclient import Kite
+import pprint
+pp = pprint.PrettyPrinter(indent=4)
 
 # initialize kite for the first time
 # if the user has already logged in, 'token' has to be passed
-token = None
+token = "9369948375"
 
-kite = Kite("DM1594", token=token, debug=True)
+kite = Kite("DA0017", token=token, debug=True)
 
 if not token:
 	# login and get the 2fa questions
-	questions = kite.login(password="abc122323", ip="127.0.0.1")
+	questions = kite.login(password="han123", ip="127.0.0.1")
 
 	# there will be two 2fa questions
 	questions = questions["questions"]
@@ -22,8 +24,6 @@ if not token:
 	# for testing, both answers are set to 'a'
 	user = kite.do2fa({questions[0]["id"]: "a", questions[1]["id"]: "a"})
 
-	print user
-	quit()
 	# logged in, we have the token now
 	kite.set_token(user["token"])
 
@@ -41,4 +41,4 @@ print kite.order_place(
 """
 # normal order = 141119000062604, amo = 141119000077821
 
-print kite.holdings_t1()
+pp.pprint( kite.positions() )
