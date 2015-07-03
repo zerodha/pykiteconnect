@@ -36,7 +36,7 @@ class Kite:
 		"positions": "/positions",
 		"holdings": "/holdings",
 		"holdings_t1": "/holdings/t1",
-		"product_modify": "/product_modify/{order_id}/{trade_id}",
+		"product_modify": "/positions",
 
 		"scrips": "/scrips/{exchange}",
 		"quote": "/quote/{exchange}/{tradingsymbol}",
@@ -489,11 +489,14 @@ class Kite:
 		"""
 		return self._get("holdings_t1")
 
-	def product_modify(self, order_id, trade_id, old_product, new_product):
-		"""Modify a position's product"""
+	def product_modify(self, exchange, tradingsymbol, transaction_type, quantity, 
+						old_product, new_product):
+		"""Modify a position's product type"""
 		return self._put("product_modify", {
-			"order_id": order_id,
-			"trade_id": trade_id,
+			"exchange": exchange,
+			"tradingsymbol": tradingsymbol,
+			"transaction_type": transaction_type,
+			"quantity": quantity,
 			"old_product": old_product,
 			"new_product": new_product
 		})
