@@ -45,7 +45,7 @@ class Kite:
 		"messages_exchange": "/messages/exchange"
 	}
 
-	_timeout = 5
+	_timeout = 7
 	_session_hook = None
 
 	def __init__(self, user_id, token=None, root=None, debug=False):
