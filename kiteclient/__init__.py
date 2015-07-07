@@ -45,23 +45,17 @@ class Kite:
 		"messages_exchange": "/messages/exchange"
 	}
 
-	_timeout = 7
+	timeout = 7
 	_session_hook = None
 
-	def __init__(self, user_id, token=None, root=None, debug=False):
+	def __init__(self, user_id, token=None, root=None, debug=False, timeout = 7):
 		self.user_id = user_id
 		self.token = token
 		self.debug = debug
+		self.timeout = timeout
 
 		if root:
 			self.root = root
-
-	def set_timeout(self, timeout):
-		"""
-		Set the timeout (in seconds) on all HTTP requests made to the
-		kite-trade server
-		"""
-		self._timeout = timeout
 
 	def session_hook(self, method):
 		"""
@@ -658,7 +652,7 @@ class Kite:
 					params=params if method != "POST" else None,
 					verify=False,
 					allow_redirects=True,
-					timeout=self._timeout
+					timeout=self.timeout
 				)
 		except requests.ConnectionError:
 			raise ex.NetworkException("Gateway connection error", code=503)
