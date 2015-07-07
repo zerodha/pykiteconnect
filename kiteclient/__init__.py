@@ -56,6 +56,13 @@ class Kite:
 		if root:
 			self.root = root
 
+	def set_timeout(self, timeout):
+		"""
+		Set the timeout (in seconds) on all HTTP requests made to the
+		kite-trade server
+		"""
+		self._timeout = timeout
+
 	def session_hook(self, method):
 		"""
 		A callback hook for session timeout errors.
