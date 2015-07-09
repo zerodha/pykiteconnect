@@ -8,11 +8,10 @@ install_requires = [
 
 # meta
 setup(
-	name="kiteclient",
-	version="1.3.1",
+	name="Kite Trade (REST) Client",
+	version="1.3",
 	author="Kailash Nadh",
 	description="Client for the Kite REST trade API",
 	install_requires=install_requires,
-	packages=["kiteclient"],
-	download_url='https://github.com/Zerodha/kite-client.git',
+	packages=["kiteclient"]
 )
