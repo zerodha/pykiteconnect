@@ -35,3 +35,12 @@ class DataException(KiteException):
 class NetworkException(KiteException):
 	def __init__(self, message, code=502):
 		super(NetworkException, self).__init__(message, code)
+
+
+"""
+	Kite client exceptions
+"""
+
+class ClientNetworkException(KiteException):
+	def __init__(self, message, code=502):
+		super(ClientNetworkException, self).__init__(message, code)
