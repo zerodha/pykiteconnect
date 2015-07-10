@@ -696,6 +696,9 @@ class Kite:
 				elif data["error_type"] == "GeneralException":
 					raise(ex.GeneralException(data["message"], code=r.status_code))
 
+				elif data["error_type"] == "InputException":
+					raise(ex.InputException(data["message"], code=r.status_code))
+
 				elif data["error_type"] == "DataException":
 					raise(ex.DataException(data["message"], code=r.status_code))
 
