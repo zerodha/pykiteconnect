@@ -5,13 +5,13 @@ pp = pprint.PrettyPrinter(indent=4)
 
 # initialize kite for the first time
 # if the user has already logged in, 'token' has to be passed
-token = "6334662772"
+token = None
 
 kite = Kite("DS1053", token=token, debug=True)
 
 if not token:
 	# login and get the 2fa questions
-	questions = kite.login(password="han123", ip="127.0.0.1")
+	questions = kite.login(password="abc123", ip="127.0.0.1")
 
 	# there will be two 2fa questions
 	questions = questions["questions"]
@@ -31,19 +31,22 @@ if not token:
 
 
 # send an order
-"""
-print kite.order_place(
-	exchange="NSE",
-	tradingsymbol="RELIANCE-EQ",
-	transaction_type="BUY",
-	quantity=1,
-	price=950,
-	order_type="LIMIT",
-	product="MIS",
-)
-"""
-# normal order = 141119000062604, amo = 141119000077821
+try:
+	print kite.order_place(
+		exchange="NSE",
+		tradingsymbol="RELIANCE-EQ",
+		transaction_type="BUY",
+		quantity=1,
+		price=123,
+		order_type="SL",
+		trigger_price="",
+		product="MIS",
+	)
+except Exception as e:
+	print e.code
 
+# normal order = 141119000062604, amo = 141119000077821
+"""
 pp.pprint(kite.product_modify(
 	tradingsymbol="asdad",
 	exchange="adsds",
@@ -52,3 +55,4 @@ pp.pprint(kite.product_modify(
 	old_product="MIS",
 	new_product="NRML"
 ))
+"""
