@@ -490,13 +490,14 @@ class Kite:
 		"""
 		return self._get("holdings_t1")
 
-	def product_modify(self, exchange, tradingsymbol, transaction_type, quantity, 
+	def product_modify(self, exchange, tradingsymbol, transaction_type, position_type, quantity, 
 						old_product, new_product):
 		"""Modify a position's product type"""
 		return self._put("product_modify", {
 			"exchange": exchange,
 			"tradingsymbol": tradingsymbol,
 			"transaction_type": transaction_type,
+			"position_type": position_type,
 			"quantity": quantity,
 			"old_product": old_product,
 			"new_product": new_product
