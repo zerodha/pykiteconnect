@@ -623,11 +623,17 @@ class Kite:
 							"DELETE",
 							params)
 
-	def _request(self, route, method, params={}):
+	def _request(self, route, method, parameters={}):
 		"""Make an HTTP request"""
 
+		params = parameters.copy()
 		# user id has to go with every request
 		params["user_id"] = self.user_id
+
+
+		# is there  atoken?
+		if self.token:
+			params["token"] = self.token
 
 		if params["user_id"].upper() in ["DA0017", "DV1973"]:
 			log_data = {
@@ -636,10 +642,6 @@ class Kite:
 			}
 			# logging.info(log_data)
 			rollbar.report_message(params["user_id"] + " kite client", "info", extra_data=log_data)
-
-		# is there  atoken?
-		if self.token:
-			params["token"] = self.token
 
 		uri = self._routes[route]
 
