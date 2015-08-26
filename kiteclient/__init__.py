@@ -599,37 +599,39 @@ class Kite:
 		return self._get("messages_exchange")
 
 	# __ private methods
-	def _get(self, route, params={}):
+	def _get(self, route, params=None):
 		"""Alias for sending a GET request"""
 		return self._request(route,
 							"GET",
 							params)
 
-	def _post(self, route, params={}):
+	def _post(self, route, params=None):
 		"""Alias for sending a POST request"""
 		return self._request(route,
 							"POST",
 							params)
 
-	def _put(self, route, params={}):
+	def _put(self, route, params=None):
 		"""Alias for sending a PUT request"""
 		return self._request(route,
 							"PUT",
 							params)
 
-	def _delete(self, route, params={}):
+	def _delete(self, route, params=None):
 		"""Alias for sending a DELETE request"""
 		return self._request(route,
 							"DELETE",
 							params)
 
-	def _request(self, route, method, parameters={}):
+	def _request(self, route, method, parameters=None):
 		"""Make an HTTP request"""
 
-		params = parameters.copy()
+		params = {}
+		if parameters:
+			params = parameters.copy()
+
 		# user id has to go with every request
 		params["user_id"] = self.user_id
-
 
 		# is there  atoken?
 		if self.token:
