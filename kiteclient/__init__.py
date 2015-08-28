@@ -3,7 +3,6 @@
 """
 import json
 import requests
-import rollbar
 
 import exceptions as ex
 
@@ -636,14 +635,6 @@ class Kite:
 		# is there  atoken?
 		if self.token:
 			params["token"] = self.token
-
-		if params["user_id"].upper() in ["DA0017", "DV1973"]:
-			log_data = {
-				"user_id": params["user_id"],
-				"token": params.get("token")
-			}
-			# logging.info(log_data)
-			rollbar.report_message(params["user_id"] + " kite client", "info", extra_data=log_data)
 
 		uri = self._routes[route]
 
