@@ -47,11 +47,12 @@ class Kite:
 
 	timeout = 7
 
-	def __init__(self, user_id, token=None, root=None, debug=False, timeout = 7):
+	def __init__(self, user_id, token=None, root=None, debug=False, timeout=7, micro_cache=False):
 		self.user_id = user_id
 		self.token = token
 		self.debug = debug
 		self.timeout = timeout
+		self.micro_cache = micro_cache
 		self.session_hook = None
 
 		if root:
@@ -631,6 +632,10 @@ class Kite:
 
 		# user id has to go with every request
 		params["user_id"] = self.user_id
+
+		# micro cache?
+		if self.micro_cache == False:
+			params["no_micro_cache"] = 1
 
 		# is there  atoken?
 		if self.token:
