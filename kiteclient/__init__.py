@@ -47,7 +47,7 @@ class Kite:
 
 	timeout = 7
 
-	def __init__(self, user_id, token=None, root=None, debug=False, timeout=7, micro_cache=False):
+	def __init__(self, user_id, token=None, root=None, debug=False, timeout=7, micro_cache=True):
 		self.user_id = user_id
 		self.token = token
 		self.debug = debug
