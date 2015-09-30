@@ -20,6 +20,8 @@ class Kite:
 		"transpassword": "/user/transpassword",
 		"margins": "/user/margins/{segment}",
 		"session_hash": "/user/session_hash",
+		"session_hash_validate": "/user/session_hash/{session_hash}",
+		"otp": "/user/otp",
 
 		"orders": "/orders",
 		"order_info": "/orders/{order_id}",
@@ -153,12 +155,20 @@ class Kite:
 		return self._delete("2fa", params)
 
 	def session_hash(self):
+		"""Retrieves the session hash that was generated during login"""
+		return self._get("session_hash")
+
+	def session_hash_validate(self, session_hash):
+		"""Validates a given hash against the login session hash"""
+		return self._get("validate_session_hash", {"session_hash": session_hash})
+
+	def otp(self):
 		"""
-		Generates a session hash for non-login routines such as
+		Generates a one time hash for non-login routines such as
 		payment gateway authentication
 		"""
 
-		return self._get("session_hash")
+		return self._get("otp")
 
 	def logout(self):
 		"""Log the user out by invalidating the token"""
@@ -669,7 +679,7 @@ class Kite:
 		except requests.Timeout:
 			raise ex.ClientNetworkException("Gateway timed out", code=504)
 		except requests.HTTPError:
-			raise ex.ClientNetworkException("Invalid response from gatway", code=502)
+			raise ex.ClientNetworkException("Invalid response from gateway", code=502)
 		except Exception as e:
 			raise ex.ClientNetworkException(e.message, code=500)
 
