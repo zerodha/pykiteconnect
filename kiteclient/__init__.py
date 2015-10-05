@@ -58,7 +58,7 @@ class Kite:
 		self.session_hook = None
 
 		if root:
-			self.root = root
+			self._root = root
 
 	def set_session_hook(self, method):
 		"""
