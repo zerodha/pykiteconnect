@@ -160,7 +160,7 @@ class Kite:
 
 	def session_hash_validate(self, session_hash):
 		"""Validates a given hash against the login session hash"""
-		return self._get("validate_session_hash", {"session_hash": session_hash})
+		return self._get("session_hash_validate", {"session_hash": session_hash})
 
 	def otp(self):
 		"""
