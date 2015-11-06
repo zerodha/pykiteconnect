@@ -99,23 +99,19 @@ class Kite:
 		"""
 		return self._post("login", {"password": password, "ip": ip})
 
-	def do2fa(self, qa):
+	def do2fa(self, qa, ans):
 		"""
 		Do 2FA authentication and login
 
 		Args:
-			qa: dict of question_id received from the login() call
-				  and corresponding answer received from the user
+			qa: list of question ids
+			ans: list of corresponding answers
 
 		Raises:
 			TwoFAException: if the user has entered the wrong answers
 			UserException: if 2FA failures exceed and the account is blocked
 		"""
-		params = {"question[]": [], "answer[]": []}
-
-		for question in qa:
-			params["question[]"].append(question)
-			params["answer[]"].append(qa[question])
+		params = {"question[]": qa, "answer[]": ans}
 
 		return self._post("2fa", params)
 
