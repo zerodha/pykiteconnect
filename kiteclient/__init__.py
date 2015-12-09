@@ -24,24 +24,21 @@ class Kite:
 		"otp": "/user/otp",
 
 		"orders": "/orders",
-		"order_info": "/orders/{order_id}",
-		"order_modify": "/orders/{order_id}",
-		"order_cancel": "/orders/{order_id}",
-		"amo_place": "/amo",
-		"amo_modify": "/amo/{order_id}",
-		"amo_cancel": "/amo/{order_id}",
-
-		"orders": "/orders",
-		"order": "/orders/{order_id}",
 		"trades": "/trades",
+		"order_info": "/orders/{order_id}",
+
+		"order_place": "/orders/{variety}",
+		"order_modify": "/orders/{variety}/{order_id}",
+		"order_cancel": "/orders/{variety}/{order_id}",
 
 		"positions": "/positions",
+		"product_modify": "/positions",
 		"holdings": "/holdings",
 		"holdings_t1": "/holdings/t1",
-		"product_modify": "/positions",
 
 		"scrips": "/scrips/{exchange}",
 		"quote": "/quote/{exchange}/{tradingsymbol}",
+		"trigger_range": "/quote/{exchange}/{tradingsymbol}/trigger_range",
 
 		"messages_admin": "/messages/admin",
 		"messages_exchange": "/messages/exchange"
@@ -294,6 +291,7 @@ class Kite:
 					order_type, quantity, price, product,
 					validity="DAY", disclosed_quantity=0,
 					trigger_price=0,
+					variety="DAY"
 					):
 		"""
 		Place an order and return the NEST order number if successful
@@ -308,8 +306,9 @@ class Kite:
 			validity: DAY, IOC, GTC, GTD
 			disclosed_quantity: 0 or the same as quantity
 			trigger_price: only for SL (stoploss orders)
+			variety: DAY / AMO / BO / CO
 		"""
-		return self._post("orders", {
+		return self._post("order_place", {
 			"exchange": exchange,
 			"tradingsymbol": tradingsymbol,
 			"transaction_type": transaction_type,
@@ -319,13 +318,15 @@ class Kite:
 			"trigger_price": trigger_price,
 			"disclosed_quantity": disclosed_quantity,
 			"product": product,
-			"validity": validity
+			"validity": validity,
+			"variety": variety
 		})["order_id"]
 
 	def order_modify(self, order_id, exchange, tradingsymbol, transaction_type,
 					quantity, price, order_type, product,
 					validity="DAY", disclosed_quantity=0,
 					trigger_price=0,
+					variety="DAY"
 					):
 		"""
 		Modify an order and return the NEST order number if successful
@@ -345,55 +346,13 @@ class Kite:
 			"trigger_price": trigger_price,
 			"disclosed_quantity": disclosed_quantity,
 			"product": product,
-			"validity": validity
+			"validity": validity,
+			"variety": variety
 		})["order_id"]
 
-	def order_cancel(self, order_id):
+	def order_cancel(self, order_id, variety="DAY"):
 		"""Cancel an order"""
-		return self._delete("order_cancel", {"order_id": order_id})["order_id"]
-
-	# amo
-	def amo_place(self, exchange, tradingsymbol, transaction_type,
-					quantity, price, order_type, product,
-					validity="DAY", disclosed_quantity=0,
-					trigger_price=0
-					):
-		"""Place an after market order and return the NEST order number if successful"""
-		return self._post("amo_place", {
-			"exchange": exchange,
-			"tradingsymbol": tradingsymbol,
-			"transaction_type": transaction_type,
-			"quantity": quantity,
-			"price": price,
-			"order_type": order_type,
-			"trigger_price": trigger_price,
-			"disclosed_quantity": disclosed_quantity,
-			"product": product,
-			"validity": validity
-		})["order_id"]
-
-	def amo_modify(self, order_id, exchange, tradingsymbol, transaction_type,
-					quantity, price, order_type, product,
-					validity="DAY", disclosed_quantity=0,
-					trigger_price=0):
-		"""Modify an after market order and return the NEST order number if successful"""
-		return self._put("amo_modify", {
-			"order_id": order_id,
-			"exchange": exchange,
-			"tradingsymbol": tradingsymbol,
-			"transaction_type": transaction_type,
-			"quantity": quantity,
-			"price": price,
-			"order_type": order_type,
-			"trigger_price": trigger_price,
-			"disclosed_quantity": disclosed_quantity,
-			"product": product,
-			"validity": validity
-		})["order_id"]
-
-	def amo_cancel(self, order_id):
-		"""Cancel an after market order"""
-		return self._delete("amo_cancel", {"order_id": order_id})["order_id"]
+		return self._delete("order_cancel", {"order_id": order_id, "variety": variety})["order_id"]
 
 	# orderbook and tradebook
 	def orders(self):
@@ -576,6 +535,18 @@ class Kite:
 			}
 		"""
 		return self._get("quote", {"exchange": exchange, "tradingsymbol": tradingsymbol})
+
+	def trigger_range(self, exchange, tradingsymbol, transaction_type):
+		"""
+		Get the buy/sell trigger range (for CO)
+
+		Returns:
+			{   start: 100.10,
+				end: 105.10,
+				percent: 3
+			}
+		"""
+		return self._get("trigger_range", {"exchange": exchange, "tradingsymbol": tradingsymbol, "transaction_type": transaction_type})
 
 	# messages
 	def messages_admin(self):
