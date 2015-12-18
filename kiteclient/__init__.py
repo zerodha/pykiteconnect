@@ -48,13 +48,16 @@ class Kite:
 
 	timeout = 7
 
-	def __init__(self, user_id, token=None, root=None, debug=False, timeout=7, micro_cache=True):
+	def __init__(self, user_id, token=None, root=None, debug=False, timeout=7, micro_cache=True, api_key=None, access_token=None):
 		self.user_id = user_id
 		self.token = token
 		self.debug = debug
 		self.timeout = timeout
 		self.micro_cache = micro_cache
 		self.session_hook = None
+
+		self.api_key = api_key
+		self.access_token = access_token
 
 		if root:
 			self._root = root
@@ -163,7 +166,7 @@ class Kite:
 					price=None,
 					product=None,
 					order_type=None,
-					validity=None,
+					validity="DAY",
 					disclosed_quantity=None,
 					trigger_price=None,
 					squareoff_value=None,
@@ -337,7 +340,8 @@ class Kite:
 		if self.token:
 			params["token"] = self.token
 
-		params["api_key"] = "abcd"
+		params["api_key"] = self.api_key
+		params["access_token"] = self.access_token
 
 		uri = self._routes[route]
 
