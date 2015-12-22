@@ -1,5 +1,10 @@
 """
-Kite REST API client
+	Kite Connect API client
+	https://kite.trade
+
+	Rainmatter (c) 2015
+
+	MIT License
 """
 
 import json
@@ -8,49 +13,39 @@ import requests
 import exceptions as ex
 
 
-class Kite:
-		# root API url
-	_root = "http://localhost:8000"
+class Kite(object):
+	# default API url (root)
+	_root = "https://api.kite.trade"
 
 	# URIs to various calls
 	_routes = {
-		"login": "/user/login",
-		"2fa": "/user/2fa",
-		"logout": "/user/logout",
-		"profile": "/user/profile",
-		"password": "/user/password",
-		"transpassword": "/user/transpassword",
-		"margins": "/user/margins/{segment}",
-		"session_hash": "/user/session_hash",
-		"session_hash_validate": "/user/session_hash/{session_hash}",
-		"otp": "/user/otp",
+		"parameters": "/parameters",
+		"user.margins": "/user/margins/{segment}",
+		"user.session_hash": "/user/session_hash",
+		"user.session_hash.validate": "/user/session_hash/{session_hash}",
 
 		"orders": "/orders",
 		"trades": "/trades",
-		"order_info": "/orders/{order_id}",
+		"orders.info": "/orders/{order_id}",
 
-		"order_place": "/orders/{variety}",
-		"order_modify": "/orders/{variety}/{order_id}",
-		"order_cancel": "/orders/{variety}/{order_id}",
+		"orders.place": "/orders/{variety}",
+		"orders.modify": "/orders/{variety}/{order_id}",
+		"orders.cancel": "/orders/{variety}/{order_id}",
 
-		"positions": "/positions",
-		"product_modify": "/positions",
-		"holdings": "/holdings",
-		"holdings_t1": "/holdings/t1",
+		"portfolio.positions": "/portfolio/positions",
+		"portfolio.holdings": "/portfolio/holdings",
 
-		"scrips": "/scrips/{exchange}",
-		"quote": "/instruments/{exchange}/{tradingsymbol}/quote",
-		"trigger_range": "/instruments/{exchange}/{tradingsymbol}/trigger_range",
-
-		"messages_admin": "/messages/admin",
-		"messages_exchange": "/messages/exchange"
+		"market.instruments.all": "/instruments",
+		"market.instruments": "/instruments/{exchange}",
+		"market.quote": "/instruments/{exchange}/{tradingsymbol}",
+		"market.trigger_range": "/instruments/{exchange}/{tradingsymbol}/trigger_range"
 	}
 
 	timeout = 7
 
-	def __init__(self, user_id, token=None, root=None, debug=False, timeout=7, micro_cache=True):
+	def __init__(self, user_id, access_token=None, root=None, debug=False, timeout=7, micro_cache=True):
 		self.user_id = user_id
-		self.token = token
+		self.access_token = access_token
 		self.debug = debug
 		self.timeout = timeout
 		self.micro_cache = micro_cache
@@ -62,7 +57,7 @@ class Kite:
 	def set_session_hook(self, method):
 		"""
 		A callback hook for session timeout errors.
-		A token (login session) can become invalid for a number of
+		An access_token (login session) can become invalid for a number of
 		reasons, but it doesn't make sense for the client to
 		try and catch it during every API call.
 
@@ -75,40 +70,14 @@ class Kite:
 		"""
 		self.session_hook = method
 
-	def set_token(self, token):
+	def set_access_token(self, access_token):
 		"""
 		Set the access token received after successful login.
 		After the first login, this token should be saved in the
 		session somewhere and passed to the client for further
 		API calls.
 		"""
-		self.token = token
-
-	def login(self, password, ip):
-		"""Authenticate the user's credentials. If the system has 2FA enabled, the questions are returned"""
-		return self._post("login", {"password": password, "ip": ip})
-
-	def do2fa(self, qa, ans):
-		"""Do 2FA authentication and login"""
-		params = {"question[]": qa, "answer[]": ans}
-
-		return self._post("2fa", params)
-
-	def update_2fa(self, qa):
-		"""Set the user's choice of 2FA questions and answers"""
-		params = {"question[]": [], "answer[]": []}
-
-		for question in qa:
-			params["question[]"].append(question)
-			params["answer[]"].append(qa[question])
-
-		return self._put("2fa", params)
-
-	def reset_2fa(self, email, identification):
-		"""Reset the user's 2FA questions and answers so they're prompted for a fresh set during the next login"""
-		params = {"email": email, "identification": identification}
-
-		return self._delete("2fa", params)
+		self.access_token = access_token
 
 	def session_hash(self):
 		"""Retrieves the session hash that was generated during login"""
@@ -118,38 +87,11 @@ class Kite:
 		"""Validates a given hash against the login session hash"""
 		return self._get("session_hash_validate", {"session_hash": session_hash})
 
-	def otp(self):
-		"""Generates a one time hash for non-login routines such as payment gateway authentication
-		"""
-		return self._get("otp")
-
 	def logout(self):
 		"""Log the user out by invalidating the token"""
-		return self._post("logout")
+		return self._delete("auth")
 
 	# user
-	def profile(self):
-		"""Fetch the user's profile"""
-		return self._get("profile")
-
-	def password_update(self, old_password, new_password):
-		"""Change the login password"""
-		return self._put("password", {"old_password": old_password, "new_password": new_password})
-
-	def transpassword_update(self, old_password, new_password):
-		"""Change the transaction password"""
-		return self._put("transpassword", {"old_password": old_password, "new_password": new_password})
-
-	def transpassword_check(self, password):
-		"""Check the transaction password"""
-		return self._post("transpassword", {"password": password})
-
-	def reset_password(self, email, identification):
-		"""Reset the user's primary password"""
-		params = {"email": email, "identification": identification}
-
-		return self._delete("password", params)
-
 	def margins(self, segment):
 		"""Get account balance and cash margin details"""
 		return self._get("margins", {"segment": segment})
@@ -244,10 +186,6 @@ class Kite:
 		"""Get the list of demat holdings"""
 		return self._get("holdings")
 
-	def holdings_t1(self):
-		"""Get the list of demat holdings"""
-		return self._get("holdings_t1")
-
 	def product_modify(self,
 						exchange,
 						tradingsymbol,
@@ -267,15 +205,18 @@ class Kite:
 			"new_product": new_product
 		})
 
-	# scrips
-	def scrips(self, exchange, search=None):
-		"""Get list of scrips by exchange with optional substring search"""
-		params = {"exchange": exchange}
+	# instruments
+	def instruments(self, exchange=None, search=None):
+		"""Get list of instruments by exchange with optional substring search"""
+		if exchange:
+			params = {"exchange": exchange}
 
-		if search:
-			params["search"] = search
+			if search:
+				params["search"] = search
 
-		return self._get("scrips", params)
+			return self._get("instruments", params)
+		else:
+			return self._get("all_instruments")
 
 	def quote(self, exchange, tradingsymbol):
 		"""Get quote and market depth for an instrument"""
@@ -285,16 +226,7 @@ class Kite:
 		"""Get the buy/sell trigger range (for CO)"""
 		return self._get("trigger_range", {"exchange": exchange, "tradingsymbol": tradingsymbol, "transaction_type": transaction_type})
 
-	# messages
-	def messages_admin(self):
-		"""Get messages posted by the admin"""
-		return self._get("messages_admin")
-
-	def messages_exchange(self):
-		"""Get messages posted by the admin"""
-		return self._get("messages_exchange")
-
-	# __ private methods
+	# Private http handlers and helpers
 	def _get(self, route, params=None):
 		"""Alias for sending a GET request"""
 		return self._request(route,
@@ -334,10 +266,10 @@ class Kite:
 			params["no_micro_cache"] = 1
 
 		# is there  atoken?
-		if self.token:
-			params["token"] = self.token
+		if self.access_token:
+			params["access_token"] = self.token
 
-		params["api_key"] = "abcd"
+		params["api_key"] = self.api_key
 
 		uri = self._routes[route]
 
@@ -393,9 +325,6 @@ class Kite:
 				elif data["error_type"] == "UserException":
 					raise(ex.UserException(data["message"], code=r.status_code))
 
-				elif data["error_type"] == "TwoFAException":
-					raise(ex.TwoFAException(data["message"], questions=data["questions"], code=r.status_code))
-
 				elif data["error_type"] == "OrderException":
 					raise(ex.OrderException(data["message"], code=r.status_code))
 
@@ -415,8 +344,5 @@ class Kite:
 					raise(ex.GeneralException(data["message"], code=r.status_code))
 
 			return data["data"]
-		# non json content (images for 2FA)
-		elif r.headers["content-type"] in ("image/jpeg", "image/jpg"):
-			return r.content
 		else:
 			raise ex.DataException("Invalid response format")

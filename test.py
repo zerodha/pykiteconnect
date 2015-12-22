@@ -4,7 +4,7 @@ pp = pprint.PrettyPrinter(indent=4)
 
 # initialize kite for the first time
 # if the user has already logged in, 'token' has to be passed
-token = "9436946368"
+token = None
 
 kite = Kite("DA0017", token=token, debug=True)
 
@@ -23,11 +23,11 @@ if not token:
 	# for testing, both answers are set to 'a'
 	user = kite.do2fa([questions[0]["id"], questions[1]["id"]], ["a", "a"])
 
-	print user
-	quit()
-
 	# logged in, we have the token now
 	kite.set_token(user["token"])
+
+print kite.quote("NSE", "INFY")
+quit()
 
 pprint.pprint(kite.orders("151216000090430"))
 quit()
