@@ -12,7 +12,6 @@ import requests
 
 import exceptions as ex
 
-
 class Kite(object):
 	# default API url (root)
 	_root = "https://api.kite.trade"
@@ -20,6 +19,7 @@ class Kite(object):
 	# URIs to various calls
 	_routes = {
 		"parameters": "/parameters",
+		"user.logout": "/user/auth",
 		"user.margins": "/user/margins/{segment}",
 		"user.session_hash": "/user/session_hash",
 		"user.session_hash.validate": "/user/session_hash/{session_hash}",
@@ -34,6 +34,7 @@ class Kite(object):
 
 		"portfolio.positions": "/portfolio/positions",
 		"portfolio.holdings": "/portfolio/holdings",
+		"portfolio.positions.modify": "/portfolio/positions"
 
 		"market.instruments.all": "/instruments",
 		"market.instruments": "/instruments/{exchange}",
@@ -61,7 +62,7 @@ class Kite(object):
 		reasons, but it doesn't make sense for the client to
 		try and catch it during every API call.
 
-		A callback that handles session timeout errors
+		A callback that handles saccess_tokenession timeout errors
 		can be provided here and when the client encounters
 		a token error, it'll be called.
 
@@ -81,20 +82,20 @@ class Kite(object):
 
 	def session_hash(self):
 		"""Retrieves the session hash that was generated during login"""
-		return self._get("session_hash")
+		return self._get("user.session_hash")
 
 	def session_hash_validate(self, session_hash):
 		"""Validates a given hash against the login session hash"""
-		return self._get("session_hash_validate", {"session_hash": session_hash})
+		return self._get("user.session_hash_validate", {"session_hash": session_hash})
 
 	def logout(self):
 		"""Log the user out by invalidating the token"""
-		return self._delete("auth")
+		return self._delete("user.logout")
 
 	# user
 	def margins(self, segment):
 		"""Get account balance and cash margin details"""
-		return self._get("margins", {"segment": segment})
+		return self._get("user.margins", {"segment": segment})
 
 	# orders
 	def order_place(self,
@@ -120,7 +121,7 @@ class Kite(object):
 			if k is None:
 				del(params[k])
 
-		return self._post("order_place", params)["order_id"]
+		return self._post("order.place", params)["order_id"]
 
 	def order_modify(self,
 					order_id,
@@ -159,17 +160,17 @@ class Kite(object):
 				"variety": variety
 			})["order_id"]
 		else:
-			return self._put("order_modify", params)["order_id"]
+			return self._put("order.modify", params)["order_id"]
 
 	def order_cancel(self, order_id, variety="regular"):
 		"""Cancel an order"""
-		return self._delete("order_cancel", {"order_id": order_id, "variety": variety})["order_id"]
+		return self._delete("order.cancel", {"order_id": order_id, "variety": variety})["order_id"]
 
 	# orderbook and tradebook
 	def orders(self, order_id=None):
 		"""Get the collection of orders from the orderbook"""
 		if order_id:
-			return self._get("order_info", {"order_id": order_id})
+			return self._get("order.info", {"order_id": order_id})
 		else:
 			return self._get("orders")
 
@@ -180,11 +181,11 @@ class Kite(object):
 	# positions and holdings
 	def positions(self):
 		"""Get the list of positions"""
-		return self._get("positions")
+		return self._get("portfolio.positions")
 
 	def holdings(self):
 		"""Get the list of demat holdings"""
-		return self._get("holdings")
+		return self._get("portfolio.holdings")
 
 	def product_modify(self,
 						exchange,
@@ -195,7 +196,7 @@ class Kite(object):
 						old_product,
 						new_product):
 		"""Modify a position's product type"""
-		return self._put("product_modify", {
+		return self._put("portfolio.positions.modify", {
 			"exchange": exchange,
 			"tradingsymbol": tradingsymbol,
 			"transaction_type": transaction_type,
@@ -214,17 +215,17 @@ class Kite(object):
 			if search:
 				params["search"] = search
 
-			return self._get("instruments", params)
+			return self._get("market.instruments", params)
 		else:
-			return self._get("all_instruments")
+			return self._get("market.all_instruments")
 
 	def quote(self, exchange, tradingsymbol):
 		"""Get quote and market depth for an instrument"""
-		return self._get("quote", {"exchange": exchange, "tradingsymbol": tradingsymbol})
+		return self._get("market.quote", {"exchange": exchange, "tradingsymbol": tradingsymbol})
 
 	def trigger_range(self, exchange, tradingsymbol, transaction_type):
 		"""Get the buy/sell trigger range (for CO)"""
-		return self._get("trigger_range", {"exchange": exchange, "tradingsymbol": tradingsymbol, "transaction_type": transaction_type})
+		return self._get("market.trigger_range", {"exchange": exchange, "tradingsymbol": tradingsymbol, "transaction_type": transaction_type})
 
 	# Private http handlers and helpers
 	def _get(self, route, params=None):
