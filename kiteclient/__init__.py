@@ -267,7 +267,7 @@ class Kite(object):
 
 		# is there  atoken?
 		if self.access_token:
-			params["access_token"] = self.token
+			params["access_token"] = self.access_token
 
 		params["api_key"] = self.api_key
 
