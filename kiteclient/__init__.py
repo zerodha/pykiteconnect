@@ -12,14 +12,15 @@ import requests
 
 import exceptions as ex
 
+
 class Kite(object):
 	# default API url (root)
-	_root = "https://api.kite.trade"
+	_root = "https://api.kite.trade/v1"
 
 	# URIs to various calls
 	_routes = {
 		"parameters": "/parameters",
-		"user.logout": "/user/auth",
+		"user.logout": "/user/session",
 		"user.margins": "/user/margins/{segment}",
 		"user.session_hash": "/user/session_hash",
 		"user.session_hash.validate": "/user/session_hash/{session_hash}",
@@ -34,7 +35,7 @@ class Kite(object):
 
 		"portfolio.positions": "/portfolio/positions",
 		"portfolio.holdings": "/portfolio/holdings",
-		"portfolio.positions.modify": "/portfolio/positions"
+		"portfolio.positions.modify": "/portfolio/positions",
 
 		"market.instruments.all": "/instruments",
 		"market.instruments": "/instruments/{exchange}",
@@ -44,8 +45,8 @@ class Kite(object):
 
 	timeout = 7
 
-	def __init__(self, user_id, access_token=None, root=None, debug=False, timeout=7, micro_cache=True):
-		self.user_id = user_id
+	def __init__(self, api_key, access_token=None, root=None, debug=False, timeout=7, micro_cache=True):
+		self.api_key = api_key
 		self.access_token = access_token
 		self.debug = debug
 		self.timeout = timeout
@@ -88,14 +89,17 @@ class Kite(object):
 		"""Validates a given hash against the login session hash"""
 		return self._get("user.session_hash_validate", {"session_hash": session_hash})
 
-	def logout(self):
-		"""Log the user out by invalidating the token"""
-		return self._delete("user.logout")
+	def login_url(self):
+		"""Returns the remote login url to which a user is to be redirected"""
+		return "%s%s?api_key=%s" % (self._root, self._routes["login"], self.api_key)
 
-	# user
 	def margins(self, segment):
 		"""Get account balance and cash margin details"""
 		return self._get("user.margins", {"segment": segment})
+
+	def logout(self):
+		"""Log the user out by invalidating the token"""
+		return self._delete("user.logout")
 
 	# orders
 	def order_place(self,
@@ -258,9 +262,6 @@ class Kite(object):
 		params = {}
 		if parameters:
 			params = parameters.copy()
-
-		# user id has to go with every request
-		params["user_id"] = self.user_id
 
 		# micro cache?
 		if self.micro_cache is False:

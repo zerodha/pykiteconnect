@@ -1,16 +1,17 @@
 import pprint
-from kiteclient import Kite
+from kiteclient.admin import KiteAdmin
 pp = pprint.PrettyPrinter(indent=4)
 
 # initialize kite for the first time
 # if the user has already logged in, 'token' has to be passed
-token = None
+api_key = "xxx"
 
-kite = Kite("DA0017", token=token, debug=True)
+token = None
+kite = KiteAdmin(api_key=api_key, user_id="DK3411", root="http://127.0.0.1:8000", debug=True)
 
 if not token:
 	# login and get the 2fa questions
-	questions = kite.login(password="sunshine2", ip="127.0.0.1")
+	questions = kite.login(password="zerozero@123", ip="127.0.0.1")
 
 	# there will be two 2fa questions
 	questions = questions["questions"]
@@ -22,11 +23,16 @@ if not token:
 
 	# for testing, both answers are set to 'a'
 	user = kite.do2fa([questions[0]["id"], questions[1]["id"]], ["a", "a"])
+	print user
 
-	# logged in, we have the token now
-	kite.set_token(user["token"])
+	# logged in, register api request
+	kite.register_token_request(user_id=user["user_id"],
+		request_token="rrr",
+		api_key=api_key,
+		permissions='a,b,c,d,e',
+		checksum="ccc")
 
-print kite.quote("NSE", "INFY")
+print "done"
 quit()
 
 pprint.pprint(kite.orders("151216000090430"))

@@ -1,5 +1,5 @@
-import exceptions as ex
 from kiteclient import Kite
+
 
 class KiteAdmin(Kite):
 	_routes = {
@@ -8,13 +8,20 @@ class KiteAdmin(Kite):
 		"user.profile": "/user/profile",
 		"user.password": "/user/password",
 		"user.transpassword": "/user/transpassword",
-		"user.register_access_token": "/register_access_token"
+		"api.register": "/session"
 	}
 
-	def __init__(self, user_id, access_token=None, root=None, debug=False, timeout=7, micro_cache=True):
-		super(KiteAdmin, self).__init__(user_id, access_token, root, debug, timeout, micro_cache)
+	def __init__(self, api_key, user_id=None, token=None, access_token=None, root=None, debug=False, timeout=7, micro_cache=True):
+		super(KiteAdmin, self).__init__(api_key=api_key,
+										access_token=access_token,
+										root=root,
+										debug=debug,
+										timeout=timeout,
+										micro_cache=micro_cache)
 		# update the routes
 		self._routes.update(super(KiteAdmin, self).__self__._routes)
+		self.user_id = user_id
+		self.token = token
 
 	def login(self, password, ip):
 		"""
@@ -28,7 +35,10 @@ class KiteAdmin(Kite):
 		Raises:
 			UserException: if the login fails
 		"""
-		return self._post("user.login", {"password": password, "ip": ip})
+		return self._post("user.login", {"user_id": self.user_id,
+										"token": self.token,
+										"password": password,
+										"ip": ip})
 
 	def do2fa(self, qa, ans):
 		"""
@@ -42,7 +52,10 @@ class KiteAdmin(Kite):
 			TwoFAException: if the user has entered the wrong answers
 			UserException: if 2FA failures exceed and the account is blocked
 		"""
-		params = {"question[]": qa, "answer[]": ans}
+		params = {"user_id": self.user_id,
+				"token": self.token,
+				"question[]": qa,
+				"answer[]": ans}
 
 		return self._post("user.2fa", params)
 
@@ -57,7 +70,10 @@ class KiteAdmin(Kite):
 		Raises:
 			UserException: if the updation failed
 		"""
-		params = {"question[]": [], "answer[]": []}
+		params = {"user_id": self.user_id,
+				"token": self.token,
+				"question[]": [],
+				"answer[]": []}
 
 		for question in qa:
 			params["question[]"].append(question)
@@ -77,7 +93,10 @@ class KiteAdmin(Kite):
 		Raises:
 			TwoFAException: if the update fails for some reason
 		"""
-		params = {"email": email, "identification": identification}
+		params = {"user_id": self.user_id,
+				"token": self.token,
+				"email": email,
+				"identification": identification}
 
 		return self._delete("user.2fa", params)
 
@@ -102,27 +121,30 @@ class KiteAdmin(Kite):
 		Raises:
 			UserException: if the profile fetching failed
 		"""
-		return self._get("profile")
+		return self._get("profile", {"user_id": self.user_id, "token": self.token})
 
 	def password_update(self, old_password, new_password):
 		"""Change the login password"""
-		return self._put("user.password", {
-					"old_password": old_password,
-					"new_password": new_password
-				})
+		return self._put("user.password",
+				{"user_id": self.user_id,
+				"token": self.token,
+				"old_password": old_password,
+				"new_password": new_password})
 
 	def transpassword_update(self, old_password, new_password):
 		"""Change the transaction password"""
-		return self._put("user.transpassword", {
+		return self._put("user.transpassword",
+					{"user_id": self.user_id,
+					"token": self.token,
 					"old_password": old_password,
-					"new_password": new_password
-				})
+					"new_password": new_password})
 
 	def transpassword_check(self, password):
 		"""Check the transaction password"""
-		return self._post("user.transpassword", {
-					"password": password
-				})
+		return self._post("user.transpassword",
+			{"user_id": self.user_id,
+			"token": self.token,
+			"password": password})
 
 	def reset_password(self, email, identification):
 		"""
@@ -135,14 +157,20 @@ class KiteAdmin(Kite):
 		Raises:
 			TwoFAException: if the update fails for some reason
 		"""
-		params = {"email": email, "identification": identification}
+		params = {"user_id": self.user_id,
+				"token": self.token,
+				"email": email,
+				"identification": identification}
 
 		return self._delete("user.password", params)
 
-	def register_access_token(self, api_key, request_token):
-		"""
-		Register access token for a given request token and api key
-		"""
-		params = {"api_key": api_key, "request_token": request_token}
-
-		return self._post("user.register_access_token", params)
+	def register_token_request(self, request_token, api_key, checksum, permissions, user_id):
+		"""Register access token for a given request token and api key"""
+		return self._post("api.register",
+			{
+				"request_token": request_token,
+				"api_key": api_key,
+				"checksum": checksum,
+				"permissions": permissions,
+				"user_id": user_id
+			})
