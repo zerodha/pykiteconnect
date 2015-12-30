@@ -8,6 +8,7 @@
 """
 
 import json
+import hashlib
 import requests
 
 import exceptions as ex
@@ -20,7 +21,8 @@ class Kite(object):
 	# URIs to various calls
 	_routes = {
 		"parameters": "/parameters",
-		"user.logout": "/user/session",
+		"api.validate": "/session/token",
+		"api.invalidate": "/session/token",
 		"user.margins": "/user/margins/{segment}",
 		"user.session_hash": "/user/session_hash",
 		"user.session_hash.validate": "/user/session_hash/{session_hash}",
@@ -81,6 +83,34 @@ class Kite(object):
 		"""
 		self.access_token = access_token
 
+	def login_url(self):
+		"""Returns the remote login url to which a user is to be redirected"""
+		return "%s%s?api_key=%s" % (self._root, self._routes["login"], self.api_key)
+
+	def request_access_token(self, request_token, secret):
+		"""Register access token for a given request token and api key"""
+		h = hashlib.sha256(self.api_key + request_token + secret)
+		checksum = h.hexdigest()
+
+		resp = self._post("api.validate",
+			{
+				"request_token": request_token,
+				"checksum": checksum
+			})
+
+		if "access_token" in resp:
+			self.set_access_token(resp["access_token"])
+
+		return resp
+
+	def invalidate_token(self, access_token=None):
+		"""Kill the session by invalidating the access token"""
+		params = None
+		if access_token:
+			params = {"access_token": access_token}
+
+		return self._delete("api.invalidate", params)
+
 	def session_hash(self):
 		"""Retrieves the session hash that was generated during login"""
 		return self._get("user.session_hash")
@@ -89,17 +119,9 @@ class Kite(object):
 		"""Validates a given hash against the login session hash"""
 		return self._get("user.session_hash_validate", {"session_hash": session_hash})
 
-	def login_url(self):
-		"""Returns the remote login url to which a user is to be redirected"""
-		return "%s%s?api_key=%s" % (self._root, self._routes["login"], self.api_key)
-
 	def margins(self, segment):
 		"""Get account balance and cash margin details"""
 		return self._get("user.margins", {"segment": segment})
-
-	def logout(self):
-		"""Log the user out by invalidating the token"""
-		return self._delete("user.logout")
 
 	# orders
 	def order_place(self,

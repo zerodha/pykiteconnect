@@ -1,10 +1,16 @@
 import pprint
+import hashlib
 from kiteclient.admin import KiteAdmin
 pp = pprint.PrettyPrinter(indent=4)
 
 # initialize kite for the first time
 # if the user has already logged in, 'token' has to be passed
 api_key = "xxx"
+secret = "yyy"
+request_token = "rrr"
+
+h = hashlib.sha256(api_key + request_token + secret)
+checksum = h.hexdigest()
 
 token = None
 kite = KiteAdmin(api_key=api_key, user_id="DK3411", root="http://127.0.0.1:8000", debug=True)
@@ -27,11 +33,13 @@ if not token:
 
 	# logged in, register api request
 	kite.register_token_request(user_id=user["user_id"],
-		request_token="rrr",
+		request_token=request_token,
 		api_key=api_key,
 		permissions='a,b,c,d,e',
-		checksum="ccc")
+		checksum=checksum)
 
+	print kite.request_access_token(request_token=request_token, secret=secret)
+	print kite.invalidate_token()
 print "done"
 quit()
 
