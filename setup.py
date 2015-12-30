@@ -8,10 +8,10 @@ install_requires = [
 
 # meta
 setup(
-	name="Kite Trade (REST) Client",
-	version="1.6",
+	name="Kite Connect  Client",
+	version="2.0",
 	author="Kailash Nadh",
-	description="Client for the Kite REST trade API",
+	description="Client for the Kite Connect",
 	install_requires=install_requires,
 	packages=["kiteclient"]
 )
