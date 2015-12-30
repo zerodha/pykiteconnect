@@ -19,7 +19,7 @@ class KiteAdmin(Kite):
 										timeout=timeout,
 										micro_cache=micro_cache)
 		# update the routes
-		self._routes.update(super(KiteAdmin, self).__self__._routes)
+		self._routes.update(super(KiteAdmin, self)._routes)
 		self.user_id = user_id
 		self.token = token
 
