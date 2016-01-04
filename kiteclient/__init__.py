@@ -83,6 +83,10 @@ class Kite(object):
 		"""
 		self.access_token = access_token
 
+	def set_user(self, user_id):
+		"""Set the instance's user id"""
+		self.user_id = user_id
+
 	def login_url(self):
 		"""Returns the remote login url to which a user is to be redirected"""
 		return "%s%s?api_key=%s" % (self._root, self._routes["login"], self.api_key)
@@ -147,7 +151,7 @@ class Kite(object):
 			if k is None:
 				del(params[k])
 
-		return self._post("order.place", params)["order_id"]
+		return self._post("orders.place", params)["order_id"]
 
 	def order_modify(self,
 					order_id,
@@ -186,17 +190,17 @@ class Kite(object):
 				"variety": variety
 			})["order_id"]
 		else:
-			return self._put("order.modify", params)["order_id"]
+			return self._put("orders.modify", params)["order_id"]
 
 	def order_cancel(self, order_id, variety="regular"):
 		"""Cancel an order"""
-		return self._delete("order.cancel", {"order_id": order_id, "variety": variety})["order_id"]
+		return self._delete("orders.cancel", {"order_id": order_id, "variety": variety})["order_id"]
 
 	# orderbook and tradebook
 	def orders(self, order_id=None):
 		"""Get the collection of orders from the orderbook"""
 		if order_id:
-			return self._get("order.info", {"order_id": order_id})
+			return self._get("orders.info", {"order_id": order_id})
 		else:
 			return self._get("orders")
 
