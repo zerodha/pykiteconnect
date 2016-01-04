@@ -11,7 +11,7 @@ class KiteAdmin(Kite):
 		"api.register": "/session"
 	}
 
-	def __init__(self, api_key, user_id=None, token=None, access_token=None, root=None, debug=False, timeout=7, micro_cache=True):
+	def __init__(self, api_key=None, user_id=None, token=None, access_token=None, root=None, debug=False, timeout=7, micro_cache=True):
 		super(KiteAdmin, self).__init__(api_key=api_key,
 										access_token=access_token,
 										root=root,
@@ -121,7 +121,7 @@ class KiteAdmin(Kite):
 		Raises:
 			UserException: if the profile fetching failed
 		"""
-		return self._get("profile", {"user_id": self.user_id, "token": self.token})
+		return self._get("user.profile", {"user_id": self.user_id, "token": self.token})
 
 	def password_update(self, old_password, new_password):
 		"""Change the login password"""
@@ -164,7 +164,7 @@ class KiteAdmin(Kite):
 
 		return self._delete("user.password", params)
 
-	def register_token_request(self, request_token, api_key, checksum, permissions, user_id):
+	def register_request_token(self, request_token, api_key, checksum, permissions, user_id):
 		"""Register access token for a given request token and api key"""
 		return self._post("api.register",
 			{
