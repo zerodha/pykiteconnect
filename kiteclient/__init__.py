@@ -297,7 +297,8 @@ class Kite(object):
 		if self.access_token:
 			params["access_token"] = self.access_token
 
-		params["api_key"] = self.api_key
+		if not "api_key" in params or not params.get("api_key"):
+			params["api_key"] = self.api_key
 
 		uri = self._routes[route]
 
