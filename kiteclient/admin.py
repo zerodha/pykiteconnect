@@ -23,6 +23,10 @@ class KiteAdmin(Kite):
 		self.user_id = user_id
 		self.token = token
 
+	def set_token(self, token):
+		"""Set token"""
+		self.token = token
+
 	def login(self, password, ip):
 		"""
 		Authenticate the user's credentials.
