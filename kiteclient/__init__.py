@@ -348,27 +348,9 @@ class Kite(object):
 						return
 
 				# native Kite errors
-				if data["error_type"] == "GeneralException":
-					raise(ex.GeneralException(data["message"], code=r.status_code))
-
-				elif data["error_type"] == "UserException":
-					raise(ex.UserException(data["message"], code=r.status_code))
-
-				elif data["error_type"] == "OrderException":
-					raise(ex.OrderException(data["message"], code=r.status_code))
-
-				elif data["error_type"] == "GeneralException":
-					raise(ex.GeneralException(data["message"], code=r.status_code))
-
-				elif data["error_type"] == "InputException":
-					raise(ex.InputException(data["message"], code=r.status_code))
-
-				elif data["error_type"] == "DataException":
-					raise(ex.DataException(data["message"], code=r.status_code))
-
-				elif data["error_type"] == "NetworkException":
-					raise(ex.NetworkException(data["message"], code=r.status_code))
-
+				exp = getattr(ex, data["error_type"])
+				if exp:
+					raise(exp(data["message"], code=r.status_code))
 				else:
 					raise(ex.GeneralException(data["message"], code=r.status_code))
 
