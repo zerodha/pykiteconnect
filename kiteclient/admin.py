@@ -23,6 +23,10 @@ class KiteAdmin(Kite):
 		self.user_id = user_id
 		self.token = token
 
+	def set_user(self, user_id):
+		"""Set the instance's user id."""
+		self.user_id = user_id
+
 	def set_token(self, token):
 		"""Set token"""
 		self.token = token
