@@ -1,5 +1,5 @@
 """
-Exception classes for Kite Connect client
+Exceptions raised by the Kite Connect client
 """
 
 
