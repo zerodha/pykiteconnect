@@ -1,10 +1,89 @@
 """
-	Kite Connect API client
-	https://kite.trade
+Kite Connect API client --	[https://kite.trade](kite.trade)
 
-	Rainmatter (c) 2015
+Rainmatter (c) 2015
 
-	MIT License
+License
+-------
+kiteclient library is licensed under the MIT License
+
+The library
+-----------
+Kite Connect is a set of REST-like APIs that expose
+many capabilities required to build a complete
+investment and trading platform. Execute orders in
+real time, manage user portfolio, stream live market
+data (WebSockets), and more, with the simple HTTP API collection
+
+This module provides an easy to use abstraction over the HTTP APIs.
+The HTTP calls have been converted to methods and their JSON responses
+are returned as native Python structures, for example, dicts, lists, bools etc.
+See the [Kite Connect API documentation]() for the complete list of APIs,
+supported parameters and values, and response formats.
+
+Getting started
+---------------
+	#!python
+	from kiteclient import Kite
+
+	# Initialise.
+	kite = Kite(api_key="your_api_key")
+
+	# Assuming you have obtained the `request_token`
+	# after the auth flow redirect by redirecting the
+	# user to kite.login_url()
+	try:
+		user = kite.request_access_token(
+			request_token="obtained_request_token")
+
+		kite.set_access_token(user["access_token"])
+	except Exception as e:
+		print "Authentication failed", str(e)
+		raise
+
+	print user["user_id"], "has logged in"
+
+	# Get the user's positions.
+	print kite.positions()
+
+	# Send an order.
+	order_id = kite.order_place(
+		tradingsymbol="INFY",
+		exchange="NSE",
+		quantity=1,
+		transaction_type="BUY",
+		order_type="MARKET"
+	)
+
+
+A typical web application
+-------------------------
+In a typical web application where a new instance of
+views, controllers etc. are created per incoming HTTP
+request, you will need to initialise a new instance of
+Kite client per request as well. This is because each
+individual instance represents a single user that's
+authenticated, unlike an **admin** API where you may
+use one instance to manage many users.
+
+Hence, in your web application, typically:
+
+- You will initialise an instance of the Kite client
+- Redirect the user to the `login_url()`
+- At the redirect url endpoint, obtain the
+`request_token` from the query parameters
+- Initialise a new instance of Kite client,
+use `request_access_token()` to obtain the `access_token`
+along with authenticated user data
+- Store this response in a session and use the
+stored `access_token` and initialise instances
+of Kite client for subsequent API calls.
+
+Exceptions
+----------
+Kite client saves you the hassle of detecting API errors
+by looking at HTTP codes or JSON error responses. Instead,
+it raises aptly named **[exceptions](exceptions.m.html)** that you can catch.
 """
 
 import json
@@ -15,7 +94,13 @@ import exceptions as ex
 
 
 class Kite(object):
-	# default API url (root)
+	"""
+	The API client class. In production, you may initialise
+	a single instance of this class per `api_key`.
+	"""
+
+	# Default root API endpoint. It's possible to
+	# override this by passing the `root` parameter during initialisation.
 	_root = "https://api.kite.trade/v1"
 
 	# URIs to various calls
@@ -24,8 +109,6 @@ class Kite(object):
 		"api.validate": "/session/token",
 		"api.invalidate": "/session/token",
 		"user.margins": "/user/margins/{segment}",
-		"user.session_hash": "/user/session_hash",
-		"user.session_hash.validate": "/user/session_hash/{session_hash}",
 
 		"orders": "/orders",
 		"trades": "/trades",
@@ -45,15 +128,36 @@ class Kite(object):
 		"market.trigger_range": "/instruments/{exchange}/{tradingsymbol}/trigger_range"
 	}
 
-	timeout = 7
+	_timeout = 7
 
 	def __init__(self, api_key, access_token=None, root=None, debug=False, timeout=7, micro_cache=True):
+		"""
+		Initialises a new Kite client instance.
+
+		- `api_key` is the key issued to you
+		- `access_token` is the token you have received
+		after the login flow. Pre-login, this will default to None,
+		but once you have obtained the `access_token`, you would've
+		persisted it in a database or session somewhere to pass
+		to the initialisation for further requests.
+		- `root` is the root API end point. Unless you explicitly
+		want to send API requests to a particular endpoint, this
+		can be ignored.
+		- `debug`, if set to True, will serialse and print requests
+		and responses to the stdout console
+		- `timeout` is the time for which the client will wait for
+		an API request to complete before it fails. Defaultis 7.
+		- `micro_cache`, when set to True, will fetch the last cached
+		version of an API response if available. This saves time on
+		a roundtrip to the backend. Micro caches only live for several
+		seconds to prevent data from turning stale.
+		"""
 		self.api_key = api_key
 		self.access_token = access_token
 		self.debug = debug
-		self.timeout = timeout
 		self.micro_cache = micro_cache
 		self.session_hook = None
+		self._timeout = timeout
 
 		if root:
 			self._root = root
@@ -61,11 +165,11 @@ class Kite(object):
 	def set_session_hook(self, method):
 		"""
 		A callback hook for session timeout errors.
-		An access_token (login session) can become invalid for a number of
+		An `access_token` (login session) can become invalid for a number of
 		reasons, but it doesn't make sense for the client to
 		try and catch it during every API call.
 
-		A callback that handles saccess_tokenession timeout errors
+		A callback that handles session timeout errors
 		can be provided here and when the client encounters
 		a token error, it'll be called.
 
@@ -83,16 +187,18 @@ class Kite(object):
 		"""
 		self.access_token = access_token
 
-	def set_user(self, user_id):
-		"""Set the instance's user id"""
-		self.user_id = user_id
-
 	def login_url(self):
-		"""Returns the remote login url to which a user is to be redirected"""
+		"""Returns the remote login url to which you should redirecr
+		the end user to initiate the login flow."""
 		return "%s%s?api_key=%s" % (self._root, self._routes["login"], self.api_key)
 
 	def request_access_token(self, request_token, secret):
-		"""Register access token for a given request token and api key"""
+		"""Given a `request_token` obtained after the login flow,
+		retrieve the `access_token` required for all further requests. The
+		response contains not just the `access_token`, but metadata for
+		the user who has authenticated.
+
+		- `secret` is the API secret issued to you"""
 		h = hashlib.sha256(self.api_key + request_token + secret)
 		checksum = h.hexdigest()
 
@@ -108,23 +214,15 @@ class Kite(object):
 		return resp
 
 	def invalidate_token(self, access_token=None):
-		"""Kill the session by invalidating the access token"""
+		"""Kill the session by invalidating the access token."""
 		params = None
 		if access_token:
 			params = {"access_token": access_token}
 
 		return self._delete("api.invalidate", params)
 
-	def session_hash(self):
-		"""Retrieves the session hash that was generated during login"""
-		return self._get("user.session_hash")
-
-	def session_hash_validate(self, session_hash):
-		"""Validates a given hash against the login session hash"""
-		return self._get("user.session_hash_validate", {"session_hash": session_hash})
-
 	def margins(self, segment):
-		"""Get account balance and cash margin details"""
+		"""Get account balance and cash margin details."""
 		return self._get("user.margins", {"segment": segment})
 
 	# orders
@@ -143,7 +241,7 @@ class Kite(object):
 					stoploss_value=None,
 					trailing_stoploss=None,
 					variety="regular"):
-		"""Place an order and return the NEST order number if successful"""
+		"""Place an order and return the NEST order number if successful."""
 		params = locals()
 		del(params["self"])
 
@@ -166,7 +264,7 @@ class Kite(object):
 					validity="DAY",
 					disclosed_quantity=0,
 					variety="regular"):
-		"""Modify an order and return the NEST order number if successful"""
+		"""Modify an order and return the NEST order number if successful."""
 		params = locals()
 		del(params["self"])
 
@@ -198,7 +296,7 @@ class Kite(object):
 
 	# orderbook and tradebook
 	def orders(self, order_id=None):
-		"""Get the collection of orders from the orderbook"""
+		"""Get the collection of orders from the orderbook."""
 		if order_id:
 			return self._get("orders.info", {"order_id": order_id})
 		else:
@@ -210,11 +308,11 @@ class Kite(object):
 
 	# positions and holdings
 	def positions(self):
-		"""Get the list of positions"""
+		"""Get the list of positions."""
 		return self._get("portfolio.positions")
 
 	def holdings(self):
-		"""Get the list of demat holdings"""
+		"""Get the list of holdings."""
 		return self._get("portfolio.holdings")
 
 	def product_modify(self,
@@ -225,7 +323,7 @@ class Kite(object):
 						quantity,
 						old_product,
 						new_product):
-		"""Modify a position's product type"""
+		"""Modify a position's product type."""
 		return self._put("portfolio.positions.modify", {
 			"exchange": exchange,
 			"tradingsymbol": tradingsymbol,
@@ -238,7 +336,7 @@ class Kite(object):
 
 	# instruments
 	def instruments(self, exchange=None, search=None):
-		"""Get list of instruments by exchange with optional substring search"""
+		"""Get list of instruments by exchange with optional substring search."""
 		if exchange:
 			params = {"exchange": exchange}
 
@@ -250,40 +348,40 @@ class Kite(object):
 			return self._get("market.all_instruments")
 
 	def quote(self, exchange, tradingsymbol):
-		"""Get quote and market depth for an instrument"""
+		"""Get quote and market depth for an instrument."""
 		return self._get("market.quote", {"exchange": exchange, "tradingsymbol": tradingsymbol})
 
 	def trigger_range(self, exchange, tradingsymbol, transaction_type):
-		"""Get the buy/sell trigger range (for CO)"""
+		"""Get the buy/sell trigger range (for CO)."""
 		return self._get("market.trigger_range", {"exchange": exchange, "tradingsymbol": tradingsymbol, "transaction_type": transaction_type})
 
 	# Private http handlers and helpers
 	def _get(self, route, params=None):
-		"""Alias for sending a GET request"""
+		"""Alias for sending a GET request."""
 		return self._request(route,
 							"GET",
 							params)
 
 	def _post(self, route, params=None):
-		"""Alias for sending a POST request"""
+		"""Alias for sending a POST request."""
 		return self._request(route,
 							"POST",
 							params)
 
 	def _put(self, route, params=None):
-		"""Alias for sending a PUT request"""
+		"""Alias for sending a PUT request."""
 		return self._request(route,
 							"PUT",
 							params)
 
 	def _delete(self, route, params=None):
-		"""Alias for sending a DELETE request"""
+		"""Alias for sending a DELETE request."""
 		return self._request(route,
 							"DELETE",
 							params)
 
 	def _request(self, route, method, parameters=None):
-		"""Make an HTTP request"""
+		"""Make an HTTP request."""
 
 		params = {}
 		if parameters:
@@ -297,7 +395,8 @@ class Kite(object):
 		if self.access_token:
 			params["access_token"] = self.access_token
 
-		if not "api_key" in params or not params.get("api_key"):
+		# override instance's API key if one is supplied in the params
+		if "api_key" not in params or not params.get("api_key"):
 			params["api_key"] = self.api_key
 
 		uri = self._routes[route]
@@ -320,7 +419,7 @@ class Kite(object):
 					params=params if method != "POST" else None,
 					verify=False,
 					allow_redirects=True,
-					timeout=self.timeout)
+					timeout=self._timeout)
 		except requests.ConnectionError:
 			raise ex.ClientNetworkException("Gateway connection error", code=503)
 		except requests.Timeout:
