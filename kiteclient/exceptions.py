@@ -47,3 +47,9 @@ class NetworkException(KiteException):
 class ClientNetworkException(KiteException):
 	def __init__(self, message, code=504):
 		super(ClientNetworkException, self).__init__(message, code)
+
+
+class TwoFAException(KiteException):
+	def __init__(self, message, questions=None, code=403):
+		super(TwoFAException, self).__init__(message, code)
+		self.questions = questions
