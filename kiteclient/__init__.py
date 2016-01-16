@@ -101,7 +101,7 @@ class Kite(object):
 
 	# Default root API endpoint. It's possible to
 	# override this by passing the `root` parameter during initialisation.
-	_root = "https://api.kite.trade/v1"
+	_root = "https://api.kite.trade"
 
 	# URIs to various calls
 	_routes = {
