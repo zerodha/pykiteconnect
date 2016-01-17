@@ -172,12 +172,13 @@ class KiteAdmin(Kite):
 
 		return self._delete("user.password", params)
 
-	def register_request_token(self, request_token, api_key, checksum, permissions, user_id):
+	def register_request_token(self, request_token, api_key, api_id, checksum, permissions, user_id):
 		"""Register access token for a given request token and api key"""
 		return self._post("api.register",
 			{
 				"request_token": request_token,
 				"api_key": api_key,
+				"api_id": api_id,
 				"checksum": checksum,
 				"permissions": permissions,
 				"user_id": user_id
