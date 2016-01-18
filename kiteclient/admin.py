@@ -188,4 +188,8 @@ class KiteAdmin(Kite):
 	def logout(self):
 		"""Log the user out completely of all sessions
 		including all api client sessions"""
-		return self._post()
+		return self._post("user.logout",
+			{
+				"user_id": self.user_id,
+				"token": self.token
+			})
