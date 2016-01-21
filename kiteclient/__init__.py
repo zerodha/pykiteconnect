@@ -448,7 +448,11 @@ class Kite(object):
 
 				# native Kite errors
 				exp = getattr(ex, data["error_type"])
-				if exp:
+				if data["error_type"] == "TwoFAException":
+					raise(ex.TwoFAException(data["message"],
+											questions=data["questions"] if "questions" in data else [],
+											code=r.status_code))
+				elif exp:
 					raise(exp(data["message"], code=r.status_code))
 				else:
 					raise(ex.GeneralException(data["message"], code=r.status_code))
