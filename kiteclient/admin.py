@@ -1,3 +1,5 @@
+import hashlib
+
 from kiteclient import Kite
 
 
@@ -184,6 +186,23 @@ class KiteAdmin(Kite):
 				"permissions": permissions,
 				"user_id": user_id
 			})
+
+	def request_access_token(self, api_key, request_token, secret):
+		"""Exchange request_token for access_token with an arbitrary api_key (admin)"""
+		h = hashlib.sha256(api_key + request_token + secret)
+		checksum = h.hexdigest()
+
+		resp = self._post("api.validate",
+			{
+				"api_key": api_key,
+				"request_token": request_token,
+				"checksum": checksum
+			})
+
+		if "access_token" in resp:
+			self.set_access_token(resp["access_token"])
+
+		return resp
 
 	def logout(self):
 		"""Log the user out completely of all sessions
