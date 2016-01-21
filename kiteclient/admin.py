@@ -8,6 +8,7 @@ class KiteAdmin(Kite):
 		"user.profile": "/user/profile",
 		"user.password": "/user/password",
 		"user.transpassword": "/user/transpassword",
+		"user.logout": "/user/logout",
 		"api.register": "/session"
 	}
 
@@ -182,4 +183,13 @@ class KiteAdmin(Kite):
 				"checksum": checksum,
 				"permissions": permissions,
 				"user_id": user_id
+			})
+
+	def logout(self):
+		"""Log the user out completely of all sessions
+		including all api client sessions"""
+		return self._post("user.logout",
+			{
+				"user_id": self.user_id,
+				"token": self.token
 			})
