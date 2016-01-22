@@ -111,7 +111,7 @@ class Kite(object):
 		"user.margins": "/user/margins/{segment}",
 
 		"orders": "/orders",
-		"trades": "/orders/trades",
+		"trades": "/trades",
 		"orders.info": "/orders/{order_id}",
 
 		"orders.place": "/orders/{variety}",
