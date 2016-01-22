@@ -10,7 +10,7 @@ class KiteAdmin(Kite):
 		"user.profile": "/user/profile",
 		"user.password": "/user/password",
 		"user.transpassword": "/user/transpassword",
-		"user.session_hash.validate": "/user/session_hash/{session_hash}",
+		"user.public_token.validate": "/user/public_token/{public_token}",
 		"user.logout": "/user/logout",
 		"api.register": "/session"
 	}
@@ -176,13 +176,13 @@ class KiteAdmin(Kite):
 
 		return self._delete("user.password", params)
 
-	def session_hash_validate(self, user_id, session_hash):
+	def public_token_validate(self, user_id, public_token):
 		"""Validate the public session hash.
 		Can be used for validating external applications that
 		need validation, such as ."""
-		return self._post("user.session_hash.validate", {
+		return self._post("user.public_token.validate", {
 			"user_id": user_id,
-			"session_hash": session_hash})
+			"public_token": public_token})
 
 	def register_request_token(self, request_token, api_key, api_id, checksum, permissions, user_id):
 		"""Register access token for a given request token and api key"""
