@@ -11,6 +11,7 @@ class KiteAdmin(Kite):
 		"user.password": "/user/password",
 		"user.transpassword": "/user/transpassword",
 		"user.public_token.validate": "/user/public_token/{public_token}",
+		"user.otp": "/user/otp",
 		"user.logout": "/user/logout",
 		"api.register": "/session"
 	}
@@ -212,6 +213,13 @@ class KiteAdmin(Kite):
 			self.set_access_token(resp["access_token"])
 
 		return resp
+
+	def otp(self):
+		"""Generate a one time OTP for payment verification"""
+		return self._post("user.otp",
+			{
+				"user_id": self.user_id
+			})
 
 	def logout(self):
 		"""Log the user out completely of all sessions
