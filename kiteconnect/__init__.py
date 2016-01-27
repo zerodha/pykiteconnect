@@ -24,7 +24,7 @@ supported parameters and values, and response formats.
 Getting started
 ---------------
 	#!python
-	from kiteclient import Kite
+	from kitecconnect import KiteConnect
 
 	# Initialise.
 	kite = Kite(api_key="your_api_key")
@@ -93,7 +93,7 @@ import requests
 import exceptions as ex
 
 
-class Kite(object):
+class KiteConnect(object):
 	"""
 	The API client class. In production, you may initialise
 	a single instance of this class per `api_key`.
