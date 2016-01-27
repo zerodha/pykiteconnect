@@ -1,9 +1,9 @@
 import hashlib
 
-from kiteclient import Kite
+from kiteconnect import KiteConnect
 
 
-class KiteAdmin(Kite):
+class KiteAdmin(KiteConnect):
 	_routes = {
 		"user.login": "/user/login",
 		"user.2fa": "/user/2fa",
