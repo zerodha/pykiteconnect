@@ -6,7 +6,7 @@ Kite Connect is a set of REST-like APIs that expose many capabilities required t
 [Rainmatter](http://rainmatter.com) (c) 2016. Licensed under the MIT License.
 
 ## Documentation
-- [Python client documentation](https://kite.trade/docs/pyconnect)
+- [Python client documentation](https://kite.trade/docs/pykiteconnect)
 - [Kite Connect HTTP API documentation](https://kite.trade/docs/connect/v1)
 
 ## Installing the client
@@ -44,4 +44,4 @@ except Exception as e:
 print(kite.orders())
 ```
 
-Refer to the [Python client documentation](https://kite.trade/docs/pyconnect) for the complete list of supported methods. 
+Refer to the [Python client documentation](https://kite.trade/docs/pykiteconnect) for the complete list of supported methods. 
