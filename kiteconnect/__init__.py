@@ -1,11 +1,11 @@
 """
-Kite Connect API client --	[https://kite.trade](kite.trade)
+Kite Connect API client for Python -- [https://kite.trade](kite.trade)
 
-Rainmatter (c) 2015
+Rainmatter (c) 2016
 
 License
 -------
-kiteclient library is licensed under the MIT License
+KiteConnect Python library is licensed under the MIT License
 
 The library
 -----------
@@ -27,7 +27,7 @@ Getting started
 	from kitecconnect import KiteConnect
 
 	# Initialise.
-	kite = Kite(api_key="your_api_key")
+	kite = KiteConnect(api_key="your_api_key")
 
 	# Assuming you have obtained the `request_token`
 	# after the auth flow redirect by redirecting the
@@ -81,7 +81,7 @@ of Kite client for subsequent API calls.
 
 Exceptions
 ----------
-Kite client saves you the hassle of detecting API errors
+Kite Connect client saves you the hassle of detecting API errors
 by looking at HTTP codes or JSON error responses. Instead,
 it raises aptly named **[exceptions](exceptions.m.html)** that you can catch.
 """
