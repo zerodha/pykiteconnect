@@ -1,11 +1,11 @@
 """
-Kite Connect API client --	[https://kite.trade](kite.trade)
+Kite Connect API client for Python -- [https://kite.trade](kite.trade)
 
-Rainmatter (c) 2015
+Rainmatter (c) 2016
 
 License
 -------
-kiteclient library is licensed under the MIT License
+KiteConnect Python library is licensed under the MIT License
 
 The library
 -----------
@@ -18,8 +18,8 @@ data (WebSockets), and more, with the simple HTTP API collection
 This module provides an easy to use abstraction over the HTTP APIs.
 The HTTP calls have been converted to methods and their JSON responses
 are returned as native Python structures, for example, dicts, lists, bools etc.
-See the **[Kite Connect API documentation](https://kite.trade/docs/connect/v1/)** for the complete list of APIs,
-supported parameters and values, and response formats.
+See the **[Kite Connect API documentation](https://kite.trade/docs/connect/v1/)**
+for the complete list of APIs, supported parameters and values, and response formats.
 
 Getting started
 ---------------
@@ -27,14 +27,14 @@ Getting started
 	from kitecconnect import KiteConnect
 
 	# Initialise.
-	kite = Kite(api_key="your_api_key")
+	kite = KiteConnect(api_key="your_api_key")
 
 	# Assuming you have obtained the `request_token`
 	# after the auth flow redirect by redirecting the
 	# user to kite.login_url()
 	try:
-		user = kite.request_access_token(
-			request_token="obtained_request_token")
+		user = kite.request_access_token(request_token="obtained_request_token",
+										secret="your_api_secret")
 
 		kite.set_access_token(user["access_token"])
 	except Exception as e:
@@ -81,7 +81,7 @@ of Kite client for subsequent API calls.
 
 Exceptions
 ----------
-Kite client saves you the hassle of detecting API errors
+Kite Connect client saves you the hassle of detecting API errors
 by looking at HTTP codes or JSON error responses. Instead,
 it raises aptly named **[exceptions](exceptions.m.html)** that you can catch.
 """
@@ -202,11 +202,10 @@ class KiteConnect(object):
 		h = hashlib.sha256(self.api_key + request_token + secret)
 		checksum = h.hexdigest()
 
-		resp = self._post("api.validate",
-			{
-				"request_token": request_token,
-				"checksum": checksum
-			})
+		resp = self._post("api.validate", {
+			"request_token": request_token,
+			"checksum": checksum
+		})
 
 		if "access_token" in resp:
 			self.set_access_token(resp["access_token"])
@@ -358,27 +357,19 @@ class KiteConnect(object):
 	# Private http handlers and helpers
 	def _get(self, route, params=None):
 		"""Alias for sending a GET request."""
-		return self._request(route,
-							"GET",
-							params)
+		return self._request(route, "GET", params)
 
 	def _post(self, route, params=None):
 		"""Alias for sending a POST request."""
-		return self._request(route,
-							"POST",
-							params)
+		return self._request(route, "POST", params)
 
 	def _put(self, route, params=None):
 		"""Alias for sending a PUT request."""
-		return self._request(route,
-							"PUT",
-							params)
+		return self._request(route, "PUT", params)
 
 	def _delete(self, route, params=None):
 		"""Alias for sending a DELETE request."""
-		return self._request(route,
-							"DELETE",
-							params)
+		return self._request(route, "DELETE", params)
 
 	def _request(self, route, method, parameters=None):
 		"""Make an HTTP request."""
