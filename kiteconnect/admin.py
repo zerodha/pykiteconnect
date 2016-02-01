@@ -185,13 +185,13 @@ class KiteAdmin(KiteConnect):
 			"user_id": user_id,
 			"public_token": public_token})
 
-	def register_request_token(self, request_token, api_key, api_id, checksum, permissions, user_id):
+	def register_request_token(self, request_token, api_key, app_id, checksum, permissions, user_id):
 		"""Register access token for a given request token and api key"""
 		return self._post("api.register",
 			{
 				"request_token": request_token,
 				"api_key": api_key,
-				"api_id": api_id,
+				"app_id": app_id,
 				"checksum": checksum,
 				"permissions": permissions,
 				"user_id": user_id
