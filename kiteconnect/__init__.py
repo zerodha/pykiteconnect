@@ -24,7 +24,7 @@ for the complete list of APIs, supported parameters and values, and response for
 Getting started
 ---------------
 	#!python
-	from kitecconnect import KiteConnect
+	from kiteconnect import KiteConnect
 
 	# Initialise.
 	kite = KiteConnect(api_key="your_api_key")
