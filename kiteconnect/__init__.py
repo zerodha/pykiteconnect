@@ -24,7 +24,7 @@ for the complete list of APIs, supported parameters and values, and response for
 Getting started
 ---------------
 	#!python
-	from kitecconnect import KiteConnect
+	from kiteconnect import KiteConnect
 
 	# Initialise.
 	kite = KiteConnect(api_key="your_api_key")
@@ -344,7 +344,7 @@ class KiteConnect(object):
 
 			return self._get("market.instruments", params)
 		else:
-			return self._get("market.all_instruments")
+			return self._get("market.instruments.all")
 
 	def quote(self, exchange, tradingsymbol):
 		"""Get quote and market depth for an instrument."""
@@ -382,7 +382,7 @@ class KiteConnect(object):
 		if self.micro_cache is False:
 			params["no_micro_cache"] = 1
 
-		# is there  atoken?
+		# is there a token?
 		if self.access_token:
 			params["access_token"] = self.access_token
 
