@@ -335,7 +335,18 @@ class KiteConnect(object):
 
 	# instruments
 	def instruments(self, exchange=None, search=None):
-		"""Get list of instruments by exchange with optional substring search."""
+		"""
+		Get list of instruments by exchange with optional substring search.
+
+		In case of full list of instruments, response is a csv string.
+		One of the simple ways to parse it:
+			import csv
+			instruments = kite.instruments()
+			cr = csv.reader(instruments.splitlines())
+			for row in cr:
+				# print row
+				do_stuff_on_row(row)
+		"""
 		if exchange:
 			params = {"exchange": exchange}
 
@@ -449,5 +460,7 @@ class KiteConnect(object):
 					raise(ex.GeneralException(data["message"], code=r.status_code))
 
 			return data["data"]
+		elif route == "market.instruments.all" and r.headers["content-type"] == "application/octet-stream, text/csv":
+			return r.content
 		else:
 			raise ex.DataException("Invalid response format")
