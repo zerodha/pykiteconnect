@@ -16,7 +16,7 @@ Kite Connect is a set of REST-like APIs that expose many capabilities required t
 ```python
 from kiteconnect import KiteConnect
 
-kite = new KiteConnect(api_key="xxx")
+kite = KiteConnect(api_key="your_api_key")
 
 # Redirect the user to the login url obtained
 # from kite.login_url(), and receive the request_token
