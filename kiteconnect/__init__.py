@@ -102,6 +102,7 @@ class KiteConnect(object):
 	# Default root API endpoint. It's possible to
 	# override this by passing the `root` parameter during initialisation.
 	_root = "https://api.kite.trade"
+	_login = "https://kite.trade/connect/login"
 
 	# URIs to various calls
 	_routes = {
@@ -190,7 +191,7 @@ class KiteConnect(object):
 	def login_url(self):
 		"""Returns the remote login url to which you should redirecr
 		the end user to initiate the login flow."""
-		return "%s%s?api_key=%s" % (self._root, self._routes["login"], self.api_key)
+		return "%s?api_key=%s" % (self._login, self.api_key)
 
 	def request_access_token(self, request_token, secret):
 		"""Given a `request_token` obtained after the login flow,
