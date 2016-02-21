@@ -24,7 +24,7 @@ for the complete list of APIs, supported parameters and values, and response for
 Getting started
 ---------------
 	#!python
-	from kitecconnect import KiteConnect
+	from kiteconnect import KiteConnect
 
 	# Initialise.
 	kite = KiteConnect(api_key="your_api_key")
@@ -336,7 +336,18 @@ class KiteConnect(object):
 
 	# instruments
 	def instruments(self, exchange=None, search=None):
-		"""Get list of instruments by exchange with optional substring search."""
+		"""
+		Get list of instruments by exchange with optional substring search.
+
+		In case of full list of instruments, response is a csv string.
+		One of the simple ways to parse it:
+			import csv
+			instruments = kite.instruments()
+			cr = csv.reader(instruments.splitlines())
+			for row in cr:
+				# print row
+				do_stuff_on_row(row)
+		"""
 		if exchange:
 			params = {"exchange": exchange}
 
@@ -345,7 +356,7 @@ class KiteConnect(object):
 
 			return self._get("market.instruments", params)
 		else:
-			return self._get("market.all_instruments")
+			return self._get("market.instruments.all")
 
 	def quote(self, exchange, tradingsymbol):
 		"""Get quote and market depth for an instrument."""
@@ -383,7 +394,7 @@ class KiteConnect(object):
 		if self.micro_cache is False:
 			params["no_micro_cache"] = 1
 
-		# is there  atoken?
+		# is there a token?
 		if self.access_token:
 			params["access_token"] = self.access_token
 
@@ -450,5 +461,7 @@ class KiteConnect(object):
 					raise(ex.GeneralException(data["message"], code=r.status_code))
 
 			return data["data"]
+		elif route == "market.instruments.all" and r.headers["content-type"] == "application/octet-stream, text/csv":
+			return r.content
 		else:
 			raise ex.DataException("Invalid response format")
