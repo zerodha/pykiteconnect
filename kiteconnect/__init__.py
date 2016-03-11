@@ -18,13 +18,13 @@ data (WebSockets), and more, with the simple HTTP API collection
 This module provides an easy to use abstraction over the HTTP APIs.
 The HTTP calls have been converted to methods and their JSON responses
 are returned as native Python structures, for example, dicts, lists, bools etc.
-See the **[Kite Connect API documentation](https://kite.trade/docs/connect/v1/)** for the complete list of APIs,
-supported parameters and values, and response formats.
+See the **[Kite Connect API documentation](https://kite.trade/docs/connect/v1/)**
+for the complete list of APIs, supported parameters and values, and response formats.
 
 Getting started
 ---------------
 	#!python
-	from kitecconnect import KiteConnect
+	from kiteconnect import KiteConnect
 
 	# Initialise.
 	kite = KiteConnect(api_key="your_api_key")
@@ -33,8 +33,8 @@ Getting started
 	# after the auth flow redirect by redirecting the
 	# user to kite.login_url()
 	try:
-		user = kite.request_access_token(
-			request_token="obtained_request_token")
+		user = kite.request_access_token(request_token="obtained_request_token",
+										secret="your_api_secret")
 
 		kite.set_access_token(user["access_token"])
 	except Exception as e:
@@ -102,6 +102,7 @@ class KiteConnect(object):
 	# Default root API endpoint. It's possible to
 	# override this by passing the `root` parameter during initialisation.
 	_root = "https://api.kite.trade"
+	_login = "https://kite.trade/connect/login"
 
 	# URIs to various calls
 	_routes = {
@@ -190,7 +191,7 @@ class KiteConnect(object):
 	def login_url(self):
 		"""Returns the remote login url to which you should redirecr
 		the end user to initiate the login flow."""
-		return "%s%s?api_key=%s" % (self._root, self._routes["login"], self.api_key)
+		return "%s?api_key=%s" % (self._login, self.api_key)
 
 	def request_access_token(self, request_token, secret):
 		"""Given a `request_token` obtained after the login flow,
@@ -202,11 +203,10 @@ class KiteConnect(object):
 		h = hashlib.sha256(self.api_key + request_token + secret)
 		checksum = h.hexdigest()
 
-		resp = self._post("api.validate",
-			{
-				"request_token": request_token,
-				"checksum": checksum
-			})
+		resp = self._post("api.validate", {
+			"request_token": request_token,
+			"checksum": checksum
+		})
 
 		if "access_token" in resp:
 			self.set_access_token(resp["access_token"])
@@ -336,7 +336,18 @@ class KiteConnect(object):
 
 	# instruments
 	def instruments(self, exchange=None, search=None):
-		"""Get list of instruments by exchange with optional substring search."""
+		"""
+		Get list of instruments by exchange with optional substring search.
+
+		In case of full list of instruments, response is a csv string.
+		One of the simple ways to parse it:
+			import csv
+			instruments = kite.instruments()
+			cr = csv.reader(instruments.splitlines())
+			for row in cr:
+				# print row
+				do_stuff_on_row(row)
+		"""
 		if exchange:
 			params = {"exchange": exchange}
 
@@ -345,7 +356,7 @@ class KiteConnect(object):
 
 			return self._get("market.instruments", params)
 		else:
-			return self._get("market.all_instruments")
+			return self._get("market.instruments.all")
 
 	def quote(self, exchange, tradingsymbol):
 		"""Get quote and market depth for an instrument."""
@@ -358,27 +369,19 @@ class KiteConnect(object):
 	# Private http handlers and helpers
 	def _get(self, route, params=None):
 		"""Alias for sending a GET request."""
-		return self._request(route,
-							"GET",
-							params)
+		return self._request(route, "GET", params)
 
 	def _post(self, route, params=None):
 		"""Alias for sending a POST request."""
-		return self._request(route,
-							"POST",
-							params)
+		return self._request(route, "POST", params)
 
 	def _put(self, route, params=None):
 		"""Alias for sending a PUT request."""
-		return self._request(route,
-							"PUT",
-							params)
+		return self._request(route, "PUT", params)
 
 	def _delete(self, route, params=None):
 		"""Alias for sending a DELETE request."""
-		return self._request(route,
-							"DELETE",
-							params)
+		return self._request(route, "DELETE", params)
 
 	def _request(self, route, method, parameters=None):
 		"""Make an HTTP request."""
@@ -391,7 +394,7 @@ class KiteConnect(object):
 		if self.micro_cache is False:
 			params["no_micro_cache"] = 1
 
-		# is there  atoken?
+		# is there a token?
 		if self.access_token:
 			params["access_token"] = self.access_token
 
@@ -458,5 +461,7 @@ class KiteConnect(object):
 					raise(ex.GeneralException(data["message"], code=r.status_code))
 
 			return data["data"]
+		elif route == "market.instruments.all" and r.headers["content-type"] == "application/octet-stream, text/csv":
+			return r.content
 		else:
 			raise ex.DataException("Invalid response format")
