@@ -1,3 +1,4 @@
+import json
 import hashlib
 
 from kiteconnect import KiteConnect
@@ -193,7 +194,7 @@ class KiteAdmin(KiteConnect):
 				"api_key": api_key,
 				"app_id": app_id,
 				"checksum": checksum,
-				"permissions": permissions,
+				"permissions": json.dumps(permissions),
 				"user_id": user_id
 			})
 
