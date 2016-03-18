@@ -21,6 +21,8 @@ setup(
 		"License :: OSI Approved :: MIT License",
 		"Programming Language :: Python :: 2.6",
 		"Programming Language :: Python :: 2.7",
+		"Programming Language :: Python :: 3.3",
+		"Programming Language :: Python :: 3.4",
 		"Topic :: Office/Business :: Financial :: Investment",
 		"Topic :: Software Development :: Libraries :: Python Modules",
 		"Topic :: Software Development :: Libraries"

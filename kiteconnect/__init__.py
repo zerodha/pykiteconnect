@@ -38,13 +38,13 @@ Getting started
 
 		kite.set_access_token(user["access_token"])
 	except Exception as e:
-		print "Authentication failed", str(e)
+		print("Authentication failed", str(e))
 		raise
 
-	print user["user_id"], "has logged in"
+	print(user["user_id"], "has logged in")
 
 	# Get the user's positions.
-	print kite.positions()
+	print(kite.positions())
 
 	# Send an order.
 	order_id = kite.order_place(
@@ -345,7 +345,7 @@ class KiteConnect(object):
 			instruments = kite.instruments()
 			cr = csv.reader(instruments.splitlines())
 			for row in cr:
-				# print row
+				# print(row)
 				do_stuff_on_row(row)
 		"""
 		if exchange:
@@ -412,8 +412,8 @@ class KiteConnect(object):
 		url = self._root + uri
 
 		if self.debug:
-			print "Request: ", url
-			print params, "\n"
+			print("Request: ", url)
+			print(params, "\n")
 
 		try:
 			r = requests.request(method,
@@ -433,7 +433,7 @@ class KiteConnect(object):
 			raise ex.ClientNetworkException(e.message, code=500)
 
 		if self.debug:
-			print "Response :", r.status_code, r.content, "\n"
+			print("Response :", r.status_code, r.content, "\n")
 
 		# content types
 		if r.headers["content-type"] == "application/json":
