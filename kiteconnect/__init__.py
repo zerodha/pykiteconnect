@@ -90,7 +90,7 @@ import json
 import hashlib
 import requests
 
-import exceptions as ex
+import kiteconnect.exceptions as ex
 
 
 class KiteConnect(object):
