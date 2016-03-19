@@ -26,6 +26,13 @@ class TokenException(KiteException):
 		super(TokenException, self).__init__(message, code)
 
 
+class PermissionException(KiteException):
+	"""Represents permission denied exceptions for certain calls.
+	Default code is 403"""
+	def __init__(self, message, code=403):
+		super(PermissionException, self).__init__(message, code)
+
+
 class UserException(KiteException):
 	"""Exceptions pertaining to calls dealing with the
 	logged in user's data.Default code is 500."""
