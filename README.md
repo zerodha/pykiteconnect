@@ -24,8 +24,8 @@ kite = KiteConnect(api_key="your_api_key")
 # Once you have the request_token, obtain the access_token
 # as follows.
 
-access_token = kite.request_access_token("request_token_here", secret="your_secret")
-kite.set_access_token(access_token)
+data = kite.request_access_token("request_token_here", secret="your_secret")
+kite.set_access_token(data["access_token"])
 
 # Place an order
 try:
