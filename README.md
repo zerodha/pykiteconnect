@@ -33,7 +33,7 @@ try:
 					exchange="NSE",
 					transaction_type="BUY",
 					quantity=1,
-					order_type="MARKET"
+					order_type="MARKET",
 					product="NRML")
 
 	print("Order placed. ID is", order_id)
