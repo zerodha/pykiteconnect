@@ -118,6 +118,7 @@ class KiteConnect(object):
 		"orders.place": "/orders/{variety}",
 		"orders.modify": "/orders/{variety}/{order_id}",
 		"orders.cancel": "/orders/{variety}/{order_id}",
+		"orders.trades": "/orders/{order_id}/trades",
 
 		"portfolio.positions": "/portfolio/positions",
 		"portfolio.holdings": "/portfolio/holdings",
@@ -200,7 +201,7 @@ class KiteConnect(object):
 		the user who has authenticated.
 
 		- `secret` is the API secret issued to you"""
-		h = hashlib.sha256(self.api_key + request_token + secret)
+		h = hashlib.sha256(self.api_key.encode("utf-8") + request_token.encode("utf-8") + secret.encode("utf-8"))
 		checksum = h.hexdigest()
 
 		resp = self._post("api.validate", {
@@ -294,7 +295,10 @@ class KiteConnect(object):
 		"""Cancel an order"""
 		return self._delete("orders.cancel", {"order_id": order_id, "variety": variety})["order_id"]
 
-	# orderbook and tradebook
+	def order_trades(self, order_id):
+		"""Get trades for the order"""
+		return self._get("orders.trades", {"order_id": order_id})
+
 	def orders(self, order_id=None):
 		"""Get the collection of orders from the orderbook."""
 		if order_id:
