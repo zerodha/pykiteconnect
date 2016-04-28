@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
 	name="kiteconnect",
-	version="2.4.6",
+	version="2.7",
 	description="The official Python client for the Kite Connect trading API",
 	author="Rainmatter Technology (India)",
 	author_email="talk@rainmatter.com",
