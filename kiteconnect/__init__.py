@@ -43,10 +43,10 @@ Getting started
 
 	print(user["user_id"], "has logged in")
 
-	# Get the user's positions.
+	# Get the list of positions.
 	print(kite.positions())
 
-	# Send an order.
+	# Place an order.
 	order_id = kite.order_place(
 		tradingsymbol="INFY",
 		exchange="NSE",
@@ -85,7 +85,8 @@ Kite Connect client saves you the hassle of detecting API errors
 by looking at HTTP codes or JSON error responses. Instead,
 it raises aptly named **[exceptions](exceptions.m.html)** that you can catch.
 """
-
+import StringIO
+import csv
 import json
 import hashlib
 import requests
@@ -134,21 +135,21 @@ class KiteConnect(object):
 
 	def __init__(self, api_key, access_token=None, root=None, debug=False, timeout=7, micro_cache=True):
 		"""
-		Initialises a new Kite client instance.
+		Initialise a new Kite Connect client instance.
 
 		- `api_key` is the key issued to you
-		- `access_token` is the token you have received
-		after the login flow. Pre-login, this will default to None,
-		but once you have obtained the `access_token`, you would've
-		persisted it in a database or session somewhere to pass
-		to the initialisation for further requests.
-		- `root` is the root API end point. Unless you explicitly
-		want to send API requests to a particular endpoint, this
+		- `access_token` is the token obtained after the login flow in
+			exchange for the `request_token` . Pre-login, this will default to None,
+		but once you have obtained it, you should
+		persist it in a database or session to pass
+		to the Kite Connect class initialisation for subsequent requests.
+		- `root` is the API end point root. Unless you explicitly
+		want to send API requests to a non-default endpoint, this
 		can be ignored.
-		- `debug`, if set to True, will serialse and print requests
-		and responses to the stdout console
-		- `timeout` is the time for which the client will wait for
-		an API request to complete before it fails. Defaultis 7.
+		- `debug`, if set to True, will serialise and print requests
+		and responses to stdout.
+		- `timeout` is the time (seconds) for which the API client will wait for
+		a request to complete before it fails.
 		- `micro_cache`, when set to True, will fetch the last cached
 		version of an API response if available. This saves time on
 		a roundtrip to the backend. Micro caches only live for several
@@ -166,41 +167,40 @@ class KiteConnect(object):
 
 	def set_session_hook(self, method):
 		"""
-		A callback hook for session timeout errors.
+		Set a callback hook for session (`TokenError` -- timeout, expiry etc.) errors.
 		An `access_token` (login session) can become invalid for a number of
 		reasons, but it doesn't make sense for the client to
 		try and catch it during every API call.
 
-		A callback that handles session timeout errors
-		can be provided here and when the client encounters
-		a token error, it'll be called.
+		A callback method that handles session errors
+		can be set here and when the client encounters
+		a token error at any point, it'll be called.
 
 		This callback, for instance, can log the user out of the UI,
-		clear session cookies, or show a timeout error message
+		clear session cookies, or initiate a fresh login.
 		"""
 		self.session_hook = method
 
 	def set_access_token(self, access_token):
-		"""
-		Set the access token received after successful login.
-		After the first login, this token should be saved in the
-		session somewhere and passed to the client for further
-		API calls.
-		"""
+		"""Set the `access_token` received after a successful authentication."""
 		self.access_token = access_token
 
 	def login_url(self):
-		"""Returns the remote login url to which you should redirecr
-		the end user to initiate the login flow."""
+		"""
+		Get the remote login url to which a user should be redirected
+		to initiate the login flow.
+		"""
 		return "%s?api_key=%s" % (self._login, self.api_key)
 
 	def request_access_token(self, request_token, secret):
-		"""Given a `request_token` obtained after the login flow,
-		retrieve the `access_token` required for all further requests. The
+		"""Do the token exchange with the `request_token` obtained after the login flow,
+		and retrieve the `access_token` required for all subsequent requests. The
 		response contains not just the `access_token`, but metadata for
 		the user who has authenticated.
 
-		- `secret` is the API secret issued to you"""
+		- `request_token` is the token obtained from the GET paramers after a successful login redirect.
+		- `secret` is the API secret issued with the API key.
+		"""
 		h = hashlib.sha256(self.api_key.encode("utf-8") + request_token.encode("utf-8") + secret.encode("utf-8"))
 		checksum = h.hexdigest()
 
@@ -215,7 +215,10 @@ class KiteConnect(object):
 		return resp
 
 	def invalidate_token(self, access_token=None):
-		"""Kill the session by invalidating the access token."""
+		"""Kill the session by invalidating the access token.
+
+		- `access_token` to invalidate. Default is the active `access_token`.
+		"""
 		params = None
 		if access_token:
 			params = {"access_token": access_token}
@@ -223,7 +226,10 @@ class KiteConnect(object):
 		return self._delete("api.invalidate", params)
 
 	def margins(self, segment):
-		"""Get account balance and cash margin details."""
+		"""Get account balance and cash margin details for a particular segment.
+
+		- `segment` is the trading segment (eg: equity or commodity)
+		"""
 		return self._get("user.margins", {"segment": segment})
 
 	# orders
@@ -242,7 +248,7 @@ class KiteConnect(object):
 					stoploss_value=None,
 					trailing_stoploss=None,
 					variety="regular"):
-		"""Place an order and return the NEST order number if successful."""
+		"""Place an order."""
 		params = locals()
 		del(params["self"])
 
@@ -265,7 +271,7 @@ class KiteConnect(object):
 					validity="DAY",
 					disclosed_quantity=0,
 					variety="regular"):
-		"""Modify an order and return the NEST order number if successful."""
+		"""Modify an open order."""
 		params = locals()
 		del(params["self"])
 
@@ -292,13 +298,10 @@ class KiteConnect(object):
 			return self._put("orders.modify", params)["order_id"]
 
 	def order_cancel(self, order_id, variety="regular"):
-		"""Cancel an order"""
+		"""Cancel an open order."""
 		return self._delete("orders.cancel", {"order_id": order_id, "variety": variety})["order_id"]
 
-	def order_trades(self, order_id):
-		"""Get trades for the order"""
-		return self._get("orders.trades", {"order_id": order_id})
-
+	# orderbook and tradebook
 	def orders(self, order_id=None):
 		"""Get the collection of orders from the orderbook."""
 		if order_id:
@@ -306,17 +309,27 @@ class KiteConnect(object):
 		else:
 			return self._get("orders")
 
-	def trades(self):
-		"""Get the collection of executed trades (tradebook)"""
-		return self._get("trades")
+	def trades(self, order_id=None):
+		"""
+		Retreive the list of trades executed (all or ones under a particular order).
 
-	# positions and holdings
+		An order can be executed in tranches based on market conditions.
+		These trades are individually recorded under an order.
+
+		- `order_id` is the ID of the order (optional) whose trades are to be retrieved.
+		If no `order_id` is specified, all trades for the day are returned.
+		"""
+		if order_id:
+			return self._get("orders.trades", {"order_id": order_id})
+		else:
+			return self._get("trades")
+
 	def positions(self):
-		"""Get the list of positions."""
+		"""Retrieve the list of positions."""
 		return self._get("portfolio.positions")
 
 	def holdings(self):
-		"""Get the list of holdings."""
+		"""Retrieve the list of equity holdings."""
 		return self._get("portfolio.holdings")
 
 	def product_modify(self,
@@ -327,7 +340,7 @@ class KiteConnect(object):
 						quantity,
 						old_product,
 						new_product):
-		"""Modify a position's product type."""
+		"""Modify an open position's product type."""
 		return self._put("portfolio.positions.modify", {
 			"exchange": exchange,
 			"tradingsymbol": tradingsymbol,
@@ -338,39 +351,45 @@ class KiteConnect(object):
 			"new_product": new_product
 		})
 
-	# instruments
-	def instruments(self, exchange=None, search=None):
+	def instruments(self, exchange=None):
 		"""
-		Get list of instruments by exchange with optional substring search.
+		Retrieve the list of market instruments available to trade.
 
-		In case of full list of instruments, response is a csv string.
-		One of the simple ways to parse it:
-			import csv
-			instruments = kite.instruments()
-			cr = csv.reader(instruments.splitlines())
-			for row in cr:
-				# print(row)
-				do_stuff_on_row(row)
+		Note that the results could be large, several hundred KBs in size,
+		with tens of thousands of entries in the list.
 		"""
 		if exchange:
 			params = {"exchange": exchange}
 
-			if search:
-				params["search"] = search
-
-			return self._get("market.instruments", params)
+			return self._parse_csv(self._get("market.instruments", params))
 		else:
-			return self._get("market.instruments.all")
+			return self._parse_csv(self._get("market.instruments.all"))
 
 	def quote(self, exchange, tradingsymbol):
-		"""Get quote and market depth for an instrument."""
+		"""Retrieve quote and market depth for an instrument."""
 		return self._get("market.quote", {"exchange": exchange, "tradingsymbol": tradingsymbol})
 
 	def trigger_range(self, exchange, tradingsymbol, transaction_type):
-		"""Get the buy/sell trigger range (for CO)."""
+		"""Retrieve the buy/sell trigger range for Cover Orders."""
 		return self._get("market.trigger_range", {"exchange": exchange, "tradingsymbol": tradingsymbol, "transaction_type": transaction_type})
 
-	# Private http handlers and helpers
+	def _parse_csv(self, data):
+		reader = csv.reader(StringIO.StringIO(data.strip()))
+
+		records = []
+		header = next(reader)
+		for row in reader:
+			record = dict(zip(header, row))
+
+			record["last_price"] = float(record["last_price"])
+			record["strike"] = float(record["strike"])
+			record["tick_size"] = float(record["tick_size"])
+			record["lot_size"] = int(record["lot_size"])
+
+			records.append(record)
+
+		return records
+
 	def _get(self, route, params=None):
 		"""Alias for sending a GET request."""
 		return self._request(route, "GET", params)
@@ -389,7 +408,6 @@ class KiteConnect(object):
 
 	def _request(self, route, method, parameters=None):
 		"""Make an HTTP request."""
-
 		params = {}
 		if parameters:
 			params = parameters.copy()
@@ -444,7 +462,7 @@ class KiteConnect(object):
 			try:
 				data = json.loads(r.content)
 			except:
-				raise ex.DataException("Unparsable response")
+				raise ex.DataException("Couldn't parse JSON response")
 
 			# api error
 			if data["status"] == "error":
@@ -465,7 +483,7 @@ class KiteConnect(object):
 					raise(ex.GeneralException(data["message"], code=r.status_code))
 
 			return data["data"]
-		elif route == "market.instruments.all" and r.headers["content-type"] == "application/octet-stream, text/csv":
+		elif "text/csv" in r.headers["content-type"]:
 			return r.content
 		else:
-			raise ex.DataException("Invalid response format")
+			raise ex.DataException("Unknown Content-Type in response")
