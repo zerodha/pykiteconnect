@@ -412,11 +412,11 @@ class KiteConnect(object):
 		if parameters:
 			params = parameters.copy()
 
-		# micro cache?
+		# Micro cache?
 		if self.micro_cache is False:
 			params["no_micro_cache"] = 1
 
-		# is there a token?
+		# Is there a token?.
 		if self.access_token:
 			params["access_token"] = self.access_token
 
@@ -426,7 +426,7 @@ class KiteConnect(object):
 
 		uri = self._routes[route]
 
-		# 'RESTful' URLs
+		# 'RESTful' URLs.
 		if "{" in uri:
 			for k in params:
 				uri = uri.replace("{" + k + "}", str(params[k]))
