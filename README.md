@@ -45,3 +45,7 @@ print(kite.orders())
 ```
 
 Refer to the [Python client documentation](https://kite.trade/docs/pykiteconnect) for the complete list of supported methods. 
+
+## Changelog
+- 2016-04-29	`instruments()` call now returns parsed CSV records.
+- 2016-05-14	Added `historical()` call.
