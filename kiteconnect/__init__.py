@@ -483,7 +483,7 @@ class KiteConnect(object):
 					raise(ex.GeneralException(data["message"], code=r.status_code))
 
 			return data["data"]
-		elif "text/csv" in r.headers["content-type"]:
+		elif "csv" in r.headers["content-type"]:
 			return r.content
 		else:
 			raise ex.DataException("Unknown Content-Type in response")
