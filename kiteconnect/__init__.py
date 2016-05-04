@@ -128,6 +128,7 @@ class KiteConnect(object):
 		"market.instruments.all": "/instruments",
 		"market.instruments": "/instruments/{exchange}",
 		"market.quote": "/instruments/{exchange}/{tradingsymbol}",
+		"market.historical": "/instruments/historical/{instrument_token}/{interval}",
 		"market.trigger_range": "/instruments/{exchange}/{tradingsymbol}/trigger_range"
 	}
 
@@ -368,6 +369,38 @@ class KiteConnect(object):
 	def quote(self, exchange, tradingsymbol):
 		"""Retrieve quote and market depth for an instrument."""
 		return self._get("market.quote", {"exchange": exchange, "tradingsymbol": tradingsymbol})
+
+	def historical(self, instrument_token, from_date, to_date, interval):
+		"""
+		Retrieve historical data (candles) for an instrument.
+
+		Although the actual response JSON from the API does not have field
+		names such has 'open', 'high' etc., this functin call structures
+		the data into an array of objects with field names. For example:
+
+		- `instrument_token` is the instrument identifier (retrieved from the instruments()) call.
+		- `date_from` is the From date (yyyy-mm-dd)
+		- `date_to` is the To date (yyyy-mm-dd)
+		- `interval` is the candle interval (minute, day, 5 minute etc.)
+		"""
+		data = self._get("market.historical", {
+			"instrument_token": instrument_token,
+			"from": from_date,
+			"to": to_date,
+			"interval": interval})
+
+		records = []
+		for d in data["candles"]:
+			records.append({
+				"date": d[0],
+				"open": d[1],
+				"high": d[2],
+				"low": d[3],
+				"close": d[4],
+				"volume": d[5]
+			})
+
+		return records
 
 	def trigger_range(self, exchange, tradingsymbol, transaction_type):
 		"""Retrieve the buy/sell trigger range for Cover Orders."""
