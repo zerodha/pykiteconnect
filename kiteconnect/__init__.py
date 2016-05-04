@@ -457,8 +457,8 @@ class KiteConnect(object):
 		if self.debug:
 			print("Response :", r.status_code, r.content, "\n")
 
-		# content types
-		if r.headers["content-type"] == "application/json":
+		# Validate the content type.
+		if "json" in r.headers["content-type"]:
 			try:
 				data = json.loads(r.content)
 			except:
