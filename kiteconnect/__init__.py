@@ -261,6 +261,7 @@ class KiteConnect(object):
 
 	def order_modify(self,
 					order_id,
+					parent_order_id=None,
 					exchange=None,
 					tradingsymbol=None,
 					transaction_type=None,
@@ -287,20 +288,26 @@ class KiteConnect(object):
 				"price": price,
 				"trigger_price": trigger_price,
 				"disclosed_quantity": disclosed_quantity,
-				"variety": variety
+				"variety": variety,
+				"parent_order_id": parent_order_id
 			})["order_id"]
 		elif variety == "CO":
 			return self._put("order_modify", {
 				"order_id": order_id,
 				"trigger_price": trigger_price,
-				"variety": variety
+				"variety": variety,
+				"parent_order_id": parent_order_id
 			})["order_id"]
 		else:
 			return self._put("orders.modify", params)["order_id"]
 
-	def order_cancel(self, order_id, variety="regular"):
-		"""Cancel an open order."""
-		return self._delete("orders.cancel", {"order_id": order_id, "variety": variety})["order_id"]
+	def order_cancel(self, order_id, variety="regular", parent_order_id=None):
+		"""Cancel an order"""
+		return self._delete("orders.cancel", {
+			"order_id": order_id,
+			"variety": variety,
+			"parent_order_id": parent_order_id
+		})["order_id"]
 
 	# orderbook and tradebook
 	def orders(self, order_id=None):
