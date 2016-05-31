@@ -88,8 +88,12 @@ it raises aptly named **[exceptions](exceptions.m.html)** that you can catch.
 import StringIO
 import csv
 import json
+import struct
 import hashlib
 import requests
+import threading
+
+import websocket
 
 import kiteconnect.exceptions as ex
 
@@ -526,4 +530,405 @@ class KiteConnect(object):
 		elif "csv" in r.headers["content-type"]:
 			return r.content
 		else:
-			raise ex.DataException("Unknown Content-Type in response")
+			raise ex.DataException("Unknown Content-Type (%s) in response" % (r.headers["content-type"],))
+
+
+class WebSocket(object):
+	"""
+	The WebSocket client for connecting to Kite Connect's streaming quotes service.
+
+	Getting started:
+	---------------
+
+		#!python
+		from kiteconnect import WebSocket
+
+		# Initialise.
+		kws = WebSocket("your_api_key", "your_public_token", "logged_in_user_id")
+
+		# Callback for tick reception.
+		def on_tick(tick, ws):
+			print tick
+
+		# Callback for successful connection.
+		def on_connect(ws):
+			# Subscribe to a list of instrument_tokens (RELIANCE and ACC here).
+			ws.subscribe([738561, 5633])
+
+			# Set RELIANCE to tick in `full` mode.
+			ws.set_mode(ws.MODE_FULL, [738561])
+
+		# Assign the callbacks.
+		kws.on_tick = on_tick
+		kws.on_connect = on_connect
+
+		# Infinite loop on the main thread. Nothing after this will run.
+		# You have to use the pre-defined callbacks to manage subscriptions.
+		kws.connect()
+
+	Tick structure (passed to the tick callback you assign):
+	---------------------------
+		[{
+			"mode": "quote",
+			"tradeable": True,
+			"instrument_token": 738561,
+
+			"last_price": 957,
+			"last_quantity": 100,
+			"sell_quantity": 2286,
+			"buy_quantity": 0,
+			"volume": 5333469,
+			"change": 0,
+			"average_price": 959,
+			"ohlc": {
+				"high": 973,
+				"close": 957,
+				"open": 969,
+				"low": 956
+			},
+			"depth": {
+				"sell": [{
+					"price": 0,
+					"orders": 0,
+					"quantity": 0
+				}, {
+					"price": 0,
+					"orders": 0,
+					"quantity": 0
+				}, {
+					"price": 0,
+					"orders": 0,
+					"quantity": 0
+				}, {
+					"price": 0,
+					"orders": 0,
+					"quantity": 0
+				}, {
+					"price": 0,
+					"orders": 0,
+					"quantity": 0
+				}, {
+					"price": 957,
+					"orders": 196608,
+					"quantity": 2286
+				}, {
+					"price": 0,
+					"orders": 0,
+					"quantity": 0
+				}, {
+					"price": 0,
+					"orders": 0,
+					"quantity": 0
+				}, {
+					"price": 0,
+					"orders": 0,
+					"quantity": 0
+				}, {
+					"price": 0,
+					"orders": 0,
+					"quantity": 0
+				}],
+				"buy": []
+			}
+		}]
+	"""
+
+	EXCHANGE_MAP = {
+		"nse": 1,
+		"nfo": 2,
+		"cds": 3,
+		"bse": 4,
+		"bfo": 5,
+		"bsecds": 6,
+		"mcx": 7,
+		"mcxsx": 8,
+		"nseindices": 9
+	}
+
+	INDICES = [EXCHANGE_MAP["nseindices"]]
+
+	READ_TIMEOUT = 5
+	RECONNECT_INTERVAL = 5
+	RECONNECT_TRIES = 300
+
+	# Available streaming modes.
+	MODE_FULL = "full"
+	MODE_QUOTE = "quote"
+	MODE_LTP = "ltp"
+
+	# Available actions.
+	_message_code = 11
+	_message_subscribe = "subscribe"
+	_message_unsubscribe = "unsubscribe"
+	_message_setmode = "mode"
+
+	# Default root API endpoint. It's possible to
+	# override this by passing the `root` parameter during initialisation.
+	_root = "wss://websocket.kite.trade/"
+
+	def __init__(self, api_key, public_token, user_id, root=None):
+		"""
+		Initialise websocket client instance.
+
+		- `api_key` is the API key issued to you
+		- `public_token` is the token obtained after the login flow in
+			exchange for the `request_token` . Pre-login, this will default to None,
+			but once you have obtained it, you should
+			persist it in a database or session to pass
+			to the Kite Connect class initialisation for subsequent requests.
+		- 'user_id' is the Zerodha client id of the authenticated user
+		- `root` is the websocket API end point root. Unless you explicitly
+			want to send API requests to a non-default endpoint, this
+			can be ignored.
+		"""
+		self.socket_url = "{root}" \
+			"?api_key={api_key}&user_id={user_id}&public_token={public_token}".format(
+				root=root if root else self._root,
+				api_key=api_key,
+				public_token=public_token,
+				user_id=user_id
+			)
+		self.socket = self._create_connection()
+
+		# Placeholders for callbacks.
+		self.on_tick = None
+		self.on_message = None
+		self.on_close = None
+		self.on_error = None
+		self.on_connect = None
+		self.on_reconnect = None
+		self.subscribed_tokens = set()
+		self.modes = set()
+
+	def _create_connection(self):
+		"""Create a WebSocket client connection."""
+		return websocket.WebSocketApp(self.socket_url,
+								on_open=self._on_connect,
+								on_message=self._on_message,
+								on_data=self._on_data,
+								on_error=self._on_error,
+								on_close=self._on_close)
+
+	def connect(self, threaded=False):
+		"""
+		Start a WebSocket connection as a seperate thread.
+
+		- `threaded` when set to True will open the connection
+			in a new thread without blocking the main thread
+		"""
+		if not threaded:
+			self.socket.run_forever()
+
+		self.websocket_thread = threading.Thread(target=self.socket.run_forever)
+		self.websocket_thread.daemon = True
+		self.websocket_thread.start()
+
+		return self
+
+	def is_connected(self):
+		"""Check if WebSocket connection is established."""
+		if self.socket and self.socket.sock:
+			return self.socket.sock.connected
+		else:
+			return False
+
+	def reconnect(self):
+		"""Reconnect WebSocket connection if it is not connected."""
+		if not self.is_connected():
+			self.socket = self._create_connection()
+
+		return True
+
+	def close(self):
+		"""Close the WebSocket connection."""
+		self.socket.close()
+
+	def subscribe(self, instrument_tokens):
+		"""
+		Subscribe to a list of instrument_tokens.
+
+		- `instrument_tokens` is list of instrument instrument_tokens to subscribe
+		"""
+		try:
+			self.socket.send(json.dumps({"a": self._message_subscribe, "v": instrument_tokens}))
+
+			for token in instrument_tokens:
+				self.subscribed_tokens.add(token)
+
+			return True
+		except:
+			self.socket.close()
+			raise
+
+	def unsubscribe(self, instrument_tokens):
+		"""
+		Unsubscribe the given list of instrument_tokens.
+
+		- `instrument_tokens` is list of instrument_tokens to unsubscribe.
+		"""
+		try:
+			self.socket.send(json.dumps({"a": self._message_unsubscribe, "v": instrument_tokens}))
+
+			for token in instrument_tokens:
+				try:
+					self.subscribed_tokens.remove(token)
+				except:
+					pass
+
+			return True
+		except:
+			self.socket.close()
+
+	def set_mode(self, mode, instrument_tokens):
+		"""
+		Set streaming mode for the given list of tokens.
+
+		- `mode` is the mode to set. It can be one of the following class constants:
+			MODE_LTP, MODE_QUOTE, or MODE_FULL.
+		- `instrument_tokens` is list of instrument tokens on which the mode should be applied
+		"""
+		try:
+			self.socket.send(json.dumps({"a": self._message_setmode, "v": [mode, instrument_tokens]}))
+			return True
+		except:
+			self.socket.close()
+			raise
+
+	def _on_connect(self, ws):
+		if self.on_connect:
+			self.on_connect(self)
+
+	def _on_data(self, ws, data, resp_type, data_continue):
+		"""Receive raw data from websocket."""
+		if self.on_tick:
+			# If the message is binary, parse it and send it to the callback.
+			if resp_type == 2 and len(data) > 4:
+				self.on_tick(self._parse_binary(data), self)
+
+	def _on_close(self):
+		"""Call 'on_close' callback when connection is closed."""
+		if self.on_close:
+			self.on_close()
+
+	def _on_error(self, ws, error):
+		"""Call 'on_error' callback when connection throws an error."""
+		if self.on_error:
+			self.on_error(self, error)
+
+		self.socket.close()
+
+	def _on_message(self, message):
+		"""Call 'on_message' callback when text message is received."""
+		if self.on_message:
+			self.on_message(message, self)
+
+	def _parse_binary(self, bin):
+		"""Parse binary data to a (list of) ticks structure."""
+		packets = self._split_packets(bin)  # split data to individual ticks packet
+		data = []
+
+		for packet in packets:
+			instrument_token = self._unpack_int(packet, 0, 4)
+			segment = instrument_token & 0xff  # Retrive segment constant from instrument_token
+
+			divisor = 10000000 if segment == self.EXCHANGE_MAP["cds"] else 100
+
+			# Parse index packets.
+			if segment in self.INDICES:
+				d = {}
+				if len(packet) == 8:
+					data.append({
+						"tradeable": False,
+						"mode": self.MODE_LTP,
+						"instrument_token": instrument_token,
+						"last_price": self._unpack_int(packet, 4, 8) / divisor
+					})
+				elif len(packet) == 28:
+					data.append({
+						"tradeable": False,
+						"mode": self.MODE_QUOTE,
+						"instrument_token": instrument_token,
+						"last_price": self._unpack_int(packet, 4, 8) / divisor,
+						"ohlc": {
+							"high": self._unpack_int(packet, 8, 12) / divisor,
+							"low": self._unpack_int(packet, 12, 16) / divisor,
+							"open": self._unpack_int(packet, 16, 20) / divisor,
+							"close": self._unpack_int(packet, 20, 24) / divisor
+						},
+						"change": self._unpack_int(packet, 24, 28) / divisor,
+					})
+
+				continue
+
+			# Parse non-index packets.
+			if len(packet) == 8:
+				data.append({
+					"tradeable": True,
+					"mode": self.MODE_LTP,
+					"instrument_token": instrument_token,
+					"last_price": self._unpack_int(packet, 4, 8) / divisor
+				})
+			elif len(packet) > 8:
+				d = {
+					"tradeable": True,
+					"mode": self.MODE_QUOTE,
+					"instrument_token": instrument_token,
+					"last_price": self._unpack_int(packet, 4, 8) / divisor,
+					"last_quantity": self._unpack_int(packet, 8, 12),
+					"average_price": self._unpack_int(packet, 12, 16) / divisor,
+					"volume": self._unpack_int(packet, 16, 20),
+					"buy_quantity": self._unpack_int(packet, 20, 24),
+					"sell_quantity": self._unpack_int(packet, 24, 28),
+					"ohlc": {
+						"open": self._unpack_int(packet, 28, 32) / divisor,
+						"high": self._unpack_int(packet, 32, 36) / divisor,
+						"low": self._unpack_int(packet, 36, 40) / divisor,
+						"close": self._unpack_int(packet, 40, 44) / divisor
+					}
+				}
+
+				# Compute the change price.
+				d["change"] = 0
+				if(d["ohlc"]["close"] != 0):
+					d["change"] = (d["last_price"] - d["ohlc"]["close"]) * 100 / d["ohlc"]["close"]
+
+				# Market depth entries.
+				depth = {
+					"buy": [],
+					"sell": []
+				}
+
+				if len(packet) > 44:
+					# Compile the market depth lists.
+					for p in range(44, len(packet), 12):
+						depth["sell" if p >= 5 else "buy"].append({
+							"quantity": self._unpack_int(packet, p, p + 4),
+							"price": self._unpack_int(packet, p + 4, p + 8) / divisor,
+							"orders": self._unpack_int(packet, p + 8, p + 12)
+						})
+
+				d["depth"] = depth
+				data.append(d)
+
+		return data
+
+	def _unpack_int(self, bin, start, end):
+		"""Unpack binary data as unsgined interger."""
+		return struct.unpack(">I", bin[start:end])[0]
+
+	def _split_packets(self, bin):
+		"""Split the data to individual packets of ticks."""
+		# Ignore heartbeat data.
+		if len(bin) < 2:
+			return []
+
+		number_of_packets = struct.unpack(">H", bin[0:2])[0]
+		packets = []
+
+		j = 2
+		for i in range(number_of_packets):
+			packet_length = struct.unpack(">H", bin[j:j + 2])[0]
+			packets.append(bin[j + 2: j + 2 + packet_length])
+			j = j + packet_length
+
+		return packets
