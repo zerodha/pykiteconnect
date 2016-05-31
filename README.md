@@ -75,6 +75,7 @@ kws.connect()
 ```
 
 ## Changelog
+- 2016-05-31	Added `WebSocket` class for streaming data.
 - 2016-04-29	`instruments()` call now returns parsed CSV records.
 - 2016-05-04	Added `historical()` call.
 - 2016-05-09	Added `parent_order_id` param for multi-legged orders.
