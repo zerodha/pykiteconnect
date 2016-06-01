@@ -929,7 +929,6 @@ class WebSocket(object):
 		for i in range(number_of_packets):
 			packet_length = struct.unpack(">H", bin[j:j + 2])[0]
 			packets.append(bin[j + 2: j + 2 + packet_length])
-			j = j + packet_length
 			j = j + 2 + packet_length
 
 		return packets
