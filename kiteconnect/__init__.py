@@ -805,10 +805,10 @@ class WebSocket(object):
 			if resp_type == 2 and len(data) > 4:
 				self.on_tick(self._parse_binary(data), self)
 
-	def _on_close(self):
+	def _on_close(self, ws):
 		"""Call 'on_close' callback when connection is closed."""
 		if self.on_close:
-			self.on_close()
+			self.on_close(self)
 
 	def _on_error(self, ws, error):
 		"""Call 'on_error' callback when connection throws an error."""
@@ -817,7 +817,7 @@ class WebSocket(object):
 
 		self.socket.close()
 
-	def _on_message(self, message):
+	def _on_message(self, ws, message):
 		"""Call 'on_message' callback when text message is received."""
 		if self.on_message:
 			self.on_message(message, self)
