@@ -813,7 +813,7 @@ class WebSocket(object):
 	def _on_error(self, ws, error):
 		"""Call 'on_error' callback when connection throws an error."""
 		if self.on_error:
-			self.on_error(self, error)
+			self.on_error(error, self)
 
 		self.socket.close()
 
