@@ -831,7 +831,7 @@ class WebSocket(object):
 			instrument_token = self._unpack_int(packet, 0, 4)
 			segment = instrument_token & 0xff  # Retrive segment constant from instrument_token
 
-			divisor = 10000000 if segment == self.EXCHANGE_MAP["cds"] else 100
+			divisor = 10000000.0 if segment == self.EXCHANGE_MAP["cds"] else 100.0
 
 			# Parse index packets.
 			if segment in self.INDICES:
