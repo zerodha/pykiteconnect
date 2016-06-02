@@ -85,7 +85,7 @@ Kite Connect client saves you the hassle of detecting API errors
 by looking at HTTP codes or JSON error responses. Instead,
 it raises aptly named **[exceptions](exceptions.m.html)** that you can catch.
 """
-import StringIO
+from six import StringIO
 import csv
 import json
 import struct

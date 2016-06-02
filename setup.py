@@ -27,5 +27,5 @@ setup(
 		"Topic :: Software Development :: Libraries :: Python Modules",
 		"Topic :: Software Development :: Libraries"
 	],
-	install_requires=["requests"]
+	install_requires=["requests", "six"]
 )
