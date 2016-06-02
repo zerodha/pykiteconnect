@@ -12,7 +12,7 @@ Kite Connect is a set of REST-like APIs that expose many capabilities required t
 ## Installing the client
 `pip install kiteconnect`
 
-## Usage
+## API usage
 ```python
 from kiteconnect import KiteConnect
 
@@ -46,7 +46,36 @@ print(kite.orders())
 
 Refer to the [Python client documentation](https://kite.trade/docs/pykiteconnect) for the complete list of supported methods. 
 
+## WebSocket usage
+```python
+from kiteconnect import WebSocket
+
+# Initialise.
+kws = WebSocket("your_api_key", "your_public_token", "logged_in_user_id")
+
+# Callback for tick reception.
+def on_tick(tick, ws):
+	print tick
+
+# Callback for successful connection.
+def on_connect(ws):
+	# Subscribe to a list of instrument_tokens (RELIANCE and ACC here).
+	ws.subscribe([738561, 5633])
+
+	# Set RELIANCE to tick in `full` mode.
+	ws.set_mode(ws.MODE_FULL, [738561])
+
+# Assign the callbacks.
+kws.on_tick = on_tick
+kws.on_connect = on_connect
+
+# Infinite loop on the main thread. Nothing after this will run.
+# You have to use the pre-defined callbacks to manage subscriptions.
+kws.connect()
+```
+
 ## Changelog
+- 2016-05-31	Added `WebSocket` class for streaming data.
 - 2016-04-29	`instruments()` call now returns parsed CSV records.
 - 2016-05-04	Added `historical()` call.
 - 2016-05-09	Added `parent_order_id` param for multi-legged orders.
