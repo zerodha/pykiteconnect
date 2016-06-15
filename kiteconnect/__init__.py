@@ -900,8 +900,8 @@ class WebSocket(object):
 
 				if len(packet) > 44:
 					# Compile the market depth lists.
-					for p in range(44, len(packet), 12):
-						depth["sell" if p >= 5 else "buy"].append({
+					for i, p in enumerate(range(44, len(packet), 12)):
+						depth["sell" if i >= 5 else "buy"].append({
 							"quantity": self._unpack_int(packet, p, p + 4),
 							"price": self._unpack_int(packet, p + 4, p + 8) / divisor,
 							"orders": self._unpack_int(packet, p + 8, p + 12)
