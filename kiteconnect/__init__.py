@@ -85,7 +85,7 @@ Kite Connect client saves you the hassle of detecting API errors
 by looking at HTTP codes or JSON error responses. Instead,
 it raises aptly named **[exceptions](exceptions.m.html)** that you can catch.
 """
-import StringIO
+from six import StringIO
 import csv
 import json
 import struct
@@ -504,7 +504,7 @@ class KiteConnect(object):
 		# Validate the content type.
 		if "json" in r.headers["content-type"]:
 			try:
-				data = json.loads(r.content)
+				data = json.loads(r.content.decode('utf8'))
 			except:
 				raise ex.DataException("Couldn't parse JSON response")
 
