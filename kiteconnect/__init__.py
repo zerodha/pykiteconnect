@@ -418,7 +418,7 @@ class KiteConnect(object):
 		return self._get("market.trigger_range", {"exchange": exchange, "tradingsymbol": tradingsymbol, "transaction_type": transaction_type})
 
 	def _parse_csv(self, data):
-		reader = csv.reader(StringIO.StringIO(data.strip()))
+		reader = csv.reader(StringIO(data.strip()))
 
 		records = []
 		header = next(reader)
