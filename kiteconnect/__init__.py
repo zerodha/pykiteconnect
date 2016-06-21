@@ -530,7 +530,7 @@ class KiteConnect(object):
 		elif "csv" in r.headers["content-type"]:
 			return r.content
 		else:
-			raise ex.DataException("Unknown Content-Type (%s) in response" % (r.headers["content-type"],))
+			raise ex.DataException("Unknown Content-Type (%s) in response: (%s)" % (r.headers["content-type"], r.content))
 
 
 class WebSocket(object):
