@@ -607,7 +607,8 @@ class WebSocket(object):
 					"price": 0,
 					"orders": 0,
 					"quantity": 0
-				}, {
+				}],
+				"buy": [{
 					"price": 957,
 					"orders": 196608,
 					"quantity": 2286
@@ -627,8 +628,7 @@ class WebSocket(object):
 					"price": 0,
 					"orders": 0,
 					"quantity": 0
-				}],
-				"buy": []
+				}]
 			}
 		}]
 	"""
