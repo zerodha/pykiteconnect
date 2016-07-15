@@ -802,7 +802,7 @@ class WebSocket(object):
 		"""Receive raw data from websocket."""
 		if self.on_tick:
 			# If the message is binary, parse it and send it to the callback.
-			if resp_type == 2 and len(data) > 4:
+			if resp_type != 1 and len(data) > 4:
 				self.on_tick(self._parse_binary(data), self)
 
 	def _on_close(self, ws):
