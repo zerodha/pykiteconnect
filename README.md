@@ -1,7 +1,7 @@
 # The Kite Connect API Python client
 The official Python client for communicating with the [Kite Connect API](https://kite.trade).
 
-Kite Connect is a set of REST-like APIs that expose many capabilities required to build a complete investment and trading platform. Execute orders in real time, manage user portfolio, stream live market data (WebSockets), and more, with the simple HTTP API collection. 
+Kite Connect is a set of REST-like APIs that expose many capabilities required to build a complete investment and trading platform. Execute orders in real time, manage user portfolio, stream live market data (WebSockets), and more, with the simple HTTP API collection.
 
 [Rainmatter](http://rainmatter.com) (c) 2016. Licensed under the MIT License.
 
@@ -44,7 +44,7 @@ except Exception as e:
 print(kite.orders())
 ```
 
-Refer to the [Python client documentation](https://kite.trade/docs/pykiteconnect) for the complete list of supported methods. 
+Refer to the [Python client documentation](https://kite.trade/docs/pykiteconnect) for the complete list of supported methods.
 
 ## WebSocket usage
 ```python
@@ -75,6 +75,7 @@ kws.connect()
 ```
 
 ## Changelog
+- 2015-07-15	Fixed: Different response type recevied for large number of subscriptions
 - 2016-05-31	Added `WebSocket` class for streaming data.
 - 2016-04-29	`instruments()` call now returns parsed CSV records.
 - 2016-05-04	Added `historical()` call.
