@@ -86,6 +86,7 @@ by looking at HTTP codes or JSON error responses. Instead,
 it raises aptly named **[exceptions](exceptions.m.html)** that you can catch.
 """
 from six import StringIO
+import ssl
 import csv
 import json
 import struct
@@ -709,19 +710,24 @@ class WebSocket(object):
 								on_error=self._on_error,
 								on_close=self._on_close)
 
-	def connect(self, threaded=False):
+	def connect(self, threaded=False, disable_ssl=False):
 		"""
 		Start a WebSocket connection as a seperate thread.
 
 		- `threaded` when set to True will open the connection
 			in a new thread without blocking the main thread
+		- `disable_ssl` when set to True will disable ssl cert verifcation. Default is False.
 		"""
-		if not threaded:
-			self.socket.run_forever()
+		sslopt = {}
+		if disable_ssl:
+			sslopt = {"cert_reqs": ssl.CERT_NONE}
 
-		self.websocket_thread = threading.Thread(target=self.socket.run_forever)
-		self.websocket_thread.daemon = True
-		self.websocket_thread.start()
+		if not threaded:
+			self.socket.run_forever(sslopt=sslopt)
+		else:
+			self.websocket_thread = threading.Thread(target=self.socket.run_forever, kwargs={"sslopt": sslopt})
+			self.websocket_thread.daemon = True
+			self.websocket_thread.start()
 
 		return self
 
