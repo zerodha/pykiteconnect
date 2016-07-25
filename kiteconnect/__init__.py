@@ -710,16 +710,16 @@ class WebSocket(object):
 								on_error=self._on_error,
 								on_close=self._on_close)
 
-	def connect(self, threaded=False, disable_ssl=False):
+	def connect(self, threaded=False, disable_ssl_verification=False):
 		"""
 		Start a WebSocket connection as a seperate thread.
 
 		- `threaded` when set to True will open the connection
 			in a new thread without blocking the main thread
-		- `disable_ssl` when set to True will disable ssl cert verifcation. Default is False.
+		- `disable_ssl_verification` when set to True will disable ssl cert verifcation. Default is False.
 		"""
 		sslopt = {}
-		if disable_ssl:
+		if disable_ssl_verification:
 			sslopt = {"cert_reqs": ssl.CERT_NONE}
 
 		if not threaded:
