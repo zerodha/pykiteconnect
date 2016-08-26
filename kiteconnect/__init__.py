@@ -419,7 +419,9 @@ class KiteConnect(object):
 		return self._get("market.trigger_range", {"exchange": exchange, "tradingsymbol": tradingsymbol, "transaction_type": transaction_type})
 
 	def _parse_csv(self, data):
-		reader = csv.reader(StringIO(data.strip()))
+		# decode to string for Python 3
+		d = data.decode('utf-8').strip()
+		reader = csv.reader(StringIO(d))
 
 		records = []
 		header = next(reader)
@@ -549,7 +551,7 @@ class WebSocket(object):
 
 		# Callback for tick reception.
 		def on_tick(tick, ws):
-			print tick
+			print(tick)
 
 		# Callback for successful connection.
 		def on_connect(ws):
