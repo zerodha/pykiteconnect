@@ -833,7 +833,7 @@ class WebSocket(object):
 	def _parse_binary(self, bin):
 		"""Parse binary data to a (list of) ticks structure."""
 		packets = self._split_packets(bin)  # split data to individual ticks packet
-		data = []
+		data = {}
 
 		for packet in packets:
 			instrument_token = self._unpack_int(packet, 0, 4)
@@ -916,7 +916,7 @@ class WebSocket(object):
 						})
 
 				d["depth"] = depth
-				data.append(d)
+				data[instrument_token]=d
 
 		return data
 
