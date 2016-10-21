@@ -139,7 +139,7 @@ class KiteConnect(object):
 
 	_timeout = 7
 
-	def __init__(self, api_key, access_token=None, root=None, debug=False, timeout=7, micro_cache=True):
+	def __init__(self, api_key, access_token=None, root=None, debug=False, timeout=7, micro_cache=True, proxies={}):
 		"""
 		Initialise a new Kite Connect client instance.
 
@@ -160,6 +160,8 @@ class KiteConnect(object):
 		version of an API response if available. This saves time on
 		a roundtrip to the backend. Micro caches only live for several
 		seconds to prevent data from turning stale.
+		- `proxies` to set requests proxy.
+		Check [python requests documentation](http://docs.python-requests.org/en/master/user/advanced/#proxies) for usage and examples.
 		"""
 		self.api_key = api_key
 		self.access_token = access_token
@@ -167,6 +169,7 @@ class KiteConnect(object):
 		self.micro_cache = micro_cache
 		self.session_hook = None
 		self._timeout = timeout
+		self.proxies = proxies
 
 		if root:
 			self._root = root
@@ -492,7 +495,8 @@ class KiteConnect(object):
 					params=params if method != "POST" else None,
 					verify=False,
 					allow_redirects=True,
-					timeout=self._timeout)
+					timeout=self._timeout,
+					proxies=self.proxies)
 		except requests.ConnectionError:
 			raise ex.ClientNetworkException("Gateway connection error", code=503)
 		except requests.Timeout:
