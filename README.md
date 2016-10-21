@@ -82,3 +82,7 @@ kws.connect()
 - 2016-05-09	Added `parent_order_id` param for multi-legged orders.
 - 2016-07-25    Option to disable SSL cert verification (Ubuntu 12.04 openssl bug)
 - 2016-08-26    Full compatability for Python 3
+- 2016-10-21	Released **version 3.3** with following fixes and features
+				* Added `tag` support to order APIs
+				* Added proxy support for api and websocket streaming
+				* Fixed market depth `orders` integer overflow issue.
