@@ -713,22 +713,42 @@ class WebSocket(object):
 								on_error=self._on_error,
 								on_close=self._on_close)
 
-	def connect(self, threaded=False, disable_ssl_verification=False):
+	def connect(self, threaded=False, disable_ssl_verification=False, proxy=None):
 		"""
 		Start a WebSocket connection as a seperate thread.
 
 		- `threaded` when set to True will open the connection
 			in a new thread without blocking the main thread
 		- `disable_ssl_verification` when set to True will disable ssl cert verifcation. Default is False.
+		- `proxy` (dict) to set http proxy. Default is None.
+			List of config
+				`host` - http proxy host name.
+				`port` - http proxy port. If not set, set to 80.
+				`auth` - http proxy auth information (tuple of username and password. default is None)
+
+			Example:
+				```
+				proxy = {
+					'host': 'testhost',
+					'port': 3000,
+					'auth': ('username', 'password')
+				}
+				```
 		"""
-		sslopt = {}
+		kwargs = {}
+
+		if proxy and proxy.get("host"):
+			kwargs["http_proxy_host"] = proxy.get("host")
+			kwargs["http_proxy_port"] = proxy.get("port")
+			kwargs["http_proxy_auth"] = proxy.get("auth")
+
 		if disable_ssl_verification:
-			sslopt = {"cert_reqs": ssl.CERT_NONE}
+			kwargs["sslopt"] = {"cert_reqs": ssl.CERT_NONE}
 
 		if not threaded:
-			self.socket.run_forever(sslopt=sslopt)
+			self.socket.run_forever(**kwargs)
 		else:
-			self.websocket_thread = threading.Thread(target=self.socket.run_forever, kwargs={"sslopt": sslopt})
+			self.websocket_thread = threading.Thread(target=self.socket.run_forever, kwargs=kwargs)
 			self.websocket_thread.daemon = True
 			self.websocket_thread.start()
 
