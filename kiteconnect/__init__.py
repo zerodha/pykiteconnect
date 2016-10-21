@@ -253,7 +253,8 @@ class KiteConnect(object):
 					squareoff_value=None,
 					stoploss_value=None,
 					trailing_stoploss=None,
-					variety="regular"):
+					variety="regular",
+					tag=""):
 		"""Place an order."""
 		params = locals()
 		del(params["self"])
