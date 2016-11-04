@@ -263,7 +263,7 @@ class KiteConnect(object):
 		del(params["self"])
 
 		for k in params:
-			if k is None:
+			if params[k] is None:
 				del(params[k])
 
 		return self._post("orders.place", params)["order_id"]
