@@ -139,7 +139,7 @@ class KiteConnect(object):
 
 	_timeout = 7
 
-	def __init__(self, api_key, access_token=None, root=None, debug=False, timeout=7, micro_cache=True, proxies={}):
+	def __init__(self, api_key, access_token=None, root=None, debug=False, timeout=7, micro_cache=True, proxies=None):
 		"""
 		Initialise a new Kite Connect client instance.
 
@@ -169,7 +169,7 @@ class KiteConnect(object):
 		self.micro_cache = micro_cache
 		self.session_hook = None
 		self._timeout = timeout
-		self.proxies = proxies
+		self.proxies = proxies if proxies else {}
 
 		if root:
 			self._root = root
