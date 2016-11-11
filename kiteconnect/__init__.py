@@ -139,7 +139,7 @@ class KiteConnect(object):
 
 	_timeout = 7
 
-	def __init__(self, api_key, access_token=None, root=None, debug=False, timeout=7, micro_cache=True, proxies=None):
+	def __init__(self, api_key, access_token=None, root=None, debug=False, timeout=7, micro_cache=True, proxies=None, pool=None):
 		"""
 		Initialise a new Kite Connect client instance.
 
@@ -162,6 +162,7 @@ class KiteConnect(object):
 		seconds to prevent data from turning stale.
 		- `proxies` to set requests proxy.
 		Check [python requests documentation](http://docs.python-requests.org/en/master/user/advanced/#proxies) for usage and examples.
+		- `pool` is manages request pools. It takes a dict of params accepted by HTTPAdapter as described here http://docs.python-requests.org/en/master/api/
 		"""
 		self.api_key = api_key
 		self.access_token = access_token
@@ -170,6 +171,14 @@ class KiteConnect(object):
 		self.session_hook = None
 		self._timeout = timeout
 		self.proxies = proxies if proxies else {}
+
+		if pool:
+			requests.packages.urllib3.disable_warnings()
+			self.reqsession = requests.Session()
+			reqadapter = requests.adapters.HTTPAdapter(**pool)
+			self.reqsession.mount("https://", reqadapter)
+		else:
+			self.reqsession = requests
 
 		if root:
 			self._root = root
@@ -489,7 +498,7 @@ class KiteConnect(object):
 			print(params, "\n")
 
 		try:
-			r = requests.request(method,
+			r = self.reqsession.request(method,
 					url,
 					data=params if method == "POST" else None,
 					params=params if method != "POST" else None,
