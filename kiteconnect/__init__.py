@@ -93,10 +93,16 @@ import struct
 import hashlib
 import requests
 import threading
+import logging
 
 import websocket
 
 import kiteconnect.exceptions as ex
+
+# Initialize logger
+logging.basicConfig()
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 class KiteConnect(object):
@@ -494,8 +500,10 @@ class KiteConnect(object):
 		url = self._root + uri
 
 		if self.debug:
-			print("Request: ", url)
-			print(params, "\n")
+			logger.debug(" Request: {method} {url} {params}".format(
+				method=method,
+				url=url,
+				params=params))
 
 		try:
 			r = self.reqsession.request(method,
@@ -516,7 +524,9 @@ class KiteConnect(object):
 			raise ex.ClientNetworkException(e.message, code=500)
 
 		if self.debug:
-			print("Response :", r.status_code, r.content, "\n")
+			logger.debug(" Response: {code} {content}".format(
+				code=r.status_code,
+				content=r.content))
 
 		# Validate the content type.
 		if "json" in r.headers["content-type"]:
