@@ -179,7 +179,6 @@ class KiteConnect(object):
 		self.proxies = proxies if proxies else {}
 
 		if pool:
-			requests.packages.urllib3.disable_warnings()
 			self.reqsession = requests.Session()
 			reqadapter = requests.adapters.HTTPAdapter(**pool)
 			self.reqsession.mount("https://", reqadapter)
@@ -188,6 +187,9 @@ class KiteConnect(object):
 
 		if root:
 			self._root = root
+
+		# disable requests SSL warning
+		requests.packages.urllib3.disable_warnings()
 
 	def set_session_hook(self, method):
 		"""
