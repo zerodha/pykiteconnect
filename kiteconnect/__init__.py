@@ -500,8 +500,8 @@ class KiteConnect(object):
 		try:
 			r = self.reqsession.request(method,
 					url,
-					data=params if method == "POST" else None,
-					params=params if method != "POST" else None,
+					data=params if method in ["POST", "PUT"] else None,
+					params=params if method in ["GET", "DELETE"] else None,
 					verify=False,
 					allow_redirects=True,
 					timeout=self._timeout,
