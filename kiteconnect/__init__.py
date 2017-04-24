@@ -947,12 +947,15 @@ class WebSocket(object):
 					d["change"] = (d["last_price"] - d["ohlc"]["close"]) * 100 / d["ohlc"]["close"]
 
 				# Market depth entries.
-				depth = {
-					"buy": [],
-					"sell": []
-				}
+				depth = {}
 
 				if len(packet) > 44:
+					# Set initial depth data
+					depth = {
+						"buy": [],
+						"sell": []
+					}
+
 					# Compile the market depth lists.
 					for i, p in enumerate(range(44, len(packet), 12)):
 						depth["sell" if i >= 5 else "buy"].append({
