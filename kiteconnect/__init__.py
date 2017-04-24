@@ -950,6 +950,9 @@ class WebSocket(object):
 				depth = {}
 
 				if len(packet) > 44:
+					# Change mode to full
+					d["mode"] = self.MODE_FULL
+
 					# Set initial depth data
 					depth = {
 						"buy": [],
