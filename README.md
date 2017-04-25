@@ -97,3 +97,4 @@ kws.connect()
 				* Fixed market depth `orders` integer overflow issue.
 - 2016-11-11	Added connection pooling (v3.4)
 - 2017-01-21	Bug fixes (v3.4.1)
+- 2017-04-25	Added auto reconnect feature and other bug fixes (v3.5)
