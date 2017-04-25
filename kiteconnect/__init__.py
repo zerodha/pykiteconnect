@@ -596,6 +596,17 @@ class WebSocket(object):
 		# You have to use the pre-defined callbacks to manage subscriptions.
 		kws.connect()
 
+	Callbacks
+	---------
+	Param `ws` is the currently initialised WebSocket object itself.
+	- `on_tick(ticks, ws)` -  Ticks (array of dicts) and the WebSocket object are passed as params.
+	- `on_close(ws)` -  Triggered when connection is closed.
+	- `on_error(error, ws)` -  Triggered when connection is closed with an error. Error object and WebSocket object are passed as params.
+	- `on_connect` -  Triggered when connection is established successfully.
+	- `on_message(data, ws)` -  Triggered when there is any message received. This is raw data received from WebSocket.
+	- `on_reconnect(ws)` -  Triggered when auto reconnection is attempted.
+	- `on_noreconnect` -  Triggered when number of auto reconnection attempts exceeds `reconnect_tries`.
+
 	Tick structure (passed to the tick callback you assign):
 	---------------------------
 		[{
@@ -711,6 +722,9 @@ class WebSocket(object):
 		- `root` is the websocket API end point root. Unless you explicitly
 			want to send API requests to a non-default endpoint, this
 			can be ignored.
+		- `reconnect` is a boolean to enable WebSocket autreconnect in case of network failure/disconnection.
+		- `reconnect_interval` - Interval (in seconds) between auto reconnection attemptes. Defaults to 5 seconds.
+		- `reconnect_tries` - Maximum number reconnection attempts. Defaults to 50 attempts.
 		"""
 		self.socket_url = "{root}" \
 			"?api_key={api_key}&user_id={user_id}&public_token={public_token}".format(
@@ -924,7 +938,7 @@ class WebSocket(object):
 		"""Enable WebSocket autreconnect in case of network failure/disconnection.
 		- `reconnect_interval` - Interval between auto reconnection attemptes. `on_reconnect` callback
 			is triggered when reconnection is attempted.
-		- `reconnect_tries` - Maximum number reconnection attemps. Defaults to 50 attempts.
+		- `reconnect_tries` - Maximum number reconnection attempts. Defaults to 50 attempts.
 			`on_noreconnect` callback is triggered when number of retries exceeds this value.
 		"""
 		self.is_reconnect = True
