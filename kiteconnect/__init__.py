@@ -88,6 +88,7 @@ it raises aptly named **[exceptions](exceptions.m.html)** that you can catch.
 from six import StringIO
 import ssl
 import csv
+import time
 import json
 import struct
 import hashlib
@@ -595,6 +596,17 @@ class WebSocket(object):
 		# You have to use the pre-defined callbacks to manage subscriptions.
 		kws.connect()
 
+	Callbacks
+	---------
+	Param `ws` is the currently initialised WebSocket object itself.
+	- `on_tick(ticks, ws)` -  Ticks (array of dicts) and the WebSocket object are passed as params.
+	- `on_close(ws)` -  Triggered when connection is closed.
+	- `on_error(error, ws)` -  Triggered when connection is closed with an error. Error object and WebSocket object are passed as params.
+	- `on_connect` -  Triggered when connection is established successfully.
+	- `on_message(data, ws)` -  Triggered when there is any message received. This is raw data received from WebSocket.
+	- `on_reconnect(ws)` -  Triggered when auto reconnection is attempted.
+	- `on_noreconnect` -  Triggered when number of auto reconnection attempts exceeds `reconnect_tries`.
+
 	Tick structure (passed to the tick callback you assign):
 	---------------------------
 		[{
@@ -678,7 +690,7 @@ class WebSocket(object):
 
 	READ_TIMEOUT = 5
 	RECONNECT_INTERVAL = 5
-	RECONNECT_TRIES = 300
+	RECONNECT_TRIES = 50
 
 	# Available streaming modes.
 	MODE_FULL = "full"
@@ -695,7 +707,8 @@ class WebSocket(object):
 	# override this by passing the `root` parameter during initialisation.
 	_root = "wss://websocket.kite.trade/"
 
-	def __init__(self, api_key, public_token, user_id, root=None):
+	def __init__(self, api_key, public_token, user_id, root=None, reconnect=False,
+			reconnect_interval=0, reconnect_tries=0):
 		"""
 		Initialise websocket client instance.
 
@@ -709,6 +722,9 @@ class WebSocket(object):
 		- `root` is the websocket API end point root. Unless you explicitly
 			want to send API requests to a non-default endpoint, this
 			can be ignored.
+		- `reconnect` is a boolean to enable WebSocket autreconnect in case of network failure/disconnection.
+		- `reconnect_interval` - Interval (in seconds) between auto reconnection attemptes. Defaults to 5 seconds.
+		- `reconnect_tries` - Maximum number reconnection attempts. Defaults to 50 attempts.
 		"""
 		self.socket_url = "{root}" \
 			"?api_key={api_key}&user_id={user_id}&public_token={public_token}".format(
@@ -717,21 +733,35 @@ class WebSocket(object):
 				public_token=public_token,
 				user_id=user_id
 			)
-		self.socket = self._create_connection()
+		self.socket = None
+		self.websocket_thread = None
 
 		# Placeholders for callbacks.
 		self.on_tick = None
-		self.on_message = None
 		self.on_close = None
 		self.on_error = None
 		self.on_connect = None
+		self.on_message = None
 		self.on_reconnect = None
-		self.subscribed_tokens = set()
-		self.modes = set()
+		self.on_noreconnect = None
 
-	def _create_connection(self):
+		# Map of currently subscribed tokens and its mode.
+		self.subscribed_tokens = {}
+
+		# Reconnect settings
+		self.is_reconnect = reconnect
+		self.reconnect_interval = reconnect_interval or self.RECONNECT_INTERVAL
+		self.reconnect_tries = reconnect_tries or self.RECONNECT_TRIES
+
+		# Last messare reveived time
+		self._retry_count = 0
+		self._last_read_time = 0
+		self._current_timer = None
+		self._current_websocket_url = None
+
+	def _create_connection(self, url):
 		"""Create a WebSocket client connection."""
-		return websocket.WebSocketApp(self.socket_url,
+		return websocket.WebSocketApp(url,
 								on_open=self._on_connect,
 								on_message=self._on_message,
 								on_data=self._on_data,
@@ -770,14 +800,24 @@ class WebSocket(object):
 		if disable_ssl_verification:
 			kwargs["sslopt"] = {"cert_reqs": ssl.CERT_NONE}
 
+		# Skip if the connection is already open
+		if self.socket and self.is_connected():
+			return
+
+		# Create a new connection with current time as unique id
+		self.socket = self._create_connection(self.socket_url + "?uid=" + str(time.time()))
+
+		# Run without threading
 		if not threaded:
-			self.socket.run_forever(**kwargs)
+			try:
+				self.socket.run_forever(**kwargs)
+			except:
+				import sys
+				sys.exit()
 		else:
 			self.websocket_thread = threading.Thread(target=self.socket.run_forever, kwargs=kwargs)
 			self.websocket_thread.daemon = True
 			self.websocket_thread.start()
-
-		return self
 
 	def is_connected(self):
 		"""Check if WebSocket connection is established."""
@@ -788,18 +828,36 @@ class WebSocket(object):
 
 	def reconnect(self):
 		"""Reconnect WebSocket connection if it is not connected."""
-		if not self.is_connected():
-			self.socket = self._create_connection()
+		# If current connection is still active then disconnect to reconnect
+		if self.is_connected():
+			self.close()
+			return
 
-		return True
+		# Exit reconnection if it exceeds maximum retries
+		if self._retry_count > self.reconnect_tries:
+			self.close()
+			self.disable_reconnect()
+
+			if self.on_noreconnect:
+				self.on_noreconnect(self)
+		# Try reconnection
+		else:
+			# Wait before try reconnection
+			time.sleep(self.reconnect_interval)
+
+			if self.on_reconnect:
+				self.on_reconnect(self)
+
+			self._retry_count += 1
+			self.connect()
 
 	def close(self):
 		"""Close the WebSocket connection."""
-		self.socket.close()
+		if self.is_connected():
+			self.socket.close()
 
 	def subscribe(self, instrument_tokens):
-		"""
-		Subscribe to a list of instrument_tokens.
+		"""Subscribe to a list of instrument_tokens.
 
 		- `instrument_tokens` is list of instrument instrument_tokens to subscribe
 		"""
@@ -807,16 +865,15 @@ class WebSocket(object):
 			self.socket.send(json.dumps({"a": self._message_subscribe, "v": instrument_tokens}))
 
 			for token in instrument_tokens:
-				self.subscribed_tokens.add(token)
+				self.subscribed_tokens[token] = self.MODE_QUOTE
 
 			return True
 		except:
-			self.socket.close()
+			self.close()
 			raise
 
 	def unsubscribe(self, instrument_tokens):
-		"""
-		Unsubscribe the given list of instrument_tokens.
+		"""Unsubscribe the given list of instrument_tokens.
 
 		- `instrument_tokens` is list of instrument_tokens to unsubscribe.
 		"""
@@ -825,17 +882,17 @@ class WebSocket(object):
 
 			for token in instrument_tokens:
 				try:
-					self.subscribed_tokens.remove(token)
+					del(self.subscribed_tokens[token])
 				except:
 					pass
 
 			return True
 		except:
-			self.socket.close()
+			self.close()
+			raise
 
 	def set_mode(self, mode, instrument_tokens):
-		"""
-		Set streaming mode for the given list of tokens.
+		"""Set streaming mode for the given list of tokens.
 
 		- `mode` is the mode to set. It can be one of the following class constants:
 			MODE_LTP, MODE_QUOTE, or MODE_FULL.
@@ -843,17 +900,85 @@ class WebSocket(object):
 		"""
 		try:
 			self.socket.send(json.dumps({"a": self._message_setmode, "v": [mode, instrument_tokens]}))
+
+			# Record the mode for that subscription
+			for token in instrument_tokens:
+				self.subscribed_tokens[token] = mode
+
 			return True
 		except:
-			self.socket.close()
+			self.close()
 			raise
 
+	def resubscribe(self):
+		"""Resubscribe to all currently subscribed tokens. Used to restore all the
+		subscribed tokens after successful reconnection.
+		"""
+		mode_full_tokens = []
+		mode_quote_tokens = []
+		mode_ltp_tokens = []
+
+		for token, mode in self.subscribed_tokens.items():
+			if mode == self.MODE_FULL:
+				mode_full_tokens.append(token)
+			elif mode == self.MODE_QUOTE:
+				mode_quote_tokens.append(token)
+			elif mode == self.MODE_LTP:
+				mode_ltp_tokens.append(token)
+
+		# subscribe for the tokens
+		self.subscribe(mode_full_tokens + mode_quote_tokens + mode_ltp_tokens)
+
+		# set modes
+		self.set_mode(self.MODE_FULL, mode_full_tokens)
+		self.set_mode(self.MODE_QUOTE, mode_quote_tokens)
+		self.set_mode(self.MODE_LTP, mode_ltp_tokens)
+
+	def enable_reconnect(self, reconnect_interval=None, reconnect_tries=None):
+		"""Enable WebSocket autreconnect in case of network failure/disconnection.
+		- `reconnect_interval` - Interval between auto reconnection attemptes. `on_reconnect` callback
+			is triggered when reconnection is attempted.
+		- `reconnect_tries` - Maximum number reconnection attempts. Defaults to 50 attempts.
+			`on_noreconnect` callback is triggered when number of retries exceeds this value.
+		"""
+		self.is_reconnect = True
+		self.reconnect_interval = reconnect_interval or self.RECONNECT_INTERVAL
+		self.reconnect_tries = reconnect_tries or self.RECONNECT_TRIES
+
+	def disable_reconnect(self):
+		"""Disable WebSocket autreconnect."""
+		self.is_reconnect = False
+
 	def _on_connect(self, ws):
+		# Set last read time
+		self._last_read_time = int(time.time())
+
+		# set current socket url
+		if not self._current_websocket_url:
+			self._current_websocket_url = ws.url
+
+		# reset retry count
+		self._retry_count = 0
+
+		# Stop the current timer if its available
+		if self._current_timer:
+			self._current_timer.cancel()
+
+		# Start the timer again for new connection
+		self._timer()
+
+		# Resubscribe to the old tokens if auto reconnect is true
+		if self.is_reconnect:
+			self.resubscribe()
+
 		if self.on_connect:
 			self.on_connect(self)
 
 	def _on_data(self, ws, data, resp_type, data_continue):
-		"""Receive raw data from websocket."""
+		"""Receive raw data from WebSocket."""
+		# Set last read time (Heartbeat is received every second)
+		self._last_read_time = int(time.time())
+
 		if self.on_tick:
 			# If the message is binary, parse it and send it to the callback.
 			if resp_type != 1 and len(data) > 4:
@@ -861,20 +986,56 @@ class WebSocket(object):
 
 	def _on_close(self, ws):
 		"""Call 'on_close' callback when connection is closed."""
+		# Ignore close callback from ghost connections
+		if self._current_websocket_url and self._current_websocket_url != ws.url:
+			return
+
 		if self.on_close:
 			self.on_close(self)
+
+		# Cancel the current timer if any
+		if self._current_timer:
+			self._current_timer.cancel()
+
+		# Reconnect if reconnect enabled
+		if self.is_reconnect:
+			self.reconnect()
 
 	def _on_error(self, ws, error):
 		"""Call 'on_error' callback when connection throws an error."""
 		if self.on_error:
 			self.on_error(error, self)
 
-		self.socket.close()
+		self.close()
 
 	def _on_message(self, ws, message):
 		"""Call 'on_message' callback when text message is received."""
 		if self.on_message:
 			self.on_message(message, self)
+
+	def _timer(self):
+		stop_timer = False
+
+		if int(time.time()) - self._last_read_time > self.READ_TIMEOUT:
+			# Reset _current_websocket_url incase current connection times out
+			# This is determined when last heart beat received time interval
+			# exceeds read_timeout value
+			self._current_websocket_url = None
+
+			# close the current connection if it open
+			if self.is_connected():
+				self.close()
+
+			# stop timer in this case
+			stop_timer = True
+
+		# Dont recall the timer if its stopped
+		if stop_timer:
+			return
+
+		self._current_timer = threading.Timer(5, self._timer)
+		self._current_timer.daemon = True
+		self._current_timer.start()
 
 	def _parse_binary(self, bin):
 		"""Parse binary data to a (list of) ticks structure."""
