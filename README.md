@@ -10,7 +10,9 @@ Kite Connect is a set of REST-like APIs that expose many capabilities required t
 - [Kite Connect HTTP API documentation](https://kite.trade/docs/connect/v1)
 
 ## Installing the client
-`pip install kiteconnect`
+```
+pip install kiteconnect
+```
 
 ## API usage
 ```python
@@ -73,7 +75,7 @@ kws.on_connect = on_connect
 # - First param is interval between reconnection attempts in seconds.
 # Callback `on_reconnect` is triggered on every reconnection attempt. (Default interval is 5 seconds)
 # - Second param is maximum number of retries before the program exits triggering `on_noreconnect` calback. (Defaults to 50 attempts)
-# Note that you can also enable auto reconnection while initialising websocket.
+# Note that you can also enable auto reconnection	 while initialising websocket.
 # Example `kws = WebSocket("your_api_key", "your_public_token", "logged_in_user_id", reconnect=True, reconnect_interval=5, reconnect_tries=50)`
 kws.enable_reconnect(reconnect_interval=5, reconnect_tries=50)
 
@@ -81,6 +83,14 @@ kws.enable_reconnect(reconnect_interval=5, reconnect_tries=50)
 # You have to use the pre-defined callbacks to manage subscriptions.
 kws.connect()
 
+```
+
+# Generate documentation
+
+```
+pip install pdoc
+
+pdoc --html --html-dir docs kiteconnect
 ```
 
 ## Changelog
