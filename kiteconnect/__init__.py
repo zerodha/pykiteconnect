@@ -92,9 +92,9 @@ import time
 import json
 import struct
 import hashlib
+import logging
 import requests
 import threading
-import logging
 
 import websocket
 
@@ -308,8 +308,13 @@ class KiteConnect(object):
 			if k is None:
 				del(params[k])
 
-		if variety == "BO":
-			return self._put("order_modify", {
+		if ((product.lower() == "bo" or product.lower() == "co")
+			and variety.lower() != product.lower()):
+			raise ex.InputException("Invalid variety. It should be: {}".format(product.lower()))
+
+		# Check for variety by product or variety
+		if variety.lower() == "bo" and product.lower() == "bo":
+			return self._put("orders.modify", {
 				"order_id": order_id,
 				"quantity": quantity,
 				"price": price,
@@ -318,8 +323,8 @@ class KiteConnect(object):
 				"variety": variety,
 				"parent_order_id": parent_order_id
 			})["order_id"]
-		elif variety == "CO":
-			return self._put("order_modify", {
+		elif variety.lower() == "co" and product.lower() == "co":
+			return self._put("orders.modify", {
 				"order_id": order_id,
 				"trigger_price": trigger_price,
 				"variety": variety,
