@@ -85,7 +85,7 @@ Kite Connect client saves you the hassle of detecting API errors
 by looking at HTTP codes or JSON error responses. Instead,
 it raises aptly named **[exceptions](exceptions.m.html)** that you can catch.
 """
-from six import StringIO
+from six import StringIO, PY2
 import ssl
 import csv
 import time
@@ -136,6 +136,21 @@ class KiteConnect(object):
 		"portfolio.positions": "/portfolio/positions",
 		"portfolio.holdings": "/portfolio/holdings",
 		"portfolio.positions.modify": "/portfolio/positions",
+
+		# MF api endpoints
+		"mf.orders": "/mf/orders/",
+		"mf.order.info": "/mf/orders/{order_id}",
+		"mf.order.place": "/mf/orders",
+		"mf.order.cancel": "/mf/orders/{order_id}",
+
+		"mf.sips": "/mf/sips",
+		"mf.sips.info": "/mf/sips/{sip_id}",
+		"mf.sips.place": "/mf/sips",
+		"mf.sips.modify": "/mf/sips/{sip_id}",
+		"mf.sips.cancel": "/mf/sips/{sip_id}",
+
+		"mf.holdings": "/mf/holdings",
+		"mf.instruments": "/mf/instruments",
 
 		"market.instruments.all": "/instruments",
 		"market.instruments": "/instruments/{exchange}",
@@ -391,6 +406,87 @@ class KiteConnect(object):
 			"new_product": new_product
 		})
 
+	def mf_orders(self, order_id):
+		"""Get all mutual fund orders or individual order info."""
+		if order_id:
+			return self._get("mf.order.info", {"order_id": order_id})
+		else:
+			return self._get("mf.orders")
+
+	def mf_order_place(self,
+						tradingsymbol,
+						transaction_type,
+						quantity=None,
+						amount=None,
+						tag=None):
+		"""Place a mutual fund order."""
+		return self._post("mf.order.place", {
+			"tradingsymbol": tradingsymbol,
+			"transaction_type": transaction_type,
+			"quantity": quantity,
+			"amount": amount,
+			"tag": tag
+		})
+
+	def mf_order_cancel(self, order_id):
+		"""Cancel a mutual fund order"""
+		return self._delete("mf.order.cancel", {"order_id": order_id})
+
+	def mf_sips(self, sip_id):
+		"""Get list of all mutual fund SIP's or individual SIP info."""
+		if sip_id:
+			return self._get("mf.sip.info", {"sip_id": sip_id})
+		else:
+			return self._get("mf.sips")
+
+	def mf_sip_place(self,
+						tradingsymbol,
+						amount,
+						initial_amount,
+						instalments,
+						frequency,
+						day=None,
+						tag=None):
+		"""Place a mutual fund SIP"""
+		return self._post("mf.sip.place", {
+			"tradingsymbol": tradingsymbol,
+			"amount": amount,
+			"initial_amount": initial_amount,
+			"instalments": instalments,
+			"frequency": frequency,
+			"day": day,
+			"tag": tag
+		})
+
+	def mf_sip_modify(self,
+						sip_id,
+						amount,
+						status,
+						instalments,
+						frequency,
+						day=None):
+		"""Modify a mutual fund SIP"""
+		return self._put("mf.sip.modify", {
+			"sip_id": sip_id,
+			"amount": amount,
+			"status": status,
+			"instalments": instalments,
+			"frequency": frequency,
+			"day": day
+		})
+
+	def mf_sip_cancel(self, sip_id):
+		"""Cancel a mutual fund SIP"""
+		return self._delete("mf.sip.cancel", {"sip_id": sip_id})
+
+	def mf_holdings(self):
+		"""Get list of mutual fund holdings"""
+		return self._get("mf.holdings")
+
+	def mf_instruments(self):
+		"""Get list of mutual fund instruments"""
+		return self._parse_mf_instruments(self._get("mf.instruments"))
+
 	def instruments(self, exchange=None):
 		"""
 		Retrieve the list of market instruments available to trade.
@@ -447,7 +543,10 @@ class KiteConnect(object):
 
 	def _parse_csv(self, data):
 		# decode to string for Python 3
-		d = data.decode('utf-8').strip()
+		d = data
+		if not PY2:
+			d = data.decode('utf-8').strip()
+
 		reader = csv.reader(StringIO(d))
 
 		records = []
@@ -462,6 +561,18 @@ class KiteConnect(object):
 
 			records.append(record)
 
+		return records
+
+	def _parse_mf_instruments(self, data):
+		# decode to string for Python 3
+		d = data
+		if not PY2:
+			d = data.decode('utf-8').strip()
+
+		reader = csv.DictReader(StringIO(d))
+
+		# Return list instead of file reader
+		records = [row for row in reader]
 		return records
 
 	def _get(self, route, params=None):
@@ -544,7 +655,7 @@ class KiteConnect(object):
 				raise ex.DataException("Couldn't parse JSON response")
 
 			# api error
-			if data["status"] == "error":
+			if data.get("error_type"):
 				if r.status_code == 403:
 					if self.session_hook:
 						self.session_hook()
