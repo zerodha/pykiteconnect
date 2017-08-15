@@ -109,3 +109,4 @@ pdoc --html --html-dir docs kiteconnect
 - 2017-01-21	Bug fixes (v3.4.1)
 - 2017-04-25	Added auto reconnect feature and other bug fixes (v3.5)
 - 2017-08-01	Fix BO and CO order modify issue (v3.5.1)
+- 2017-10-15	Add mutual fund API calls (v3.6.0)
