@@ -138,16 +138,16 @@ class KiteConnect(object):
 		"portfolio.positions.modify": "/portfolio/positions",
 
 		# MF api endpoints
-		"mf.orders": "/mf/orders/",
+		"mf.orders": "/mf/orders",
 		"mf.order.info": "/mf/orders/{order_id}",
 		"mf.order.place": "/mf/orders",
 		"mf.order.cancel": "/mf/orders/{order_id}",
 
 		"mf.sips": "/mf/sips",
-		"mf.sips.info": "/mf/sips/{sip_id}",
-		"mf.sips.place": "/mf/sips",
-		"mf.sips.modify": "/mf/sips/{sip_id}",
-		"mf.sips.cancel": "/mf/sips/{sip_id}",
+		"mf.sip.info": "/mf/sips/{sip_id}",
+		"mf.sip.place": "/mf/sips",
+		"mf.sip.modify": "/mf/sips/{sip_id}",
+		"mf.sip.cancel": "/mf/sips/{sip_id}",
 
 		"mf.holdings": "/mf/holdings",
 		"mf.instruments": "/mf/instruments",
@@ -406,7 +406,7 @@ class KiteConnect(object):
 			"new_product": new_product
 		})
 
-	def mf_orders(self, order_id):
+	def mf_orders(self, order_id=None):
 		"""Get all mutual fund orders or individual order info."""
 		if order_id:
 			return self._get("mf.order.info", {"order_id": order_id})
@@ -432,7 +432,7 @@ class KiteConnect(object):
 		"""Cancel a mutual fund order"""
 		return self._delete("mf.order.cancel", {"order_id": order_id})
 
-	def mf_sips(self, sip_id):
+	def mf_sips(self, sip_id=None):
 		"""Get list of all mutual fund SIP's or individual SIP info."""
 		if sip_id:
 			return self._get("mf.sip.info", {"sip_id": sip_id})
@@ -442,9 +442,9 @@ class KiteConnect(object):
 	def mf_sip_place(self,
 						tradingsymbol,
 						amount,
-						initial_amount,
 						instalments,
 						frequency,
+						initial_amount=None,
 						day=None,
 						tag=None):
 		"""Place a mutual fund SIP"""
@@ -464,7 +464,7 @@ class KiteConnect(object):
 						status,
 						instalments,
 						frequency,
-						day=None):
+						instalment_day=None):
 		"""Modify a mutual fund SIP"""
 		return self._put("mf.sip.modify", {
 			"sip_id": sip_id,
@@ -472,7 +472,7 @@ class KiteConnect(object):
 			"status": status,
 			"instalments": instalments,
 			"frequency": frequency,
-			"day": day
+			"instalment_day": instalment_day
 		})
 
 	def mf_sip_cancel(self, sip_id):
