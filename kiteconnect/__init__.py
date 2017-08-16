@@ -463,7 +463,7 @@ class KiteConnect(object):
 						instalments,
 						frequency,
 						initial_amount=None,
-						day=None,
+						instalment_day=None,
 						tag=None):
 		"""Place a mutual fund SIP"""
 		return self._post("mf.sip.place", {
@@ -472,7 +472,7 @@ class KiteConnect(object):
 			"initial_amount": initial_amount,
 			"instalments": instalments,
 			"frequency": frequency,
-			"day": day,
+			"instalment_day": instalment_day,
 			"tag": tag
 		})
 
