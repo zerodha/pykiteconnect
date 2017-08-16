@@ -43,7 +43,7 @@ except Exception as e:
 	print("Order placement failed", e.message)
 
 # Fetch all orders
-print(kite.orders())
+kite.orders()
 
 # Get instruments
 kite.instruments()
