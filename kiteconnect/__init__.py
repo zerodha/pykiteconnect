@@ -523,7 +523,7 @@ class KiteConnect(object):
 		"""Retrieve quote and market depth for an instrument."""
 		return self._get("market.quote", {"exchange": exchange, "tradingsymbol": tradingsymbol})
 
-	def historical(self, instrument_token, from_date, to_date, interval):
+	def historical(self, instrument_token, from_date, to_date, interval, continuous=0):
 		"""
 		Retrieve historical data (candles) for an instrument.
 
@@ -540,7 +540,8 @@ class KiteConnect(object):
 			"instrument_token": instrument_token,
 			"from": from_date,
 			"to": to_date,
-			"interval": interval})
+			"interval": interval,
+			"continuous": continuous})
 
 		records = []
 		for d in data["candles"]:
