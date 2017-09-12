@@ -541,7 +541,7 @@ class KiteConnect(object):
 			"from": from_date,
 			"to": to_date,
 			"interval": interval,
-			"continuous": int(continuous)})
+			"continuous": 1 if continuous else 0})
 
 		records = []
 		for d in data["candles"]:
