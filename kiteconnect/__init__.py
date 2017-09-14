@@ -341,30 +341,7 @@ class KiteConnect(object):
 			if k is None:
 				del(params[k])
 
-		if ((product.lower() == "bo" or product.lower() == "co")
-			and variety.lower() != product.lower()):
-			raise ex.InputException("Invalid variety. It should be: {}".format(product.lower()))
-
-		# Check for variety by product or variety
-		if variety.lower() == "bo" and product.lower() == "bo":
-			return self._put("orders.modify", {
-				"order_id": order_id,
-				"quantity": quantity,
-				"price": price,
-				"trigger_price": trigger_price,
-				"disclosed_quantity": disclosed_quantity,
-				"variety": variety,
-				"parent_order_id": parent_order_id
-			})["order_id"]
-		elif variety.lower() == "co" and product.lower() == "co":
-			return self._put("orders.modify", {
-				"order_id": order_id,
-				"trigger_price": trigger_price,
-				"variety": variety,
-				"parent_order_id": parent_order_id
-			})["order_id"]
-		else:
-			return self._put("orders.modify", params)["order_id"]
+		return self._put("orders.modify", params)["order_id"]
 
 	def order_cancel(self, order_id, variety="regular", parent_order_id=None):
 		"""Cancel an order"""
