@@ -512,6 +512,7 @@ class KiteConnect(object):
 		- `date_from` is the From date (yyyy-mm-dd)
 		- `date_to` is the To date (yyyy-mm-dd)
 		- `interval` is the candle interval (minute, day, 5 minute etc.)
+		- `continuous` is a boolean flag to get continous data for futures and options instruments.
 		"""
 		data = self._get("market.historical", {
 			"instrument_token": instrument_token,
