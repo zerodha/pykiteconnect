@@ -367,6 +367,9 @@ class KiteTicker(object):
     MODE_QUOTE = "quote"
     MODE_LTP = "ltp"
 
+    # Flag to set if its first connect
+    _is_first_connect = True
+
     # Available actions.
     _message_code = 11
     _message_subscribe = "subscribe"
@@ -438,8 +441,7 @@ class KiteTicker(object):
         self.on_reconnect = None
         self.on_noreconnect = None
 
-        self.subscribed_tokens = set()
-        self.modes = set()
+        self.subscribed_tokens = {}
 
     def _create_connection(self, url, **kwargs):
         """Create a WebSocket client connection."""
@@ -526,7 +528,7 @@ class KiteTicker(object):
             self.ws.sendMessage(json.dumps({"a": self._message_subscribe, "v": instrument_tokens}))
 
             for token in instrument_tokens:
-                self.subscribed_tokens.add(token)
+                self.subscribed_tokens[token] = self.MODE_QUOTE
 
             return True
         except Exception as e:
@@ -544,8 +546,8 @@ class KiteTicker(object):
 
             for token in instrument_tokens:
                 try:
-                    self.subscribed_tokens.remove(token)
-                except:
+                    del(self.subscribed_tokens[token])
+                except KeyError:
                     pass
 
             return True
@@ -563,10 +565,34 @@ class KiteTicker(object):
         """
         try:
             self.ws.sendMessage(json.dumps({"a": self._message_setmode, "v": [mode, instrument_tokens]}))
+
+            # Update modes
+            for token in instrument_tokens:
+                self.subscribed_tokens[token] = mode
+
             return True
         except Exception as e:
             self.close(reason="Error while setting mode: {}".format(str(e)))
             raise
+
+    def _resubscribe(self):
+        """Resubscribe to all current subscribed tokens."""
+        modes = {}
+
+        for token in self.subscribed_tokens:
+            m = self.subscribed_tokens[token]
+
+            if not modes.get(m):
+                modes[m] = []
+
+            modes[m].append(token)
+
+        for mode in modes:
+            if self.debug:
+                log.debug("Resubscribe and set mode: {} - {}".format(mode, modes[mode]))
+
+            self.subscribe(modes[mode])
+            self.set_mode(mode, modes[mode])
 
     def _on_connect(self, ws, response):
         self.ws = ws
@@ -596,6 +622,13 @@ class KiteTicker(object):
     def _on_open(self, ws):
         if self.on_open:
             return self.on_open(self)
+
+        # Resubscribe if its reconnect
+        if not self._is_first_connect:
+            self._resubscribe()
+
+        # Set first connect to false once its connected first time
+        self._is_first_connect = False
 
     def _on_reconnect(self, attempts_count):
         if self.on_reconnect:
