@@ -99,6 +99,12 @@ kws.on_connect = on_connect
 kws.connect()
 ```
 
+# Run unit tests
+
+```
+python setup.py test
+```
+
 # Generate documentation
 
 ```
