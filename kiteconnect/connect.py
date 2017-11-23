@@ -200,7 +200,7 @@ class KiteConnect(object):
         """Get the remote login url to which a user should be redirected to initiate the login flow."""
         return "%s?api_key=%s" % (self._default_login_uri, self.api_key)
 
-    def request_access_token(self, request_token, secret):
+    def request_access_token(self, request_token, api_secret):
         """
         Get `access_token` by exchanging `request_token`.
 
@@ -210,9 +210,9 @@ class KiteConnect(object):
         the user who has authenticated.
 
         - `request_token` is the token obtained from the GET paramers after a successful login redirect.
-        - `secret` is the API secret issued with the API key.
+        - `api_secret` is the API api_secret issued with the API key.
         """
-        h = hashlib.sha256(self.api_key.encode("utf-8") + request_token.encode("utf-8") + secret.encode("utf-8"))
+        h = hashlib.sha256(self.api_key.encode("utf-8") + request_token.encode("utf-8") + api_secret.encode("utf-8"))
         checksum = h.hexdigest()
 
         resp = self._post("api.validate", {
