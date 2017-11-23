@@ -634,8 +634,8 @@ class KiteConnect(object):
             try:
                 data = json.loads(r.content.decode("utf8"))
             except:
-                raise ex.DataException("Couldn't parse the JSON response received from the server: {contnet}".format(
-                    content=data))
+                raise ex.DataException("Couldn't parse the JSON response received from the server: {content}".format(
+                    content=r.content))
 
             # api error
             if data.get("error_type"):
