@@ -16,7 +16,10 @@ pip install kiteconnect
 
 ## API usage
 ```python
+import logging
 from kiteconnect import KiteConnect
+
+logging.basicConfig(level=logging.DEBUG)
 
 kite = KiteConnect(api_key="your_api_key")
 
@@ -31,16 +34,16 @@ kite.set_access_token(data["access_token"])
 
 # Place an order
 try:
-	order_id = kite.order_place(tradingsymbol="INFY",
-					exchange="NSE",
-					transaction_type="BUY",
-					quantity=1,
-					order_type="MARKET",
-					product="NRML")
+    order_id = kite.place_order(tradingsymbol="INFY",
+                                exchange=kite.EXCHANGE_NSE,
+                                transaction_type=kite.TRANSACTION_TYPE_BUY,
+                                quantity=1,
+                                order_type=kite.ORDER_TYPE_MARKET,
+                                product=kite.PRODUCT_NRML)
 
-	print("Order placed. ID is", order_id)
+    logging.info("Order placed. ID is: {}".format(order_id))
 except Exception as e:
-	print("Order placement failed", e.message)
+    logging.info("Order placement failed: {}".format(e.message))
 
 # Fetch all orders
 kite.orders()
@@ -49,15 +52,15 @@ kite.orders()
 kite.instruments()
 
 # Place an mutual fund order
-kite.mf_order_place(
-	tradingsymbol="INF090I01239",
-	transaction_type="BUY",
-	amount=5000,
-	tag="mytag"
-)))
+kite.place_mf_order(
+    tradingsymbol="INF090I01239",
+    transaction_type=kite.TRANSACTION_TYPE_BUY,
+    amount=5000,
+    tag="mytag"
+)
 
 # Cancel a mutual fund order
-kite.mf_order_cancel(order_id="order_id")
+kite.cancel_mf_order(order_id="order_id")
 
 # Get mutual fund instruments
 kite.mf_instruments()
@@ -67,39 +70,33 @@ Refer to the [Python client documentation](https://kite.trade/docs/pykiteconnect
 
 ## WebSocket usage
 ```python
-from kiteconnect import WebSocket
+import logging
+from kiteconnect import KiteTicker
 
-# Initialise.
-kws = WebSocket("your_api_key", "your_public_token", "logged_in_user_id")
+logging.basicConfig(level=logging.DEBUG)
 
-# Callback for tick reception.
-def on_tick(tick, ws):
-	print tick
+# Initialise
+kws = KiteTicker("your_api_key", "your_public_token", "logged_in_user_id")
 
-# Callback for successful connection.
-def on_connect(ws):
-	# Subscribe to a list of instrument_tokens (RELIANCE and ACC here).
-	ws.subscribe([738561, 5633])
+def on_ticks(ws, ticks):
+    # Callback to receive ticks.
+    logging.debug("Ticks: {}".format(ticks))
 
-	# Set RELIANCE to tick in `full` mode.
-	ws.set_mode(ws.MODE_FULL, [738561])
+def on_connect(ws, response):
+    # Callback on successful connect.
+    # Subscribe to a list of instrument_tokens (RELIANCE and ACC here).
+    ws.subscribe([738561, 5633])
+
+    # Set RELIANCE to tick in `full` mode.
+    ws.set_mode(ws.MODE_FULL, [738561])
 
 # Assign the callbacks.
-kws.on_tick = on_tick
+kws.on_ticks = on_ticks
 kws.on_connect = on_connect
-
-# To enable auto reconnect WebSocket connection in case of network failure
-# - First param is interval between reconnection attempts in seconds.
-# Callback `on_reconnect` is triggered on every reconnection attempt. (Default interval is 5 seconds)
-# - Second param is maximum number of retries before the program exits triggering `on_noreconnect` calback. (Defaults to 50 attempts)
-# Note that you can also enable auto reconnection	 while initialising websocket.
-# Example `kws = WebSocket("your_api_key", "your_public_token", "logged_in_user_id", reconnect=True, reconnect_interval=5, reconnect_tries=50)`
-kws.enable_reconnect(reconnect_interval=5, reconnect_tries=50)
 
 # Infinite loop on the main thread. Nothing after this will run.
 # You have to use the pre-defined callbacks to manage subscriptions.
 kws.connect()
-
 ```
 
 # Generate documentation
