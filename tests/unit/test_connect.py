@@ -8,7 +8,7 @@ from .conftest import fp
 
 def test_set_access_token(kiteconnect):
     """Check for token exception when invalid token is set."""
-    kiteconnect.root = 'https://api.kite.trade'
+    kiteconnect.root = "https://api.kite.trade"
     kiteconnect.set_access_token("invalid_token")
     with pytest.raises(ex.TokenException):
         kiteconnect.positions()
@@ -19,8 +19,8 @@ def test_positions(kiteconnect):
     """Test positions."""
     responses.add(
         responses.GET,
-        '%s%s' % (kiteconnect.root, kiteconnect._routes['portfolio.positions']),
-        body=open(fp('responses/positions.json'), 'r').read(),
+        "%s%s" % (kiteconnect.root, kiteconnect._routes["portfolio.positions"]),
+        body=open(fp("responses/positions.json"), "r").read(),
         content_type="application/json"
     )
     positions = kiteconnect.positions()
@@ -34,8 +34,8 @@ def test_holdings(kiteconnect):
     """Test holdings."""
     responses.add(
         responses.GET,
-        '%s%s' % (kiteconnect.root, kiteconnect._routes['portfolio.holdings']),
-        body=open(fp('responses/holdings.json'), 'r').read(),
+        "%s%s" % (kiteconnect.root, kiteconnect._routes["portfolio.holdings"]),
+        body=open(fp("responses/holdings.json"), "r").read(),
         content_type="application/json"
     )
     holdings = kiteconnect.holdings()
@@ -47,8 +47,8 @@ def test_margins(kiteconnect):
     """Test margins."""
     responses.add(
         responses.GET,
-        '%s%s' % (kiteconnect.root, kiteconnect._routes['user.margins']),
-        body=open(fp('responses/margins.json'), 'r').read(),
+        "%s%s" % (kiteconnect.root, kiteconnect._routes["user.margins"]),
+        body=open(fp("responses/margins.json"), "r").read(),
         content_type="application/json"
     )
     margins = kiteconnect.margins()
@@ -62,13 +62,13 @@ def test_margins_segmentwise(kiteconnect):
     """Test margins for individual segments."""
     responses.add(
         responses.GET,
-        '%s%s' % (
+        "%s%s" % (
             kiteconnect.root,
-            kiteconnect._routes['user.margins.segment'].format(
+            kiteconnect._routes["user.margins.segment"].format(
                 segment=kiteconnect.MARGIN_COMMODITY
             )
         ),
-        body=open(fp('responses/margins.json'), 'r').read(),
+        body=open(fp("responses/margins.json"), "r").read(),
         content_type="application/json"
     )
     commodity = kiteconnect.margins(segment=kiteconnect.MARGIN_COMMODITY)
@@ -80,8 +80,8 @@ def test_orders(kiteconnect):
     """Test orders."""
     responses.add(
         responses.GET,
-        '%s%s' % (kiteconnect.root, kiteconnect._routes['orders']),
-        body=open(fp('responses/orders.json'), 'r').read(),
+        "%s%s" % (kiteconnect.root, kiteconnect._routes["orders"]),
+        body=open(fp("responses/orders.json"), "r").read(),
         content_type="application/json"
     )
     orders = kiteconnect.orders()
@@ -93,8 +93,8 @@ def test_trades(kiteconnect):
     """Test trades."""
     responses.add(
         responses.GET,
-        '%s%s' % (kiteconnect.root, kiteconnect._routes['trades']),
-        body=open(fp('responses/trades.json'), 'r').read(),
+        "%s%s" % (kiteconnect.root, kiteconnect._routes["trades"]),
+        body=open(fp("responses/trades.json"), "r").read(),
         content_type="application/json"
     )
     trades = kiteconnect.trades()

@@ -39,6 +39,6 @@ setup(
     ],
     install_requires=["requests", "six", "autobahn", "twisted"],
     tests_require=["pytest", "responses"],
-    test_suite='tests',
+    test_suite="tests",
     setup_requires=["pytest-runner"]
 )
