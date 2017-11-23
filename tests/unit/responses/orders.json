@@ -1,0 +1,35 @@
+{
+  "status": "success",
+  "data": [{
+    "order_id": "151220000000000",
+    "parent_order_id": "151210000000000",
+    "exchange_order_id": null,
+    "placed_by": "AB0012",
+    "variety": "regular",
+    "status": "REJECTED",
+
+    "tradingsymbol": "ACC",
+    "exchange": "NSE",
+    "instrument_token": 22,
+    "transaction_type": "BUY",
+    "order_type": "MARKET",
+    "product": "NRML",
+    "validity": "DAY",
+
+    "price": 0.0,
+    "quantity": 75,
+    "trigger_price": 0.0,
+
+    "average_price": 0.0,
+    "pending_quantity": 0,
+    "filled_quantity": 0,
+    "disclosed_quantity": 0,
+    "market_protection": 0,
+
+    "order_timestamp": "2015-12-20 15:01:43",
+    "exchange_timestamp": null,
+
+    "status_message": "RMS:Margin Exceeds, Required:0, Available:0",
+    "tag": null
+  }]
+}

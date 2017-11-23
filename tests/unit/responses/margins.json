@@ -1,0 +1,25 @@
+{
+  "status": "success",
+  "data": {
+    "enabled": true,
+    "net": 0.0,
+    "available": {
+      "cash": 0.0,
+      "intraday_payin": 0.0,
+      "adhoc_margin": 0.0,
+      "collateral": 0.0
+    },
+    "utilised": {
+      "m2m_unrealised": 0.0,
+      "m2m_realised": 0.0,
+      "debits": 0.0,
+      "span": 0.0,
+      "option_premium": 0.0,
+      "holding_sales": 0.0,
+      "exposure": 23285.85,
+      "turnover": 0.0
+    },
+    "equity": {},
+    "commodity": {}
+  }
+}
