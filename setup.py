@@ -37,5 +37,8 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Software Development :: Libraries"
     ],
-    install_requires=["requests", "six", "autobahn", "twisted"]
+    install_requires=["requests", "six", "autobahn", "twisted"],
+    tests_require=["pytest", "responses"],
+    test_suite='tests',
+    setup_requires=["pytest-runner"]
 )
