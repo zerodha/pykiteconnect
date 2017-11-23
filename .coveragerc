@@ -1,0 +1,11 @@
+[run]
+branch = True
+source = kiteconnect
+
+[report]
+exclude_lines =
+    pragma: no cover
+ignore_errors = True
+omit =
+    tests/*
+    setup.py
