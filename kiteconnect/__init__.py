@@ -25,36 +25,34 @@ for the complete list of APIs, supported parameters and values, and response for
 Getting started
 ---------------
     #!python
+    import logging
     from kiteconnect import KiteConnect
 
-    # Initialise.
+    logging.basicConfig(level=logging.DEBUG)
+
     kite = KiteConnect(api_key="your_api_key")
 
-    # Assuming you have obtained the `request_token`
-    # after the auth flow redirect by redirecting the
-    # user to kite.login_url()
+    # Redirect the user to the login url obtained
+    # from kite.login_url(), and receive the request_token
+    # from the registered redirect url after the login flow.
+    # Once you have the request_token, obtain the access_token
+    # as follows.
+
+    data = kite.request_access_token("request_token_here", secret="your_secret")
+    kite.set_access_token(data["access_token"])
+
+    # Place an order
     try:
-        user = kite.request_access_token(request_token="obtained_request_token",
-                                        secret="your_api_secret")
+        order_id = kite.place_order(tradingsymbol="INFY",
+                                    exchange=kite.EXCHANGE_NSE,
+                                    transaction_type=kite.TRANSACTION_TYPE_BUY,
+                                    quantity=1,
+                                    order_type=kite.ORDER_TYPE_MARKET,
+                                    product=kite.PRODUCT_NRML)
 
-        kite.set_access_token(user["access_token"])
+        logging.info("Order placed. ID is: {}".format(order_id))
     except Exception as e:
-        print("Authentication failed", str(e))
-        raise
-
-    print(user["user_id"], "has logged in")
-
-    # Get the list of positions.
-    print(kite.positions())
-
-    # Place an order.
-    order_id = kite.order_place(
-        tradingsymbol="INFY",
-        exchange="NSE",
-        quantity=1,
-        transaction_type="BUY",
-        order_type="MARKET"
-    )
+        logging.info("Order placement failed: {}".format(e.message))
 
     # Fetch all orders
     kite.orders()
@@ -63,14 +61,15 @@ Getting started
     kite.instruments()
 
     # Place an mutual fund order
-    kite.mf_order_place(
+    kite.place_mf_order(
         tradingsymbol="INF090I01239",
-        transaction_type="BUY",
+        transaction_type=kite.TRANSACTION_TYPE_BUY,
         amount=5000,
         tag="mytag"
+    )
 
     # Cancel a mutual fund order
-    kite.mf_order_cancel(order_id="order_id")
+    kite.cancel_mf_order(order_id="order_id")
 
     # Get mutual fund instruments
     kite.mf_instruments()

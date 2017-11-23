@@ -28,12 +28,12 @@ class KiteTickerClientProtocol(WebSocketClientProtocol):
     _last_ping_time = None
 
     def __init__(self, *args, **kwargs):
-        """Initialize protocol."""
+        """Initialize protocol with all options passed from factory."""
         super(KiteTickerClientProtocol, self).__init__(*args, **kwargs)
 
     # Overide method
     def onConnect(self, response):  # noqa
-        """On WebSocket connect."""
+        """Called when WebSocket server connection was established"""
         self.factory.ws = self
 
         if self.factory.on_connect:
@@ -44,7 +44,7 @@ class KiteTickerClientProtocol(WebSocketClientProtocol):
 
     # Overide method
     def onOpen(self):  # noqa
-        """On WebSocket connection open."""
+        """Called when the initial WebSocket opening handshake was completed."""
         # send ping
         self._loop_ping()
         # init last pong check after X seconds
@@ -55,13 +55,13 @@ class KiteTickerClientProtocol(WebSocketClientProtocol):
 
     # Overide method
     def onMessage(self, payload, is_binary):  # noqa
-        """On text or binary message is received."""
+        """Called when text or binary message is received."""
         if self.factory.on_message:
             self.factory.on_message(self, payload, is_binary)
 
     # Overide method
     def onClose(self, was_clean, code, reason):  # noqa
-        """On connection close received."""
+        """Called when connection is closed."""
         if not was_clean:
             if self.factory.on_error:
                 self.factory.on_error(self, code, reason)
@@ -80,43 +80,55 @@ class KiteTickerClientProtocol(WebSocketClientProtocol):
             self._next_pong_check.cancel()
 
     def onPong(self, response):  # noqa
-        """On pong message."""
-        if self._last_pong_time:
+        """Called when pong message is received."""
+        if self._last_pong_time and self.factory.debug:
             log.debug("last pong was {} seconds back.".format(time.time() - self._last_pong_time))
 
         self._last_pong_time = time.time()
-        log.debug("pong => {}".format(response))
+
+        if self.factory.debug:
+            log.debug("pong => {}".format(response))
 
     """
     Custom helper and exposed methods.
     """
-
     def _loop_ping(self): # noqa
         """Start a ping loop where it sends ping message every X seconds."""
-        log.debug("ping => {}".format(self._ping_message))
-        if self._last_ping_time:
-            log.debug("last ping was {} seconds back.".format(time.time() - self._last_ping_time))
+        if self.factory.debug:
+            log.debug("ping => {}".format(self._ping_message))
+            if self._last_ping_time:
+                log.debug("last ping was {} seconds back.".format(time.time() - self._last_ping_time))
 
+        # Set current time as last ping time
         self._last_ping_time = time.time()
+        # Send a ping message to server
         self.sendPing(self._ping_message)
 
         # Call self after X seconds
         self._next_ping = self.factory.reactor.callLater(self.PING_INTERVAL, self._loop_ping)
 
     def _loop_pong_check(self):
+        """
+        Timer sortof to check if connection is still there.
+
+        Checks last pong message time and disconnects the existing connection to make sure it doesn't become a ghost connection.
+        """
         if self._last_pong_time:
             # No pong message since long time, so init reconnect
             last_pong_diff = time.time() - self._last_pong_time
             if last_pong_diff > (2 * self.PING_INTERVAL):
-                log.debug("Last pong was {} seconds ago. So dropping connection to reconnect.".format(last_pong_diff))
-                # drop connection
+                if self.factory.debug:
+                    log.debug("Last pong was {} seconds ago. So dropping connection to reconnect.".format(
+                        last_pong_diff))
+                # drop existing connection to avoid ghost connection
                 self.dropConnection(abort=True)
 
+        # Call self after X seconds
         self._next_pong_check = self.factory.reactor.callLater(self.PING_INTERVAL, self._loop_pong_check)
 
 
 class KiteTickerClientFactory(WebSocketClientFactory, ReconnectingClientFactory):
-    """Autobahn WebSocket client factory to implement reconnection and callbacks."""
+    """Autobahn WebSocket client factory to implement reconnection and custom callbacks."""
 
     protocol = KiteTickerClientProtocol
     maxDelay = 5
@@ -126,6 +138,7 @@ class KiteTickerClientFactory(WebSocketClientFactory, ReconnectingClientFactory)
 
     def __init__(self, *args, **kwargs):
         """Initialize with default callback method values."""
+        self.debug = False
         self.ws = None
         self.on_open = None
         self.on_error = None
@@ -139,39 +152,47 @@ class KiteTickerClientFactory(WebSocketClientFactory, ReconnectingClientFactory)
 
     def startedConnecting(self, connector):  # noqa
         """On connecting start or reconnection."""
-        if not self._last_connection_time:
+        if not self._last_connection_time and self.debug:
             log.debug("Start WebSocket connection.")
 
         self._last_connection_time = time.time()
 
     def clientConnectionFailed(self, connector, reason):  # noqa
-        """On connection failure."""
+        """On connection failure (When connect request fails)"""
         log.error("WebSocket connection failed: {}.".format(reason))
-        log.error("Try reconnecting. Retry attempt count: {}".format(self.retries))
 
-        # on reconnect callback
-        if self.on_reconnect:
-            self.on_reconnect()
+        if self.retries > 0:
+            log.error("Try reconnecting. Retry attempt count: {}".format(self.retries))
 
+            # on reconnect callback
+            if self.on_reconnect:
+                self.on_reconnect(self.retries)
+
+        # Retry the connection
         self.retry(connector)
         self.send_noreconnect()
 
     def clientConnectionLost(self, connector, reason):  # noqa
-        """On connection lost."""
+        """On connection lost (When ongoing connection got disconnected)."""
         log.error("WebSocket connection lost: {}.".format(reason))
-        log.error("Try reconnecting. Retry attempt count: {}".format(self.retries))
 
-        # on reconnect callback
-        if self.on_reconnect:
-            self.on_reconnect()
+        if self.retries > 0:
+            log.error("Try reconnecting. Retry attempt count: {}".format(self.retries))
 
+            # on reconnect callback
+            if self.on_reconnect:
+                self.on_reconnect(self.retries)
+
+        # Retry the connection
         self.retry(connector)
         self.send_noreconnect()
 
     def send_noreconnect(self):
         """Callback `no_reconnect` if max retries are exhausted."""
         if self.maxRetries is not None and (self.retries > self.maxRetries):
-            log.debug("Maximum retries ({}) exhausted.".format(self.maxRetries))
+            if self.debug:
+                log.debug("Maximum retries ({}) exhausted.".format(self.maxRetries))
+
             if self.on_noreconnect:
                 self.on_noreconnect()
 
@@ -183,42 +204,57 @@ class KiteTicker(object):
     Getting started:
     ---------------
         #!python
-        from kiteconnect import WebSocket
-        # Initialise.
-        kws = WebSocket("your_api_key", "your_public_token", "logged_in_user_id")
-        # Callback for tick reception.
-        def on_tick(tick, ws):
-            print(tick)
-        # Callback for successful connection.
-        def on_connect(ws):
+        import logging
+        from kiteconnect import KiteTicker
+
+        logging.basicConfig(level=logging.DEBUG)
+
+        # Initialise
+        kws = KiteTicker("your_api_key", "your_public_token", "logged_in_user_id")
+
+        def on_ticks(ws, ticks):
+            # Callback to receive ticks.
+            logging.debug("Ticks: {}".format(ticks))
+
+        def on_connect(ws, response):
+            # Callback on successful connect.
             # Subscribe to a list of instrument_tokens (RELIANCE and ACC here).
             ws.subscribe([738561, 5633])
+
             # Set RELIANCE to tick in `full` mode.
             ws.set_mode(ws.MODE_FULL, [738561])
+
         # Assign the callbacks.
-        kws.on_tick = on_tick
+        kws.on_ticks = on_ticks
         kws.on_connect = on_connect
-        # To enable auto reconnect WebSocket connection in case of network failure
-        # - First param is interval between reconnection attempts in seconds.
-        # Callback `on_reconnect` is triggered on every reconnection attempt. (Default interval is 5 seconds)
-        # - Second param is maximum number of retries before the program exits triggering `on_noreconnect` calback. (Defaults to 50 attempts)
-        # Note that you can also enable auto reconnection    while initialising websocket.
-        # Example `kws = WebSocket("your_api_key", "your_public_token", "logged_in_user_id", reconnect=True, reconnect_interval=5, reconnect_tries=50)`
-        kws.enable_reconnect(reconnect_interval=5, reconnect_tries=50)
+
         # Infinite loop on the main thread. Nothing after this will run.
         # You have to use the pre-defined callbacks to manage subscriptions.
         kws.connect()
+
     Callbacks
     ---------
-    Param `ws` is the currently initialised WebSocket object itself.
-    - `on_tick(ticks, ws)` -  Ticks (array of dicts) and the WebSocket object are passed as params.
-    - `on_close(ws)` -  Triggered when connection is closed.
-    - `on_error(error, ws)` -  Triggered when connection is closed with an error. Error object and WebSocket object are passed as params.
+    In below examples `ws` is the currently initialised WebSocket object.
+
+    - `on_ticks(ws, ticks)` -  Triggered when ticks are recevied.
+        - `ticks` - List of `tick` object. Check below for sample structure.
+    - `on_close(ws, code, reason)` -  Triggered when connection is closed.
+        - `code` - WebSocket standard close event code (https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent)
+        - `reason` - DOMString indicating the reason the server closed the connection
+    - `on_error(ws, code, reason)` -  Triggered when connection is closed with an error.
+        - `code` - WebSocket standard close event code (https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent)
+        - `reason` - DOMString indicating the reason the server closed the connection
     - `on_connect` -  Triggered when connection is established successfully.
-    - `on_message(data, ws)` -  Triggered when there is any message received. This is raw data received from WebSocket.
-    - `on_reconnect(ws)` -  Triggered when auto reconnection is attempted.
-    - `on_noreconnect` -  Triggered when number of auto reconnection attempts exceeds `reconnect_tries`.
-    Tick structure (passed to the tick callback you assign):
+        - `response` - Response received from server on successful connection.
+    - `on_message(ws, payload, is_binary)` -  Triggered when message is received from the server.
+        - `payload` - Raw response from the server (either text or binary).
+        - `is_binary` - Bool to check if response is binary type.
+    - `on_reconnect(ws, attempts_count)` -  Triggered when auto reconnection is attempted.
+        - `attempts_count` - Current reconnect attempt number.
+    - `on_noreconnect(ws)` -  Triggered when number of auto reconnection attempts exceeds `reconnect_tries`.
+
+
+    Tick structure (passed to the `on_ticks` callback)
     ---------------------------
         [{
             "mode": "quote",
@@ -281,7 +317,27 @@ class KiteTicker(object):
                     "quantity": 0
                 }]
             }
-        }]
+        }
+        ...
+        ...
+        ...]
+
+    Auto reconnection
+    -----------------
+
+    Auto reonnection is enabled by default and it can be disabled by passing `reconnect` param while initialising `KiteTicker`.
+
+    Auto reonnection mechanism is based on [Exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff) algorithm in which
+    next retry interval will be increased exponentially. `reconnect_max_delay` and `reconnect_max_tries` params can be used to tewak
+    the alogrithm where `reconnect_max_delay` is the maximum delay after which subsequent reconnection interval will become constant and
+    `reconnect_max_tries` is maximum number of retries before its quiting reconnection.
+
+    For example if `reconnect_max_delay` is 60 seconds and `reconnect_max_tries` is 50 then the first reconnection interval starts from
+    minimum interval which is 2 seconds and keep increasing up to 60 seconds after which it becomes constant and when reconnection attempt
+    is reached upto 50 then it stops reconnecting.
+
+    method `stop_retry` can be used to stop ongoing reconnect attempts and `on_reconnect` callback will be called with current reconnect
+    attempt and `on_noreconnect` is called when reconnection attempts reaches max retries.
     """
 
     EXCHANGE_MAP = {
@@ -373,7 +429,7 @@ class KiteTicker(object):
         self.debug = debug
 
         # Placeholders for callbacks.
-        self.on_tick = None
+        self.on_ticks = None
         self.on_open = None
         self.on_close = None
         self.on_error = None
@@ -391,6 +447,8 @@ class KiteTicker(object):
 
         # Alias for current websocket connection
         self.ws = self.factory.ws
+
+        self.factory.debug = self.debug
 
         # Register private callbacks
         self.factory.on_open = self._on_open
@@ -415,7 +473,8 @@ class KiteTicker(object):
         }
 
         # Init WebSocket client factory
-        self._create_connection(self.socket_url, useragent=self._user_agent(),
+        self._create_connection(self.socket_url,
+                                useragent=self._user_agent(),
                                 proxy=proxy, headers=headers)
 
         # Set SSL context
@@ -432,6 +491,8 @@ class KiteTicker(object):
         # Run in seperate thread of blocking
         opts = {}
         if threaded:
+            # Signals are not allowed in non main thread by twisted so supress it.
+            opts["installSignalHandlers"] = False
             self.websocket_thread = threading.Thread(target=reactor.run, kwargs=opts)
             self.websocket_thread.daemon = True
             self.websocket_thread.start()
@@ -440,8 +501,10 @@ class KiteTicker(object):
 
     def is_connected(self):
         """Check if WebSocket connection is established."""
-        if self.ws:
-            return True if self.ws.STATE_OPEN else False
+        if self.ws and self.ws.state == self.ws.STATE_OPEN:
+            return True
+        else:
+            return False
 
     def close(self, code=None, reason=None):
         """Close the WebSocket connection."""
@@ -525,18 +588,18 @@ class KiteTicker(object):
         if self.on_message:
             self.on_message(self, payload, is_binary)
 
-        if self.on_tick:
+        if self.on_ticks:
             # If the message is binary, parse it and send it to the callback.
             if is_binary and len(payload) > 4:
-                self.on_tick(self, self._parse_binary(payload))
+                self.on_ticks(self, self._parse_binary(payload))
 
     def _on_open(self, ws):
         if self.on_open:
             return self.on_open(self)
 
-    def _on_reconnect(self):
+    def _on_reconnect(self, attempts_count):
         if self.on_reconnect:
-            return self.on_reconnect(self)
+            return self.on_reconnect(self, attempts_count)
 
     def _on_noreconnect(self):
         if self.on_noreconnect:
