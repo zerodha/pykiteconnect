@@ -645,11 +645,8 @@ class KiteConnect(object):
                         return
 
                 # native Kite errors
-                exp = getattr(ex, data["error_type"])
-                if exp:
-                    raise(exp(data["message"], code=r.status_code))
-                else:
-                    raise(ex.GeneralException(data["message"], code=r.status_code))
+                exp = getattr(ex, data["error_type"], ex.GeneralException)
+                raise exp(data["message"], code=r.status_code)
 
             return data["data"]
         elif "csv" in r.headers["content-type"]:
