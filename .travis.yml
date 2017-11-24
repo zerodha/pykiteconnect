@@ -15,6 +15,8 @@ install:
   - pip install codecov
   - pip install -e .
   - pip install -r dev_requirements.txt
+# script run flake8
+before_script: flake8 . --exclude=examples
 # command to run tests
 script:
   - py.test --cov=./
