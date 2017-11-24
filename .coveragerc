@@ -7,5 +7,7 @@ exclude_lines =
     pragma: no cover
 ignore_errors = True
 omit =
+    examples/*
     tests/*
+    test*.py
     setup.py
