@@ -75,12 +75,11 @@ class KiteConnect(object):
 
         "orders": "/orders",
         "trades": "/trades",
-        "orders.info": "/orders/{order_id}",
-
-        "orders.place": "/orders/{variety}",
-        "orders.modify": "/orders/{variety}/{order_id}",
-        "orders.cancel": "/orders/{variety}/{order_id}",
-        "orders.trades": "/orders/{order_id}/trades",
+        "order.info": "/orders/{order_id}",
+        "order.place": "/orders/{variety}",
+        "order.modify": "/orders/{variety}/{order_id}",
+        "order.cancel": "/orders/{variety}/{order_id}",
+        "order.trades": "/orders/{order_id}/trades",
 
         "portfolio.positions": "/portfolio/positions",
         "portfolio.holdings": "/portfolio/holdings",
@@ -271,7 +270,7 @@ class KiteConnect(object):
             if params[k] is None:
                 del(params[k])
 
-        return self._post("orders.place", params)["order_id"]
+        return self._post("order.place", params)["order_id"]
 
     def modify_order(self,
                      order_id,
@@ -295,11 +294,11 @@ class KiteConnect(object):
             if params[k] is None:
                 del(params[k])
 
-        return self._put("orders.modify", params)["order_id"]
+        return self._put("order.modify", params)["order_id"]
 
     def cancel_order(self, order_id, variety="regular", parent_order_id=None):
         """Cancel an order."""
-        return self._delete("orders.cancel", {
+        return self._delete("order.cancel", {
             "order_id": order_id,
             "variety": variety,
             "parent_order_id": parent_order_id
@@ -313,7 +312,7 @@ class KiteConnect(object):
     def orders(self, order_id=None):
         """Get the collection of orders from the orderbook."""
         if order_id:
-            return self._get("orders.info", {"order_id": order_id})
+            return self._get("order.info", {"order_id": order_id})
         else:
             return self._get("orders")
 
@@ -328,7 +327,7 @@ class KiteConnect(object):
         If no `order_id` is specified, all trades for the day are returned.
         """
         if order_id:
-            return self._get("orders.trades", {"order_id": order_id})
+            return self._get("order.trades", {"order_id": order_id})
         else:
             return self._get("trades")
 
