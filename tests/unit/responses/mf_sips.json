@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "data": [{
+    "sip_id": "1234",
+    "tradingsymbol": "INF090I01239",
+    "fund": "Franklin India Prima Plus",
+    "dividend_type": "growth",
+    "transaction_type": "BUY",
+    "status": "ACTIVE",
+    "created": "2016-01-01 13:00:00",
+    "frequency": "monthly",
+    "instalment_amount": 1000,
+    "instalments": -1,
+    "last_instalment": "2017-07-05 07:33:32",
+    "pending_instalments": -1,
+    "instalment_date": 5,
+    "tag": ""
+  }]
+}

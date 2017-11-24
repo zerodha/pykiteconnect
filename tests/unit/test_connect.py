@@ -99,3 +99,79 @@ def test_trades(kiteconnect):
     )
     trades = kiteconnect.trades()
     assert type(trades) == list
+@responses.activate
+def test_mf_orders(kiteconnect):
+    """Test mf orders get."""
+    responses.add(
+        responses.GET,
+        "%s%s" % (kiteconnect.root, kiteconnect._routes["mf.orders"]),
+        body=open(fp("responses/mf_orders.json"), "r").read(),
+        content_type="application/json"
+    )
+    trades = kiteconnect.mf_orders()
+    assert type(trades) == list
+
+
+@responses.activate
+def test_mf_individual_order(kiteconnect):
+    """Test mf orders get."""
+    responses.add(
+        responses.GET,
+        "%s%s/%s" % (kiteconnect.root, kiteconnect._routes["mf.orders"], "abc123"),
+        body=open(fp("responses/mf_individual_order.json"), "r").read(),
+        content_type="application/json"
+    )
+    trades = kiteconnect.mf_orders(order_id="abc123")
+    assert type(trades) == dict
+
+
+@responses.activate
+def test_mf_sips(kiteconnect):
+    """Test mf sips get."""
+    responses.add(
+        responses.GET,
+        "%s%s" % (kiteconnect.root, kiteconnect._routes["mf.sips"]),
+        body=open(fp("responses/mf_sips.json"), "r").read(),
+        content_type="application/json"
+    )
+    trades = kiteconnect.mf_sips()
+    assert type(trades) == list
+
+
+@responses.activate
+def test_mf_individual_sip(kiteconnect):
+    """Test mf sips get."""
+    responses.add(
+        responses.GET,
+        "%s%s/%s" % (kiteconnect.root, kiteconnect._routes["mf.sips"], "abc123"),
+        body=open(fp("responses/mf_individual_sip.json"), "r").read(),
+        content_type="application/json"
+    )
+    trades = kiteconnect.mf_sips(sip_id="abc123")
+    assert type(trades) == dict
+
+
+@responses.activate
+def test_mf_holdings(kiteconnect):
+    """Test mf holdings."""
+    responses.add(
+        responses.GET,
+        "%s%s" % (kiteconnect.root, kiteconnect._routes["mf.holdings"]),
+        body=open(fp("responses/mf_holdings.json"), "r").read(),
+        content_type="application/json"
+    )
+    trades = kiteconnect.mf_holdings()
+    assert type(trades) == list
+
+
+@responses.activate
+def test_mf_instruments(kiteconnect):
+    """Test mf instruments fetch."""
+    responses.add(
+        responses.GET,
+        "%s%s" % (kiteconnect.root, kiteconnect._routes["mf.instruments"]),
+        body=open(fp("responses/mf_instruments.csv"), "r").read(),
+        content_type="text/csv"
+    )
+    trades = kiteconnect.mf_instruments()
+    assert type(trades) == list
