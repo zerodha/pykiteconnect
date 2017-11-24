@@ -14,7 +14,7 @@ def test_wrong_json_response(kiteconnect):
         content_type="application/json"
     )
     with pytest.raises(ex.DataException) as exc:
-        positions = kiteconnect.positions()
+        kiteconnect.positions()
         assert exc.message == "Couldn't parse the JSON response "\
             "received from the server: {a:b}"
 
@@ -29,7 +29,7 @@ def test_wrong_content_type(kiteconnect):
         content_type="application/rdf+xml"
     )
     with pytest.raises(ex.DataException) as exc:
-        positions = kiteconnect.positions()
+        kiteconnect.positions()
         assert exc.message == "Unknown Content-Type ({content_type}) with response: ({content})".format(
             content_type='application/rdf+xml',
             content=rdf_data
@@ -52,5 +52,5 @@ def test_native_exceptions(error_type, message, kiteconnect):
         content_type="application/json"
     )
     with pytest.raises(getattr(ex, error_type, ex.GeneralException)) as exc:
-        positions = kiteconnect.positions()
+        kiteconnect.positions()
         assert exc.message == message
