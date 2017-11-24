@@ -40,18 +40,42 @@ def test_margins_segmentwise(kiteconnect):
 
 
 def test_orders(kiteconnect):
-    """Test holdiogs."""
+    """Test orders get."""
     orders = kiteconnect.orders()
     assert type(orders) == list
 
 
 def test_order_get(kiteconnect):
-    """Test holdiogs."""
+    """Test individual order get."""
     orders = kiteconnect.orders()
     assert type(orders) == list
 
 
 def test_trades(kiteconnect):
-    """Test holdiogs."""
+    """Test trades."""
     trades = kiteconnect.trades()
+    assert type(trades) == list
+
+
+def test_mf_orders(kiteconnect):
+    """Test mf orders get."""
+    trades = kiteconnect.mf_orders()
+    assert type(trades) == list
+
+
+def test_mf_sips(kiteconnect):
+    """Test mf sips get."""
+    trades = kiteconnect.mf_sips()
+    assert type(trades) == list
+
+
+def test_mf_holdings(kiteconnect):
+    """Test mf holdings."""
+    trades = kiteconnect.mf_holdings()
+    assert type(trades) == list
+
+
+def test_mf_instruments(kiteconnect):
+    """Test mf instruments fetch."""
+    trades = kiteconnect.mf_instruments()
     assert type(trades) == list
