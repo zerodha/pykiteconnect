@@ -19,7 +19,7 @@ def test_positions(kiteconnect):
     """Test positions."""
     responses.add(
         responses.GET,
-        "%s%s" % (kiteconnect.root, kiteconnect._routes["portfolio.positions"]),
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["portfolio.positions"]),
         body=open(fp("responses/positions.json"), "r").read(),
         content_type="application/json"
     )
@@ -34,7 +34,7 @@ def test_holdings(kiteconnect):
     """Test holdings."""
     responses.add(
         responses.GET,
-        "%s%s" % (kiteconnect.root, kiteconnect._routes["portfolio.holdings"]),
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["portfolio.holdings"]),
         body=open(fp("responses/holdings.json"), "r").read(),
         content_type="application/json"
     )
@@ -47,7 +47,7 @@ def test_margins(kiteconnect):
     """Test margins."""
     responses.add(
         responses.GET,
-        "%s%s" % (kiteconnect.root, kiteconnect._routes["user.margins"]),
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["user.margins"]),
         body=open(fp("responses/margins.json"), "r").read(),
         content_type="application/json"
     )
@@ -62,7 +62,7 @@ def test_margins_segmentwise(kiteconnect):
     """Test margins for individual segments."""
     responses.add(
         responses.GET,
-        "%s%s" % (
+        "{0}{1}".format(
             kiteconnect.root,
             kiteconnect._routes["user.margins.segment"].format(
                 segment=kiteconnect.MARGIN_COMMODITY
@@ -80,7 +80,7 @@ def test_orders(kiteconnect):
     """Test orders."""
     responses.add(
         responses.GET,
-        "%s%s" % (kiteconnect.root, kiteconnect._routes["orders"]),
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["orders"]),
         body=open(fp("responses/orders.json"), "r").read(),
         content_type="application/json"
     )
@@ -93,7 +93,7 @@ def test_trades(kiteconnect):
     """Test trades."""
     responses.add(
         responses.GET,
-        "%s%s" % (kiteconnect.root, kiteconnect._routes["trades"]),
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["trades"]),
         body=open(fp("responses/trades.json"), "r").read(),
         content_type="application/json"
     )
@@ -106,7 +106,7 @@ def test_instruments(kiteconnect):
     """Test mf instruments fetch."""
     responses.add(
         responses.GET,
-        "%s%s" % (kiteconnect.root, kiteconnect._routes["market.instruments.all"]),
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["market.instruments.all"]),
         body=open(fp("responses/instruments_all.csv"), "r").read(),
         content_type="text/csv"
     )
@@ -115,11 +115,12 @@ def test_instruments(kiteconnect):
 
 
 @responses.activate
+@responses.activate
 def test_mf_orders(kiteconnect):
     """Test mf orders get."""
     responses.add(
         responses.GET,
-        "%s%s" % (kiteconnect.root, kiteconnect._routes["mf.orders"]),
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["mf.orders"]),
         body=open(fp("responses/mf_orders.json"), "r").read(),
         content_type="application/json"
     )
@@ -130,9 +131,10 @@ def test_mf_orders(kiteconnect):
 @responses.activate
 def test_mf_individual_order(kiteconnect):
     """Test mf orders get."""
+    url = kiteconnect._routes["mf.order.info"].format(order_id="abc123")
     responses.add(
         responses.GET,
-        "%s%s/%s" % (kiteconnect.root, kiteconnect._routes["mf.orders"], "abc123"),
+        "{0}{1}".format(kiteconnect.root, url),
         body=open(fp("responses/mf_individual_order.json"), "r").read(),
         content_type="application/json"
     )
@@ -145,7 +147,7 @@ def test_mf_sips(kiteconnect):
     """Test mf sips get."""
     responses.add(
         responses.GET,
-        "%s%s" % (kiteconnect.root, kiteconnect._routes["mf.sips"]),
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["mf.sips"]),
         body=open(fp("responses/mf_sips.json"), "r").read(),
         content_type="application/json"
     )
@@ -156,9 +158,10 @@ def test_mf_sips(kiteconnect):
 @responses.activate
 def test_mf_individual_sip(kiteconnect):
     """Test mf sips get."""
+    url = kiteconnect._routes["mf.sip.info"].format(sip_id="abc123")
     responses.add(
         responses.GET,
-        "%s%s/%s" % (kiteconnect.root, kiteconnect._routes["mf.sips"], "abc123"),
+        "{0}{1}".format(kiteconnect.root, url),
         body=open(fp("responses/mf_individual_sip.json"), "r").read(),
         content_type="application/json"
     )
@@ -171,7 +174,7 @@ def test_mf_holdings(kiteconnect):
     """Test mf holdings."""
     responses.add(
         responses.GET,
-        "%s%s" % (kiteconnect.root, kiteconnect._routes["mf.holdings"]),
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["mf.holdings"]),
         body=open(fp("responses/mf_holdings.json"), "r").read(),
         content_type="application/json"
     )
@@ -184,7 +187,7 @@ def test_mf_instruments(kiteconnect):
     """Test mf instruments fetch."""
     responses.add(
         responses.GET,
-        "%s%s" % (kiteconnect.root, kiteconnect._routes["mf.instruments"]),
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["mf.instruments"]),
         body=open(fp("responses/mf_instruments.csv"), "r").read(),
         content_type="text/csv"
     )
