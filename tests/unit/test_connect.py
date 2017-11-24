@@ -99,6 +99,21 @@ def test_trades(kiteconnect):
     )
     trades = kiteconnect.trades()
     assert type(trades) == list
+
+
+@responses.activate
+def test_instruments(kiteconnect):
+    """Test mf instruments fetch."""
+    responses.add(
+        responses.GET,
+        "%s%s" % (kiteconnect.root, kiteconnect._routes["market.instruments.all"]),
+        body=open(fp("responses/instruments_all.csv"), "r").read(),
+        content_type="text/csv"
+    )
+    trades = kiteconnect.instruments()
+    assert type(trades) == list
+
+
 @responses.activate
 def test_mf_orders(kiteconnect):
     """Test mf orders get."""
