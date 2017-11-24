@@ -89,6 +89,20 @@ def test_orders(kiteconnect):
 
 
 @responses.activate
+def test_individual_order(kiteconnect):
+    """Test mf orders get."""
+    url = kiteconnect._routes["order.info"].format(order_id="abc123")
+    responses.add(
+        responses.GET,
+        "{0}{1}".format(kiteconnect.root, url),
+        body=open(fp("responses/individual_order.json"), "r").read(),
+        content_type="application/json"
+    )
+    trades = kiteconnect.orders(order_id="abc123")
+    assert type(trades) == list
+
+
+@responses.activate
 def test_trades(kiteconnect):
     """Test trades."""
     responses.add(
@@ -115,6 +129,19 @@ def test_instruments(kiteconnect):
 
 
 @responses.activate
+def test_instruments_exchangewise(kiteconnect):
+    """Test mf instruments fetch."""
+    responses.add(
+        responses.GET,
+        "{0}{1}".format(kiteconnect.root,
+                        kiteconnect._routes["market.instruments"].format(exchange=kiteconnect.EXCHANGE_NSE)),
+        body=open(fp("responses/instruments_nse.csv"), "r").read(),
+        content_type="text/csv"
+    )
+    trades = kiteconnect.instruments(exchange=kiteconnect.EXCHANGE_NSE)
+    assert type(trades) == list
+
+
 @responses.activate
 def test_mf_orders(kiteconnect):
     """Test mf orders get."""
