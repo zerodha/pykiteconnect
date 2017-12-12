@@ -119,9 +119,7 @@ import websocket
 import kiteconnect.exceptions as ex
 
 # Initialize logger
-logging.basicConfig()
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 
 
 class KiteConnect(object):
