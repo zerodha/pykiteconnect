@@ -173,6 +173,8 @@ class KiteConnect(object):
 		"market.instruments.all": "/instruments",
 		"market.instruments": "/instruments/{exchange}",
 		"market.quote": "/instruments/{exchange}/{tradingsymbol}",
+		"market.quote.ohlc": "/quote/ohlc",
+		"market.quote.ltp": "/quote/ltp",
 		"market.historical": "/instruments/historical/{instrument_token}/{interval}",
 		"market.trigger_range": "/instruments/{exchange}/{tradingsymbol}/trigger_range"
 	}
@@ -499,6 +501,22 @@ class KiteConnect(object):
 	def quote(self, exchange, tradingsymbol):
 		"""Retrieve quote and market depth for an instrument."""
 		return self._get("market.quote", {"exchange": exchange, "tradingsymbol": tradingsymbol})
+
+	def ohlc(self, instruments):
+		"""
+		Retrieve OHLC and market depth for list of instruments.
+
+		- `instruments` is a list of instruments, Instrument are in the format of `tradingsymbol:exchange`. For example NSE:INFY
+		"""
+		return self._get("market.quote.ohlc", {"i": instruments})
+
+	def ltp(self, instruments):
+		"""
+		Retrieve last price for list of instruments.
+
+		- `instruments` is a list of instruments, Instrument are in the format of `tradingsymbol:exchange`. For example NSE:INFY
+		"""
+		return self._get("market.quote.ltp", {"i": instruments})
 
 	def historical(self, instrument_token, from_date, to_date, interval, continuous=False):
 		"""
