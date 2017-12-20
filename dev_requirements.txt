@@ -1,4 +1,5 @@
 pytest
 responses
+codecov
 pytest-cov
 flake8

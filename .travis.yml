@@ -12,11 +12,10 @@ python:
 # command to install dependencies
 install:
   - pip install --upgrade setuptools
-  - pip install codecov
-  - pip install -e .
   - pip install -r dev_requirements.txt
+  - pip install -e .
 # script run flake8
-before_script: flake8 . --exclude=examples
+before_script: flake8
 # command to run tests
 script:
   - py.test --cov=./
