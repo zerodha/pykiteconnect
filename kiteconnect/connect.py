@@ -632,7 +632,7 @@ class KiteConnect(object):
         if "json" in r.headers["content-type"]:
             try:
                 data = json.loads(r.content.decode("utf8"))
-            except:
+            except ValueError:
                 raise ex.DataException("Couldn't parse the JSON response received from the server: {content}".format(
                     content=r.content))
 

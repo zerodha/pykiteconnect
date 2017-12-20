@@ -1,3 +1,4 @@
 pytest
 responses
 pytest-cov
+flake8

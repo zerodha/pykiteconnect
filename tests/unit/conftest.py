@@ -3,7 +3,6 @@
 """Pytest config."""
 import os
 import pytest
-import responses
 from kiteconnect import KiteConnect
 
 

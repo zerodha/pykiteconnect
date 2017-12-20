@@ -37,7 +37,7 @@ class TestKiteConnectObject:
             status=403
         )
         with pytest.raises(ex.TokenException) as exc:
-            positions = kiteconnect.positions()
+            kiteconnect.positions()
             assert exc.message == "token expired it seems! please login again"
 
     def test_set_access_token_meth(self, kiteconnect):
