@@ -575,7 +575,7 @@ class KiteTicker(object):
             self.close(reason="Error while setting mode: {}".format(str(e)))
             raise
 
-    def _resubscribe(self):
+    def resubscribe(self):
         """Resubscribe to all current subscribed tokens."""
         modes = {}
 
@@ -625,7 +625,7 @@ class KiteTicker(object):
 
         # Resubscribe if its reconnect
         if not self._is_first_connect:
-            self._resubscribe()
+            self.resubscribe()
 
         # Set first connect to false once its connected first time
         self._is_first_connect = False
