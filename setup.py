@@ -40,5 +40,8 @@ setup(
     install_requires=["requests", "six", "autobahn", "Twisted", "pyOpenSSL", "service-identity", "enum34"],
     tests_require=["pytest", "responses", "pytest-cov"],
     test_suite="tests",
-    setup_requires=["pytest-runner"]
+    setup_requires=["pytest-runner"],
+    extras_require={
+        "doc": ["pdoc"]
+    }
 )
