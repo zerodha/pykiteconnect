@@ -1,0 +1,49 @@
+- Historical data accepts datetime object for from and to date
+- User agent is sent with all the requests
+- Added `ohlc` method
+- Added `ltp` method
+- Added `disable_ssl` param to skip SSL verification for api call
+- Added `segment` param to margins to optionally fetch margins segmentwise (Like `equity` and `commodity`)
+- Added `exit_order` alias method for CO/BO order exit/leg order cancellation
+- Added constants for products, order type, variety, transaction type, validity, exchange and margin segments
+- Renamed: `historical`  	  => 	`historical_data`
+- Renamed: `order_place` 	  => 	`place_order`
+- Renamed: `order_modify` 	  => 	`modify_order`
+- Renamed: `order_cancel` 	  => 	`cancel_order`
+- Renamed: `product_modify`   => 	`convert_position`
+- Renamed: `mf_order_place`   => 	`place_mf_order`
+- Renamed: `mf_order_cancel`  => 	`cancel_mf_order`
+- Renamed: `mf_sip_place` 	  => 	`place_mf_sip`
+- Renamed: `mf_sip_modify` 	  => 	`modify_mf_sip`
+- Renamed: `mf_sip_cancel` 	  => 	`cancel_mf_sip`
+- Deprecated unnecessary exceptions: UserException, ClientNetworkException, TwoFAException
+- All client network related exceptions raised are python requests exceptions instead of deprecated `ClientNetworkException`. Check Python requests docs on available exceptions - http://docs.python-requests.org/en/master/_modules/requests/exceptions/
+
+- Underlying WebSocket library is replaced with Autohbahn Python client (Supports 2,7+, 3.3+)
+- Renamed: `WebSocket` to `KiteTicker`
+- Changes to `KiteTicker` init method
+	- `reconnect` is enabled by default (Auto reconnectoion)
+	- Deprecate: `reconnect_interval` is deprecated for option `reconnect_max_delay`
+	- Add: `reconnect_max_delay` to controll maximum delay between the retries. Defaults to 60 seconds and it can't be set to lower than 5 seconds.
+	- Renamed: `reconnect_tries` to `reconnect_max_tries`. Defaults to 50 and it can't be set to higher than 300.
+	- Add: `debug` to enable debug mode.
+- Auto reconnect uses exponential backoff alogrithm instead of fixed reconnect interval (https://en.wikipedia.org/wiki/Exponential_backoff)
+- Deprecate methods `enable_reconnect`, `disable_reconnect` and `reconnect`
+- Callbacks
+    - `on_ticks(ws, ticks)` -  Triggered when ticks are recevied.
+        - `ticks` - List of `tick` object. Check below for sample structure.
+    - `on_close(ws, code, reason)` -  Triggered when connection is closed.
+        - `code` - WebSocket standard close event code (https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent)
+        - `reason` - DOMString indicating the reason the server closed the connection
+    - `on_error(ws, code, reason)` -  Triggered when connection is closed with an error.
+        - `code` - WebSocket standard close event code (https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent)
+        - `reason` - DOMString indicating the reason the server closed the connection
+    - `on_connect` -  Triggered when connection is established successfully.
+        - `response` - Response received from server on successful connection.
+    - `on_message(ws, payload, is_binary)` -  Triggered when message is received from the server.
+        - `payload` - Raw response from the server (either text or binary).
+        - `is_binary` - Bool to check if response is binary type.
+    - `on_reconnect(ws, attempts_count)` -  Triggered when auto reconnection is attempted.
+        - `attempts_count` - Current reconnect attempt number.
+    - `on_noreconnect(ws)` -  Triggered when number of auto reconnection attempts exceeds `reconnect_tries`.
+
