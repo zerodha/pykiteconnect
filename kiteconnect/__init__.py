@@ -106,7 +106,8 @@ it raises aptly named **[exceptions](exceptions.m.html)** that you can catch.
 
 from __future__ import unicode_literals, absolute_import
 
+import exceptions
 from .connect import KiteConnect
 from .ticker import KiteTicker
 
-__all__ = ["KiteConnect", "KiteTicker"]
+__all__ = ["KiteConnect", "KiteTicker", "exceptions"]
