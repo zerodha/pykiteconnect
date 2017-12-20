@@ -3,3 +3,4 @@ responses
 codecov
 pytest-cov
 flake8
+mock

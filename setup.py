@@ -38,7 +38,7 @@ setup(
         "Topic :: Software Development :: Libraries"
     ],
     install_requires=["requests", "six", "autobahn", "Twisted", "pyOpenSSL", "service-identity", "enum34"],
-    tests_require=["pytest", "responses", "pytest-cov"],
+    tests_require=["pytest", "responses", "pytest-cov", "mock"],
     test_suite="tests",
     setup_requires=["pytest-runner"],
     extras_require={
