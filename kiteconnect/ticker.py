@@ -4,6 +4,7 @@ import json
 import struct
 import logging
 import threading
+from datetime import datetime
 from twisted.internet import reactor, ssl
 from twisted.python import log as twisted_log
 from twisted.internet.protocol import ReconnectingClientFactory
@@ -210,7 +211,7 @@ class KiteTicker(object):
         logging.basicConfig(level=logging.DEBUG)
 
         # Initialise
-        kws = KiteTicker("your_api_key", "your_public_token", "logged_in_user_id")
+        kws = KiteTicker("your_api_key", "your_access_token", "logged_in_user_id")
 
         def on_ticks(ws, ticks):
             # Callback to receive ticks.
@@ -381,15 +382,15 @@ class KiteTicker(object):
     # Maximum number or retries user can set
     _maximum_reconnect_max_tries = 300
 
-    def __init__(self, api_key, public_token, user_id, debug=False, root=None,
+    def __init__(self, api_key, access_token, user_id, debug=False, root=None,
                  reconnect=True, reconnect_max_tries=RECONNECT_MAX_TRIES, reconnect_max_delay=RECONNECT_MAX_DELAY,
                  connect_timeout=CONNECT_TIMEOUT):
         """
         Initialise websocket client instance.
 
         - `api_key` is the API key issued to you
-        - `public_token` is the token obtained after the login flow in
-            exchange for the `request_token` . Pre-login, this will default to None,
+        - `access_token` is the token obtained after the login flow in
+            exchange for the `request_token`. Pre-login, this will default to None,
             but once you have obtained it, you should
             persist it in a database or session to pass
             to the Kite Connect class initialisation for subsequent requests.
@@ -422,10 +423,10 @@ class KiteTicker(object):
         self.connect_timeout = connect_timeout
 
         self.socket_url = "{root}?api_key={api_key}&user_id={user_id}"\
-            "&public_token={public_token}".format(
+            "&access_token={access_token}".format(
                 root=self.root,
                 api_key=api_key,
-                public_token=public_token,
+                access_token=access_token,
                 user_id=user_id
             )
 
@@ -682,7 +683,7 @@ class KiteTicker(object):
 
                 data.append(d)
             # Quote and full mode
-            elif len(packet) == 44 or len(packet) == 164:
+            elif len(packet) == 44 or len(packet) == 184:
                 mode = self.MODE_QUOTE if len(packet) == 44 else self.MODE_FULL
 
                 d = {
@@ -708,21 +709,37 @@ class KiteTicker(object):
                 if(d["ohlc"]["close"] != 0):
                     d["change"] = (d["last_price"] - d["ohlc"]["close"]) * 100 / d["ohlc"]["close"]
 
-                if len(packet) == 164:
+                # Parse full mode
+                if len(packet) == 184:
+                    try:
+                        last_trade_time = datetime.fromtimestamp(self._unpack_int(packet, 44, 48))
+                    except TypeError:
+                        last_trade_time = None
+
+                    try:
+                        timestamp = datetime.fromtimestamp(self._unpack_int(packet, 60, 64))
+                    except TypeError:
+                        timestamp = None
+
+                    d["last_trade_time"] = last_trade_time
+                    d["oi"] = self._unpack_int(packet, 48, 52)
+                    d["oi_high"] = self._unpack_int(packet, 52, 56)
+                    d["oi_low"] = self._unpack_int(packet, 56, 60)
+                    d["timestamp"] = timestamp
+
                     # Market depth entries.
                     depth = {
                         "buy": [],
                         "sell": []
                     }
 
-                    if len(packet) > 44:
-                        # Compile the market depth lists.
-                        for i, p in enumerate(range(44, len(packet), 12)):
-                            depth["sell" if i >= 5 else "buy"].append({
-                                "quantity": self._unpack_int(packet, p, p + 4),
-                                "price": self._unpack_int(packet, p + 4, p + 8) / divisor,
-                                "orders": self._unpack_int(packet, p + 8, p + 12)
-                            })
+                    # Compile the market depth lists.
+                    for i, p in enumerate(range(64, len(packet), 12)):
+                        depth["sell" if i >= 5 else "buy"].append({
+                            "quantity": self._unpack_int(packet, p, p + 4),
+                            "price": self._unpack_int(packet, p + 4, p + 8) / divisor,
+                            "orders": self._unpack_int(packet, p + 8, p + 12)
+                        })
 
                     d["depth"] = depth
 
