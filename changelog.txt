@@ -20,6 +20,7 @@
 - All client network related exceptions raised are python requests exceptions instead of deprecated `ClientNetworkException`. Check Python requests docs on available exceptions - http://docs.python-requests.org/en/master/_modules/requests/exceptions/
 
 - Underlying WebSocket library is replaced with Autohbahn Python client (Supports 2,7+, 3.3+)
+- `public_token` is replaced with `access_token`
 - Renamed: `WebSocket` to `KiteTicker`
 - Changes to `KiteTicker` init method
 	- `reconnect` is enabled by default (Auto reconnectoion)
