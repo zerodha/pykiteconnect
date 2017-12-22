@@ -32,6 +32,8 @@ class KiteConnect(object):
     PRODUCT_MIS = "MIS"
     PRODUCT_CNC = "CNC"
     PRODUCT_NRML = "NRML"
+    PRODUCT_CO = "CO"
+    PRODUCT_BO = "BO"
 
     # Order types
     ORDER_TYPE_MARKET = "MARKET"
