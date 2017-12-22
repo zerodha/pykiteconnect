@@ -642,8 +642,8 @@ class KiteConnect(object):
             if data.get("error_type"):
                 # Call session hook if its registered and TokenException is raised
                 if self.session_expiry_hook and r.status_code == 403 and data["error_type"] == "TokenException":
-                        self.session_expiry_hook()
-                        return
+                    self.session_expiry_hook()
+                    return
 
                 # native Kite errors
                 exp = getattr(ex, data["error_type"], ex.GeneralException)
