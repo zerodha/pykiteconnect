@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
-"""Exceptions raised by the Kite Connect client."""
+"""
+    exceptions.py
+
+    Exceptions raised by the Kite Connect client.
+
+    :copyright: (c) 2017 by Zerodha Technology.
+    :license: see LICENSE for details.
+"""
 
 
 class KiteException(Exception):

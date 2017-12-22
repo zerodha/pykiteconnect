@@ -1,5 +1,12 @@
-# coding: utf-8
+# -*- coding: utf-8 -*-
+"""
+    connect.py
 
+    API wrapper for Kite Connect REST APIs.
+
+    :copyright: (c) 2017 by Zerodha Technology.
+    :license: see LICENSE for details.
+"""
 from six import StringIO, PY2
 from six.moves.urllib.parse import urljoin
 import csv
