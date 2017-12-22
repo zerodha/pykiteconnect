@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*-
+"""
+    ticker.py
+
+    Websocket implementation for kite ticker
+
+    :copyright: (c) 2017 by Zerodha Technology.
+    :license: see LICENSE for details.
+"""
 import sys
 import time
 import json
