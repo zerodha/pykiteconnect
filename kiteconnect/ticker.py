@@ -661,11 +661,13 @@ class KiteTicker(object):
                     "instrument_token": instrument_token,
                     "last_price": self._unpack_int(packet, 4, 8) / divisor
                 })
-            # Indices quote call
-            elif len(packet) == 28:
+            # Indices quote and full mode
+            elif len(packet) == 28 or len(packet) == 32:
+                mode = self.MODE_QUOTE if len(packet) == 28 else self.MODE_FULL
+
                 d = {
                     "tradeable": tradeable,
-                    "mode": self.MODE_QUOTE,
+                    "mode": mode,
                     "instrument_token": instrument_token,
                     "last_price": self._unpack_int(packet, 4, 8) / divisor,
                     "ohlc": {
@@ -680,6 +682,15 @@ class KiteTicker(object):
                 # Compute the change price using close price and last price
                 if(d["ohlc"]["close"] != 0):
                     d["change"] = (d["last_price"] - d["ohlc"]["close"]) * 100 / d["ohlc"]["close"]
+
+                # Full mode with timestamp
+                if len(packet) == 32:
+                    try:
+                        timestamp = datetime.fromtimestamp(self._unpack_int(packet, 28, 32))
+                    except TypeError:
+                        timestamp = None
+
+                    d["timestamp"] = timestamp
 
                 data.append(d)
             # Quote and full mode
