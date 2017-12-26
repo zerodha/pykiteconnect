@@ -253,6 +253,7 @@ class KiteTicker(object):
     - `on_reconnect(ws, attempts_count)` -  Triggered when auto reconnection is attempted.
         - `attempts_count` - Current reconnect attempt number.
     - `on_noreconnect(ws)` -  Triggered when number of auto reconnection attempts exceeds `reconnect_tries`.
+    - `on_order_update(ws, data)` -  Triggered when there is an order update for the connected user.
 
 
     Tick structure (passed to the `on_ticks` callback)
@@ -430,6 +431,7 @@ class KiteTicker(object):
                 user_id=user_id
             )
 
+        # Debug enables logs
         self.debug = debug
 
         # Placeholders for callbacks.
@@ -442,6 +444,10 @@ class KiteTicker(object):
         self.on_reconnect = None
         self.on_noreconnect = None
 
+        # Text message updates
+        self.on_order_update = None
+
+        # List of current subscribed tokens
         self.subscribed_tokens = {}
 
     def _create_connection(self, url, **kwargs):
@@ -615,10 +621,13 @@ class KiteTicker(object):
         if self.on_message:
             self.on_message(self, payload, is_binary)
 
-        if self.on_ticks:
-            # If the message is binary, parse it and send it to the callback.
-            if is_binary and len(payload) > 4:
-                self.on_ticks(self, self._parse_binary(payload))
+        # If the message is binary, parse it and send it to the callback.
+        if self.on_ticks and is_binary and len(payload) > 4:
+            self.on_ticks(self, self._parse_binary(payload))
+
+        # Parse text messages
+        if not is_binary:
+            self._parse_text_message(payload)
 
     def _on_open(self, ws):
         if self.on_open:
@@ -638,6 +647,17 @@ class KiteTicker(object):
     def _on_noreconnect(self):
         if self.on_noreconnect:
             return self.on_noreconnect(self)
+
+    def _parse_text_message(self, payload):
+        """Parse text message."""
+        try:
+            data = json.loads(payload)
+        except ValueError:
+            return
+
+        # Order update callback
+        if self.on_order_update and data.get("type") == "order" and data.get("data"):
+            self.on_order_update(self, data["data"])
 
     def _parse_binary(self, bin):
         """Parse binary data to a (list of) ticks structure."""
