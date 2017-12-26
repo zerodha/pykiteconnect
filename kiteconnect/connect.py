@@ -1,5 +1,12 @@
-# coding: utf-8
+# -*- coding: utf-8 -*-
+"""
+    connect.py
 
+    API wrapper for Kite Connect REST APIs.
+
+    :copyright: (c) 2017 by Zerodha Technology.
+    :license: see LICENSE for details.
+"""
 from six import StringIO, PY2
 from six.moves.urllib.parse import urljoin
 import csv
@@ -642,8 +649,8 @@ class KiteConnect(object):
             if data.get("error_type"):
                 # Call session hook if its registered and TokenException is raised
                 if self.session_expiry_hook and r.status_code == 403 and data["error_type"] == "TokenException":
-                        self.session_expiry_hook()
-                        return
+                    self.session_expiry_hook()
+                    return
 
                 # native Kite errors
                 exp = getattr(ex, data["error_type"], ex.GeneralException)
