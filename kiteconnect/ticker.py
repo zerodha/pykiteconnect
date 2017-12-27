@@ -7,6 +7,7 @@
     :copyright: (c) 2017 by Zerodha Technology.
     :license: see LICENSE for details.
 """
+import six
 import sys
 import time
 import json
@@ -541,7 +542,9 @@ class KiteTicker(object):
         - `instrument_tokens` is list of instrument instrument_tokens to subscribe
         """
         try:
-            self.ws.sendMessage(json.dumps({"a": self._message_subscribe, "v": instrument_tokens}))
+            self.ws.sendMessage(
+                six.b(json.dumps({"a": self._message_subscribe, "v": instrument_tokens}))
+            )
 
             for token in instrument_tokens:
                 self.subscribed_tokens[token] = self.MODE_QUOTE
@@ -558,7 +561,9 @@ class KiteTicker(object):
         - `instrument_tokens` is list of instrument_tokens to unsubscribe.
         """
         try:
-            self.ws.sendMessage(json.dumps({"a": self._message_unsubscribe, "v": instrument_tokens}))
+            self.ws.sendMessage(
+                six.b(json.dumps({"a": self._message_unsubscribe, "v": instrument_tokens}))
+            )
 
             for token in instrument_tokens:
                 try:
@@ -580,7 +585,9 @@ class KiteTicker(object):
         - `instrument_tokens` is list of instrument tokens on which the mode should be applied
         """
         try:
-            self.ws.sendMessage(json.dumps({"a": self._message_setmode, "v": [mode, instrument_tokens]}))
+            self.ws.sendMessage(
+                six.b(json.dumps({"a": self._message_setmode, "v": [mode, instrument_tokens]}))
+            )
 
             # Update modes
             for token in instrument_tokens:
