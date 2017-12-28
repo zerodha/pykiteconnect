@@ -120,16 +120,12 @@ class KiteConnect(object):
         "market.quote.ltp": "/quote/ltp",
     }
 
-    # Public constants
-    BO = "BO"
-
     def __init__(self,
                  api_key,
                  access_token=None,
                  root=None,
                  debug=False,
                  timeout=None,
-                 micro_cache=True,
                  proxies=None,
                  pool=None,
                  disable_ssl=False):
@@ -149,10 +145,6 @@ class KiteConnect(object):
         and responses to stdout.
         - `timeout` is the time (seconds) for which the API client will wait for
         a request to complete before it fails. Defaults to 7 seconds
-        - `micro_cache`, when set to True, will fetch the last cached
-        version of an API response if available. This saves time on
-        a roundtrip to the backend. Micro caches only live for several
-        seconds to prevent data from turning stale.
         - `proxies` to set requests proxy.
         Check [python requests documentation](http://docs.python-requests.org/en/master/user/advanced/#proxies) for usage and examples.
         - `pool` is manages request pools. It takes a dict of params accepted by HTTPAdapter as described here http://docs.python-requests.org/en/master/api/
@@ -162,7 +154,6 @@ class KiteConnect(object):
         self.debug = debug
         self.api_key = api_key
         self.session_expiry_hook = None
-        self.micro_cache = micro_cache
         self.disable_ssl = disable_ssl
         self.access_token = access_token
         self.proxies = proxies if proxies else {}
@@ -327,7 +318,7 @@ class KiteConnect(object):
 
     def trades(self, order_id=None):
         """
-        Retreive the list of trades executed (all or ones under a particular order).
+        Retrieve the list of trades executed (all or ones under a particular order).
 
         An order can be executed in tranches based on market conditions.
         These trades are individually recorded under an order.
@@ -421,10 +412,10 @@ class KiteConnect(object):
 
     def modify_mf_sip(self,
                       sip_id,
-                      amount,
-                      status,
-                      instalments,
-                      frequency,
+                      amount=None,
+                      status=None,
+                      instalments=None,
+                      frequency=None,
                       instalment_day=None):
         """Modify a mutual fund SIP."""
         return self._put("mf.sip.modify", {
@@ -460,9 +451,9 @@ class KiteConnect(object):
         if exchange:
             params = {"exchange": exchange}
 
-            return self._parse_csv(self._get("market.instruments", params))
+            return self._parse_instruments(self._get("market.instruments", params))
         else:
-            return self._parse_csv(self._get("market.instruments.all"))
+            return self._parse_instruments(self._get("market.instruments.all"))
 
     def quote(self, exchange, tradingsymbol):
         """
@@ -542,7 +533,7 @@ class KiteConnect(object):
             "transaction_type": transaction_type
         })
 
-    def _parse_csv(self, data):
+    def _parse_instruments(self, data):
         # decode to string for Python 3
         d = data
         if not PY2:
