@@ -1,9 +1,9 @@
 # coding: utf-8
-import responses
 import pytest
+import responses
 import kiteconnect.exceptions as ex
 
-from .conftest import fp
+import utils
 
 
 def test_set_access_token(kiteconnect):
@@ -20,7 +20,7 @@ def test_positions(kiteconnect):
     responses.add(
         responses.GET,
         "{0}{1}".format(kiteconnect.root, kiteconnect._routes["portfolio.positions"]),
-        body=open(fp("responses/positions.json"), "r").read(),
+        body=utils.get_response("portfolio.positions"),
         content_type="application/json"
     )
     positions = kiteconnect.positions()
@@ -35,7 +35,7 @@ def test_holdings(kiteconnect):
     responses.add(
         responses.GET,
         "{0}{1}".format(kiteconnect.root, kiteconnect._routes["portfolio.holdings"]),
-        body=open(fp("responses/holdings.json"), "r").read(),
+        body=utils.get_response("portfolio.holdings"),
         content_type="application/json"
     )
     holdings = kiteconnect.holdings()
@@ -48,7 +48,7 @@ def test_margins(kiteconnect):
     responses.add(
         responses.GET,
         "{0}{1}".format(kiteconnect.root, kiteconnect._routes["user.margins"]),
-        body=open(fp("responses/margins.json"), "r").read(),
+        body=utils.get_response("user.margins"),
         content_type="application/json"
     )
     margins = kiteconnect.margins()
@@ -68,7 +68,7 @@ def test_margins_segmentwise(kiteconnect):
                 segment=kiteconnect.MARGIN_COMMODITY
             )
         ),
-        body=open(fp("responses/margins.json"), "r").read(),
+        body=utils.get_response("user.margins.segment"),
         content_type="application/json"
     )
     commodity = kiteconnect.margins(segment=kiteconnect.MARGIN_COMMODITY)
@@ -81,7 +81,7 @@ def test_orders(kiteconnect):
     responses.add(
         responses.GET,
         "{0}{1}".format(kiteconnect.root, kiteconnect._routes["orders"]),
-        body=open(fp("responses/orders.json"), "r").read(),
+        body=utils.get_response("orders"),
         content_type="application/json"
     )
     orders = kiteconnect.orders()
@@ -95,7 +95,7 @@ def test_individual_order(kiteconnect):
     responses.add(
         responses.GET,
         "{0}{1}".format(kiteconnect.root, url),
-        body=open(fp("responses/individual_order.json"), "r").read(),
+        body=utils.get_response("order.info"),
         content_type="application/json"
     )
     trades = kiteconnect.orders(order_id="abc123")
@@ -108,7 +108,7 @@ def test_trades(kiteconnect):
     responses.add(
         responses.GET,
         "{0}{1}".format(kiteconnect.root, kiteconnect._routes["trades"]),
-        body=open(fp("responses/trades.json"), "r").read(),
+        body=utils.get_response("trades"),
         content_type="application/json"
     )
     trades = kiteconnect.trades()
@@ -121,7 +121,7 @@ def test_instruments(kiteconnect):
     responses.add(
         responses.GET,
         "{0}{1}".format(kiteconnect.root, kiteconnect._routes["market.instruments.all"]),
-        body=open(fp("responses/instruments_all.csv"), "r").read(),
+        body=utils.get_response("market.instruments.all"),
         content_type="text/csv"
     )
     trades = kiteconnect.instruments()
@@ -135,7 +135,7 @@ def test_instruments_exchangewise(kiteconnect):
         responses.GET,
         "{0}{1}".format(kiteconnect.root,
                         kiteconnect._routes["market.instruments"].format(exchange=kiteconnect.EXCHANGE_NSE)),
-        body=open(fp("responses/instruments_nse.csv"), "r").read(),
+        body=utils.get_response("market.instruments"),
         content_type="text/csv"
     )
     trades = kiteconnect.instruments(exchange=kiteconnect.EXCHANGE_NSE)
@@ -148,7 +148,7 @@ def test_mf_orders(kiteconnect):
     responses.add(
         responses.GET,
         "{0}{1}".format(kiteconnect.root, kiteconnect._routes["mf.orders"]),
-        body=open(fp("responses/mf_orders.json"), "r").read(),
+        body=utils.get_response("mf.orders"),
         content_type="application/json"
     )
     trades = kiteconnect.mf_orders()
@@ -162,7 +162,7 @@ def test_mf_individual_order(kiteconnect):
     responses.add(
         responses.GET,
         "{0}{1}".format(kiteconnect.root, url),
-        body=open(fp("responses/mf_individual_order.json"), "r").read(),
+        body=utils.get_response("mf.order.info"),
         content_type="application/json"
     )
     trades = kiteconnect.mf_orders(order_id="abc123")
@@ -175,7 +175,7 @@ def test_mf_sips(kiteconnect):
     responses.add(
         responses.GET,
         "{0}{1}".format(kiteconnect.root, kiteconnect._routes["mf.sips"]),
-        body=open(fp("responses/mf_sips.json"), "r").read(),
+        body=utils.get_response("mf.sips"),
         content_type="application/json"
     )
     trades = kiteconnect.mf_sips()
@@ -189,7 +189,7 @@ def test_mf_individual_sip(kiteconnect):
     responses.add(
         responses.GET,
         "{0}{1}".format(kiteconnect.root, url),
-        body=open(fp("responses/mf_individual_sip.json"), "r").read(),
+        body=utils.get_response("mf.sip.info"),
         content_type="application/json"
     )
     trades = kiteconnect.mf_sips(sip_id="abc123")
@@ -202,7 +202,7 @@ def test_mf_holdings(kiteconnect):
     responses.add(
         responses.GET,
         "{0}{1}".format(kiteconnect.root, kiteconnect._routes["mf.holdings"]),
-        body=open(fp("responses/mf_holdings.json"), "r").read(),
+        body=utils.get_response("mf.holdings"),
         content_type="application/json"
     )
     trades = kiteconnect.mf_holdings()
@@ -215,7 +215,7 @@ def test_mf_instruments(kiteconnect):
     responses.add(
         responses.GET,
         "{0}{1}".format(kiteconnect.root, kiteconnect._routes["mf.instruments"]),
-        body=open(fp("responses/mf_instruments.csv"), "r").read(),
+        body=utils.get_response("mf.instruments"),
         content_type="text/csv"
     )
     trades = kiteconnect.mf_instruments()

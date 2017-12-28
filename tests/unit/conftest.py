@@ -2,18 +2,11 @@
 
 """Pytest config."""
 import os
+import sys
 import pytest
 from kiteconnect import KiteConnect, KiteTicker
 
-
-def fp(rel_path):
-    "return the full path of given rel_path"
-    return os.path.abspath(
-        os.path.join(
-            os.path.dirname(__file__),
-            rel_path
-        )
-    )
+sys.path.append(os.path.join(os.path.dirname(__file__), '../helpers'))
 
 
 @pytest.fixture()
