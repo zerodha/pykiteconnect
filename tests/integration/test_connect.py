@@ -1,6 +1,8 @@
 # coding: utf-8
 
+import warnings
 import pytest
+import utils
 import kiteconnect.exceptions as ex
 
 
@@ -17,6 +19,18 @@ def test_positions(kiteconnect):
     assert type(positions) == dict
     assert "day" in positions
     assert "net" in positions
+
+    if len(positions["day"]) > 0:
+        keys = ['day_sell_value', 'day_buy_quantity', 'last_price']
+        utils.assert_dict_keys(positions["day"][0], keys)
+    else:
+        warnings.warn(UserWarning("No day positions. So skipping day positions response keys test."))
+
+    if len(positions["net"]) > 0:
+        keys = ['day_sell_value', 'day_buy_quantity', 'last_price']
+        utils.assert_dict_keys(positions["net"][0], keys)
+    else:
+        warnings.warn(UserWarning("No net positions. So skipping net positions response keys test."))
 
 
 def test_holdings(kiteconnect):
