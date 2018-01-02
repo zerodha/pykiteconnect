@@ -148,7 +148,7 @@ class KiteConnect(object):
         a request to complete before it fails. Defaults to 7 seconds
         - `proxies` to set requests proxy.
         Check [python requests documentation](http://docs.python-requests.org/en/master/user/advanced/#proxies) for usage and examples.
-        - `pool` is manages request pools. It takes a dict of params accepted by HTTPAdapter as described here http://docs.python-requests.org/en/master/api/
+        - `pool` is manages request pools. It takes a dict of params accepted by HTTPAdapter as described here in [python requests documentation](http://docs.python-requests.org/en/master/api/#requests.adapters.HTTPAdapter)
         - `disable_ssl` disables the SSL verification while making a request.
         If set requests won't throw SSLError if its set to custom `root` url without SSL.
         """
