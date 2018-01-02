@@ -252,6 +252,7 @@ class KiteConnect(object):
                     tradingsymbol,
                     transaction_type,
                     quantity,
+                    variety,
                     price=None,
                     product=None,
                     order_type=None,
@@ -261,7 +262,6 @@ class KiteConnect(object):
                     squareoff=None,
                     stoploss=None,
                     trailing_stoploss=None,
-                    variety=VARIETY_REGULAR,
                     tag=None):
         """Place an order."""
         params = locals()
@@ -275,6 +275,7 @@ class KiteConnect(object):
 
     def modify_order(self,
                      order_id,
+                     variety,
                      parent_order_id=None,
                      exchange=None,
                      tradingsymbol=None,
@@ -283,10 +284,9 @@ class KiteConnect(object):
                      price=None,
                      order_type=None,
                      product=None,
-                     trigger_price=0,
-                     validity="DAY",
-                     disclosed_quantity=0,
-                     variety="regular"):
+                     trigger_price=None,
+                     validity=None,
+                     disclosed_quantity=None):
         """Modify an open order."""
         params = locals()
         del(params["self"])
@@ -297,7 +297,7 @@ class KiteConnect(object):
 
         return self._put("order.modify", params)["order_id"]
 
-    def cancel_order(self, order_id, variety="regular", parent_order_id=None):
+    def cancel_order(self, order_id, variety, parent_order_id=None):
         """Cancel an order."""
         return self._delete("order.cancel", {
             "order_id": order_id,
@@ -305,7 +305,7 @@ class KiteConnect(object):
             "parent_order_id": parent_order_id
         })["order_id"]
 
-    def exit_order(self, order_id, variety="regular", parent_order_id=None):
+    def exit_order(self, order_id, variety, parent_order_id=None):
         """Exit a BO/CO order."""
         self.cancel_order(order_id, variety=variety, parent_order_id=parent_order_id)
 
