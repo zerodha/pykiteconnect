@@ -1,5 +1,6 @@
 # coding: utf-8
 import os
+import json
 
 # Mock responses path
 responses_path = {
@@ -56,3 +57,26 @@ def get_json_response(key):
     """Get json mock response based on route."""
     return json.loads(get_response(key))
 
+
+def assert_responses(inp, sample):
+    """Check if all keys given as a list is there in input."""
+    # Type check only if its a list or dict
+    # Issue with checking all types are a float value can be inferred as int and
+    # in some responses it will None instrad of empty string
+    if type(sample) in [list, dict]:
+        assert type(inp) == type(sample)
+
+    # If its a list then just check the first element if its available
+    if type(inp) == list and len(inp) > 0:
+        assert_responses(inp[0], sample[0])
+
+    # If its a dict then iterate individual keys to test
+    if type(inp) == dict:
+        for key in inp.keys():
+            assert_responses(inp[key], sample[key])
+
+
+def merge_dicts(x, y):
+    z = x.copy()
+    z.update(y)
+    return z
