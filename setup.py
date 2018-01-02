@@ -37,7 +37,7 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Software Development :: Libraries"
     ],
-    install_requires=["requests", "six", "autobahn", "Twisted", "pyOpenSSL", "service-identity", "enum34"],
+    install_requires=["requests", "six", "autobahn", "Twisted", "pyOpenSSL", "service-identity", "enum34", "python-dateutil"],
     tests_require=["pytest", "responses", "pytest-cov", "mock", "flake8"],
     test_suite="tests",
     setup_requires=["pytest-runner"],

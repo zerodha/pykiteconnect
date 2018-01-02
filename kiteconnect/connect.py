@@ -11,6 +11,7 @@ from six import StringIO, PY2
 from six.moves.urllib.parse import urljoin
 import csv
 import json
+import dateutil.parser
 import hashlib
 import logging
 import requests
@@ -502,7 +503,7 @@ class KiteConnect(object):
         - `interval` is the candle interval (minute, day, 5 minute etc.)
         - `continuous` is a boolean flag to get continous data for futures and options instruments.
         """
-        date_string_format = "%Y-%m-%d+%H:%M:%S"
+        date_string_format = "%Y-%m-%d %H:%M:%S"
 
         data = self._get("market.historical", {
             "instrument_token": instrument_token,
@@ -512,10 +513,13 @@ class KiteConnect(object):
             "continuous": 1 if continuous else 0
         })
 
+        return self._format_historical(data)
+
+    def _format_historical(self, data):
         records = []
         for d in data["candles"]:
             records.append({
-                "date": d[0],
+                "date": dateutil.parser.parse(d[0]),
                 "open": d[1],
                 "high": d[2],
                 "low": d[3],
