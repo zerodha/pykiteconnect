@@ -10,7 +10,7 @@ responses_path = {
     "orders": "orders.json",
     "trades": "trades.json",
     "order.info": "order_info.json",
-    "order.trades": "",
+    "order.trades": "order_trades.json",
 
     "portfolio.positions": "positions.json",
     "portfolio.holdings": "holdings.json",
@@ -27,17 +27,17 @@ responses_path = {
 
     "market.instruments": "instruments_nse.csv",
     "market.instruments.all": "instruments_all.csv",
-    "market.historical": "",
+    "market.historical": "historical_minute.json",
     "market.trigger_range": "",
 
-    "market.quote": "",
+    "market.quote": "quote.json",
     "market.quote.ohlc": "",
     "market.quote.ltp": ""
 }
 
 
 def full_path(rel_path):
-    """return the full path of given rel_path"""
+    """return the full path of given rel_path."""
     return os.path.abspath(
         os.path.join(
             os.path.dirname(__file__),
@@ -47,12 +47,12 @@ def full_path(rel_path):
 
 
 def get_response(key):
-    """Get mock response based on route"""
+    """Get mock response based on route."""
     path = full_path(responses_path["base"] + responses_path[key])
     return open(path, "r").read()
 
 
-def assert_dict_keys(inp, keys):
-    """Check if all keys given as a list is there in input"""
-    for k in keys:
-        assert k in inp
+def get_json_response(key):
+    """Get json mock response based on route."""
+    return json.loads(get_response(key))
+

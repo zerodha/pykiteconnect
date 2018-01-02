@@ -1,21 +1,19 @@
 {
     "status": "success",
-    "data": [{
-        "trade_id": 159918,
-        "order_id": "151220000000000",
-        "exchange_order_id": "511220371736111",
-
-        "tradingsymbol": "ACC",
+    "data": [
+      {
+        "average_price": 310.7,
         "exchange": "NSE",
-        "instrument_token": "22",
-
-        "transaction_type": "BUY",
-        "product": "MIS",
-        "average_price": 100.98,
-        "quantity": 10,
-
-        "order_timestamp": "2015-12-20 15:01:44",
-        "exchange_timestamp": "2015-12-20 15:01:43"
-
-    }]
-}
+        "exchange_order_id": "1300000001887410",
+        "exchange_timestamp": "2017-12-29 12:02:05",
+        "instrument_token": 779521,
+        "order_id": "171229000724687",
+        "order_timestamp": "12:02:05",
+        "product": "CNC",
+        "quantity": 1,
+        "trade_id": "75894751",
+        "tradingsymbol": "SBIN",
+        "transaction_type": "BUY"
+      }
+    ]
+  }
