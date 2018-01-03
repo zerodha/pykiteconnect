@@ -178,74 +178,42 @@ def test_mf_instruments(kiteconnect):
 # Historical API tests
 ######################
 
-max_interval = {
-    "minute": 30,
-    "hour": 365,
-    "day": 2000,
-
-    "3minute": 90,
-    "5minute": 90,
-    "10minute": 90,
-    "15minute": 180,
-    "30minute": 180,
-    "60minute": 365
-}
-
-
-def historical(kiteconnect, interval):
+@pytest.mark.parametrize("max_interval,candle_interval", [
+    (30, "minute"),
+    (365, "hour"),
+    (2000, "day"),
+    (90, "3minute"),
+    (90, "5minute"),
+    (90, "10minute"),
+    (180, "15minute"),
+    (180, "30minute"),
+    (365, "60minute")
+], ids=[
+    "minute",
+    "hour",
+    "day",
+    "3minute",
+    "5minute",
+    "10minute",
+    "15minute",
+    "30minute",
+    "60minute",
+])
+def test_historical_data_intervals(max_interval, candle_interval, kiteconnect):
+    """Test historical data for each intervals"""
     # Reliance token
     instrument_token = 256265
     to_date = datetime.datetime.now()
-    diff = int(max_interval[interval] / 3)
+    diff = int(max_interval / 3)
 
     from_date = (to_date - datetime.timedelta(days=diff))
 
     # minute data
-    data = kiteconnect.historical_data(instrument_token, from_date, to_date, interval)
+    data = kiteconnect.historical_data(instrument_token, from_date, to_date, candle_interval)
     mock_resp = kiteconnect._format_historical(utils.get_json_response("market.historical")["data"])
     utils.assert_responses(data, mock_resp)
 
     # Max interval
-    from_date = (to_date - datetime.timedelta(days=(max_interval[interval] + 1)))
+    from_date = (to_date - datetime.timedelta(days=(max_interval + 1)))
     with pytest.raises(ex.InputException):
-        kiteconnect.historical_data(instrument_token, from_date, to_date, interval)
-
-
-def test_historical_data_minute(kiteconnect):
-    """Test historical data call."""
-    historical(kiteconnect, "minute")
-
-
-def test_historical_data_3minute(kiteconnect):
-    """Test historical data call."""
-    historical(kiteconnect, "3minute")
-
-
-def test_historical_data_5minute(kiteconnect):
-    """Test historical data call."""
-    historical(kiteconnect, "5minute")
-
-
-def test_historical_data_10minute(kiteconnect):
-    """Test historical data call."""
-    historical(kiteconnect, "10minute")
-
-
-def test_historical_data_15minute(kiteconnect):
-    """Test historical data call."""
-    historical(kiteconnect, "15minute")
-
-
-def test_historical_data_30minute(kiteconnect):
-    """Test historical data call."""
-    historical(kiteconnect, "30minute")
-
-
-def test_historical_data_60minute(kiteconnect):
-    """Test historical data call."""
-    historical(kiteconnect, "60minute")
-
-
-def test_historical_data_day(kiteconnect):
-    """Test historical data call."""
-    historical(kiteconnect, "day")
+        kiteconnect.historical_data(instrument_token, from_date, to_date, candle_interval)
