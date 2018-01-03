@@ -249,4 +249,3 @@ def test_historical_data_60minute(kiteconnect):
 def test_historical_data_day(kiteconnect):
     """Test historical data call."""
     historical(kiteconnect, "day")
-

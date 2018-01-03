@@ -15,6 +15,7 @@ params = {
 
 
 def is_pending_order(status):
+    """Check if the status is pending order status."""
     status = status.upper()
     if ("COMPLETE" in status or "REJECT" in status or "CANCEL" in status):
         return False
@@ -35,7 +36,9 @@ def setup_order_place(kiteconnect,
                       squareoff=None,
                       stoploss=None,
                       trailing_stoploss=None,
-                      tag=None):
+                      tag="itest"):
+    """Place an order with custom fields enabled. Prices are calculated from live ltp and offset based
+    on `price_diff` and `diff_constant`. All BO specific fields prices are diffed by `bo_price_diff`"""
     updated_params = utils.merge_dicts(params, {
         "product": product,
         "variety": variety,
@@ -50,8 +53,9 @@ def setup_order_place(kiteconnect,
     if price or trigger_price:
         symbol = params["exchange"] + ":" + params["tradingsymbol"]
         ltp = kiteconnect.ltp(symbol)
-        diff = ltp[symbol]["last_price"] * diff_constant
 
+        # Subtract last price with diff_constant %
+        diff = ltp[symbol]["last_price"] * diff_constant
         round_off_decimal = diff % price_diff if price_diff > 0 else 0
         base_price = ltp[symbol]["last_price"] - (diff - round_off_decimal)
 
@@ -82,7 +86,7 @@ def setup_order_place(kiteconnect,
 
 
 def cleanup_orders(kiteconnect, order_id=None):
-    """Cleanup all pending orders and exit position for test symbol"""
+    """Cleanup all pending orders and exit position for test symbol."""
     order = kiteconnect.orders(order_id)
     status = order[-1]["status"].upper()
     variety = order[-1]["variety"]
@@ -102,7 +106,8 @@ def cleanup_orders(kiteconnect, order_id=None):
                 p["exchange"] == exchange and
                 p["product"] == product and
                 p["quantity"] != 0 and
-                p["product"] not in [kiteconnect.PRODUCT_BO, kiteconnect.PRODUCT_CO]):
+                    p["product"] not in [kiteconnect.PRODUCT_BO, kiteconnect.PRODUCT_CO]):
+
                 updated_params = {
                     "tradingsymbol": p["tradingsymbol"],
                     "exchange": p["exchange"],
@@ -115,6 +120,7 @@ def cleanup_orders(kiteconnect, order_id=None):
 
                 kiteconnect.place_order(**updated_params)
 
+    # If order is complete and CO/BO order then exit the orde
     if "COMPLETE" in status and variety in [kiteconnect.VARIETY_BO, kiteconnect.VARIETY_CO]:
         orders = kiteconnect.orders()
         leg_order_id = None
@@ -131,6 +137,7 @@ def cleanup_orders(kiteconnect, order_id=None):
 #####################
 
 def test_place_order_market_regular(kiteconnect):
+    """Place regular marker order."""
     updated_params, order_id, order = setup_order_place(
         kiteconnect=kiteconnect,
         product=kiteconnect.PRODUCT_MIS,
@@ -148,6 +155,7 @@ def test_place_order_market_regular(kiteconnect):
 
 
 def test_place_order_limit_regular(kiteconnect):
+    """Place regular limit order."""
     updated_params, order_id, order = setup_order_place(
         kiteconnect=kiteconnect,
         product=kiteconnect.PRODUCT_MIS,
@@ -166,6 +174,7 @@ def test_place_order_limit_regular(kiteconnect):
 
 
 def test_place_order_sl_regular(kiteconnect):
+    """Place regular SL order."""
     updated_params, order_id, order = setup_order_place(
         kiteconnect=kiteconnect,
         product=kiteconnect.PRODUCT_MIS,
@@ -187,6 +196,7 @@ def test_place_order_sl_regular(kiteconnect):
 
 
 def test_place_order_slm_regular(kiteconnect):
+    """Place regular SL-M order."""
     updated_params, order_id, order = setup_order_place(
         kiteconnect=kiteconnect,
         product=kiteconnect.PRODUCT_MIS,
@@ -227,6 +237,7 @@ def test_place_order_tag(kiteconnect):
 
 
 def test_place_order_co_market(kiteconnect):
+    """Place market CO order."""
     updated_params, order_id, order = setup_order_place(
         kiteconnect=kiteconnect,
         product=kiteconnect.PRODUCT_MIS,
@@ -245,6 +256,7 @@ def test_place_order_co_market(kiteconnect):
 
 
 def test_place_order_co_limit(kiteconnect):
+    """Place LIMIT co order."""
     updated_params, order_id, order = setup_order_place(
         kiteconnect=kiteconnect,
         product=kiteconnect.PRODUCT_MIS,
@@ -263,6 +275,7 @@ def test_place_order_co_limit(kiteconnect):
 
 
 def test_place_order_bo_limit(kiteconnect):
+    """Place LIMIT BO order."""
     updated_params, order_id, order = setup_order_place(
         kiteconnect=kiteconnect,
         product=kiteconnect.PRODUCT_MIS,
@@ -283,6 +296,7 @@ def test_place_order_bo_limit(kiteconnect):
 
 
 def test_place_order_bo_sl(kiteconnect):
+    """Place BO SL order."""
     updated_params, order_id, order = setup_order_place(
         kiteconnect=kiteconnect,
         product=kiteconnect.PRODUCT_MIS,
@@ -333,6 +347,7 @@ def setup_order_modify_cancel(kiteconnect, variety):
 
 
 def test_order_cancel_regular(kiteconnect):
+    """Regular order cancel."""
     setup = setup_order_modify_cancel(kiteconnect, kiteconnect.VARIETY_REGULAR)
     if setup:
         updated_params, order_id, order = setup
@@ -354,6 +369,7 @@ def test_order_cancel_regular(kiteconnect):
 
 
 def test_order_modify_limit_regular(kiteconnect):
+    """Modify limit regular."""
     setup = setup_order_modify_cancel(kiteconnect, kiteconnect.VARIETY_REGULAR)
     if setup:
         updated_params, order_id, order = setup
