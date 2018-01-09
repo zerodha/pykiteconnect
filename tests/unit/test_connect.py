@@ -89,7 +89,7 @@ def test_orders(kiteconnect):
 
 
 @responses.activate
-def test_individual_order(kiteconnect):
+def test_order_history(kiteconnect):
     """Test mf orders get."""
     url = kiteconnect._routes["order.info"].format(order_id="abc123")
     responses.add(
@@ -98,7 +98,7 @@ def test_individual_order(kiteconnect):
         body=utils.get_response("order.info"),
         content_type="application/json"
     )
-    trades = kiteconnect.orders(order_id="abc123")
+    trades = kiteconnect.order_history(order_id="abc123")
     assert type(trades) == list
 
 
@@ -112,6 +112,20 @@ def test_trades(kiteconnect):
         content_type="application/json"
     )
     trades = kiteconnect.trades()
+    assert type(trades) == list
+
+
+@responses.activate
+def test_order_trades(kiteconnect):
+    """Test order trades."""
+    url = kiteconnect._routes["order.trades"].format(order_id="abc123")
+    responses.add(
+        responses.GET,
+        "{0}{1}".format(kiteconnect.root, url),
+        body=utils.get_response("trades"),
+        content_type="application/json"
+    )
+    trades = kiteconnect.order_trades(order_id="abc123")
     assert type(trades) == list
 
 
