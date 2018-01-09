@@ -116,7 +116,7 @@ class KiteConnect(object):
         "market.historical": "/instruments/historical/{instrument_token}/{interval}",
         "market.trigger_range": "/instruments/{exchange}/{tradingsymbol}/trigger_range",
 
-        "market.quote": "/instruments/{exchange}/{tradingsymbol}",
+        "market.quote": "/quote",
         "market.quote.ohlc": "/quote/ohlc",
         "market.quote.ltp": "/quote/ltp",
     }
@@ -456,14 +456,13 @@ class KiteConnect(object):
         else:
             return self._parse_instruments(self._get("market.instruments.all"))
 
-    def quote(self, exchange, tradingsymbol):
+    def quote(self, instruments):
         """
-        Retrieve quote and market depth for an instrument.
+        Retrieve quote for list of instruments.
 
-        - `exchange` is instrument exchange
-        - `tradingsymbol` is instrument name
+        - `instruments` is a list of instruments, Instrument are in the format of `tradingsymbol:exchange`. For example NSE:INFY
         """
-        return self._get("market.quote", {"exchange": exchange, "tradingsymbol": tradingsymbol})
+        return self._get("market.quote", {"i": instruments})
 
     def ohlc(self, instruments):
         """
