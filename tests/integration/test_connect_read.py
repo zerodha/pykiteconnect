@@ -79,7 +79,7 @@ def test_orders(kiteconnect):
     # utils.assert_responses(orders, mock_resp)
 
 
-def test_order_info(kiteconnect):
+def test_order_history(kiteconnect):
     """Test individual order get."""
     orders = kiteconnect.orders()
 
@@ -87,7 +87,7 @@ def test_order_info(kiteconnect):
         warnings.warn(UserWarning("Order info: Couldn't perform individual order test since orderbook is empty."))
         return
 
-    order = kiteconnect.orders(order_id=orders[0]["order_id"])
+    order = kiteconnect.order_history(order_id=orders[0]["order_id"])
 
     mock_resp = utils.get_json_response("order.info")["data"]
     utils.assert_responses(order, mock_resp)
@@ -113,7 +113,7 @@ def test_order_trades(kiteconnect):
         warnings.warn(UserWarning("Trades: Couldn't perform individual order test since trades is empty."))
         return
 
-    order_trades = kiteconnect.trades(order_id=trades[0]["order_id"])
+    order_trades = kiteconnect.order_trades(order_id=trades[0]["order_id"])
 
     mock_resp = utils.get_json_response("order.trades")["data"]
     utils.assert_responses(order_trades, mock_resp)
