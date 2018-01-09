@@ -270,7 +270,7 @@ class KiteTicker(object):
     ---------------------------
         [{
             "mode": "quote",
-            "tradeable": True,
+            "tradable": True,
             "instrument_token": 738561,
             "last_price": 957,
             "last_quantity": 100,
@@ -687,12 +687,12 @@ class KiteTicker(object):
             divisor = 10000000.0 if segment == self.EXCHANGE_MAP["cds"] else 100.0
 
             # All indices are not tradable
-            tradeable = False if segment == self.EXCHANGE_MAP["indices"] else True
+            tradable = False if segment == self.EXCHANGE_MAP["indices"] else True
 
             # LTP packets
             if len(packet) == 8:
                 data.append({
-                    "tradeable": tradeable,
+                    "tradable": tradable,
                     "mode": self.MODE_LTP,
                     "instrument_token": instrument_token,
                     "last_price": self._unpack_int(packet, 4, 8) / divisor
@@ -702,7 +702,7 @@ class KiteTicker(object):
                 mode = self.MODE_QUOTE if len(packet) == 28 else self.MODE_FULL
 
                 d = {
-                    "tradeable": tradeable,
+                    "tradable": tradable,
                     "mode": mode,
                     "instrument_token": instrument_token,
                     "last_price": self._unpack_int(packet, 4, 8) / divisor,
@@ -734,7 +734,7 @@ class KiteTicker(object):
                 mode = self.MODE_QUOTE if len(packet) == 44 else self.MODE_FULL
 
                 d = {
-                    "tradeable": True,
+                    "tradable": True,
                     "mode": mode,
                     "instrument_token": instrument_token,
                     "last_price": self._unpack_int(packet, 4, 8) / divisor,
