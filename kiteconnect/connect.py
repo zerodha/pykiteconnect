@@ -111,8 +111,8 @@ class KiteConnect(object):
         "mf.instruments": "/mf/instruments",
 
         "market.instruments.all": "/instruments",
-        "market.margins": "/margins/{segment}",
         "market.instruments": "/instruments/{exchange}",
+        "market.margins": "/margins/{segment}",
         "market.historical": "/instruments/historical/{instrument_token}/{interval}",
         "market.trigger_range": "/instruments/{exchange}/{tradingsymbol}/trigger_range",
 
@@ -322,7 +322,7 @@ class KiteConnect(object):
         """
             return self._get("order.info", {"order_id": order_id})
 
-    def trades(self, order_id=None):
+    def trades(self):
         """
         Retrieve the list of trades executed (all or ones under a particular order).
 
@@ -332,10 +332,16 @@ class KiteConnect(object):
         - `order_id` is the ID of the order (optional) whose trades are to be retrieved.
         If no `order_id` is specified, all trades for the day are returned.
         """
-        if order_id:
+        return self._get("trades")
+
+    def order_trades(self, order_id):
+        """
+        Retrieve the list of trades executed for a particular order.
+
+        - `order_id` is the ID of the order (optional) whose trades are to be retrieved.
+            If no `order_id` is specified, all trades for the day are returned.
+        """
             return self._get("order.trades", {"order_id": order_id})
-        else:
-            return self._get("trades")
 
     def positions(self):
         """Retrieve the list of positions."""
