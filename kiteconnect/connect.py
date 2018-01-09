@@ -310,12 +310,17 @@ class KiteConnect(object):
         self.cancel_order(order_id, variety=variety, parent_order_id=parent_order_id)
 
     # orderbook and tradebook
-    def orders(self, order_id=None):
-        """Get the collection of orders from the orderbook."""
-        if order_id:
+    def orders(self):
+        """Get list of orders."""
+        return self._get("orders")
+
+    def order_history(self, order_id):
+        """
+        Get list of order history.
+
+        - `order_id` is the ID of the order to retrieve order history.
+        """
             return self._get("order.info", {"order_id": order_id})
-        else:
-            return self._get("orders")
 
     def trades(self, order_id=None):
         """
