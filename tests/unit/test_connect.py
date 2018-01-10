@@ -58,6 +58,19 @@ def test_margins(kiteconnect):
 
 
 @responses.activate
+def test_profile(kiteconnect):
+    """Test profile."""
+    responses.add(
+        responses.GET,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["user.profile"]),
+        body=utils.get_response("user.profile"),
+        content_type="application/json"
+    )
+    profile = kiteconnect.profile()
+    assert type(profile) == dict
+
+
+@responses.activate
 def test_margins_segmentwise(kiteconnect):
     """Test margins for individual segments."""
     responses.add(

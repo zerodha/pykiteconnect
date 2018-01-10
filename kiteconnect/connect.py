@@ -77,14 +77,15 @@ class KiteConnect(object):
 
     # URIs to various calls
     _routes = {
-        "parameters": "/parameters",
         "api.validate": "/session/token",
         "api.invalidate": "/session/token",
+        "user.profile": "/user/profile",
         "user.margins": "/user/margins",
         "user.margins.segment": "/user/margins/{segment}",
 
         "orders": "/orders",
         "trades": "/trades",
+
         "order.info": "/orders/{order_id}",
         "order.place": "/orders/{variety}",
         "order.modify": "/orders/{variety}/{order_id}",
@@ -246,6 +247,10 @@ class KiteConnect(object):
         else:
             return self._get("user.margins")
 
+    def profile(self):
+        """Get user profile details."""
+        return self._get("user.profile")
+
     # orders
     def place_order(self,
                     exchange,
@@ -320,7 +325,7 @@ class KiteConnect(object):
 
         - `order_id` is the ID of the order to retrieve order history.
         """
-            return self._get("order.info", {"order_id": order_id})
+        return self._get("order.info", {"order_id": order_id})
 
     def trades(self):
         """
@@ -341,7 +346,7 @@ class KiteConnect(object):
         - `order_id` is the ID of the order (optional) whose trades are to be retrieved.
             If no `order_id` is specified, all trades for the day are returned.
         """
-            return self._get("order.trades", {"order_id": order_id})
+        return self._get("order.trades", {"order_id": order_id})
 
     def positions(self):
         """Retrieve the list of positions."""

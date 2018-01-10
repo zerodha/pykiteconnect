@@ -5,6 +5,7 @@ import json
 # Mock responses path
 responses_path = {
     "base": "../mock_responses/",
+    "user.profile": "profile.json",
     "user.margins": "margins.json",
     "user.margins.segment": "margins.json",
 

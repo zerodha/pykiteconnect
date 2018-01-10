@@ -25,13 +25,13 @@
 - Changes to `KiteTicker` init method
 	- `reconnect` is enabled by default (Auto reconnectoion)
 	- Deprecate: `reconnect_interval` is deprecated for option `reconnect_max_delay`
-	- Add: `reconnect_max_delay` to controll maximum delay between the retries. Defaults to 60 seconds and it can't be set to lower than 5 seconds.
+	- Add: `reconnect_max_delay` to control maximum delay between the retries. Defaults to 60 seconds and it can't be set to lower than 5 seconds.
 	- Rename: `reconnect_tries` to `reconnect_max_tries`. Defaults to 50 and it can't be set to higher than 300.
 	- Add: `debug` to enable debug mode.
-- Auto reconnect uses exponential backoff alogrithm instead of fixed reconnect interval (https://en.wikipedia.org/wiki/Exponential_backoff)
+- Auto reconnect uses exponential backoff algorithm instead of fixed reconnect interval (https://en.wikipedia.org/wiki/Exponential_backoff)
 - Deprecate methods `enable_reconnect`, `disable_reconnect` and `reconnect`
 - Callbacks
-    - `on_ticks(ws, ticks)` -  Triggered when ticks are recevied.
+    - `on_ticks(ws, ticks)` -  Triggered when ticks are received.
         - `ticks` - List of `tick` object. Check below for sample structure.
     - `on_close(ws, code, reason)` -  Triggered when connection is closed.
         - `code` - WebSocket standard close event code (https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent)
