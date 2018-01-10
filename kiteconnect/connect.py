@@ -609,26 +609,25 @@ class KiteConnect(object):
         """Make an HTTP request."""
         params = parameters.copy() if parameters else {}
 
-        # Add access token to params if its set
-        if self.access_token:
-            params["access_token"] = self.access_token
-
-        # override instance's API key if one is supplied in the params
-        if "api_key" not in params or not params.get("api_key"):
-            params["api_key"] = self.api_key
+        if not self.access_token or not self.api_key:
+            raise ValueError("`api_key` or `access_token` is not set.")
 
         # Form a restful URL
         uri = self._routes[route].format(**params)
         url = urljoin(self.root, uri)
 
-        if self.debug:
-            log.debug("Request: {method} {url} {params}".format(method=method, url=url, params=params))
+        # set authorization header
+        authorization_header = self.api_key + ":" + self.access_token
 
         # Custom headers
         headers = {
             "X-Kite-Version": "3",  # For version 3
-            "User-Agent": self._user_agent()
+            "User-Agent": self._user_agent(),
+            "Authorization": "token {}".format(authorization_header)
         }
+
+        if self.debug:
+            log.debug("Request: {method} {url} {params} {headers}".format(method=method, url=url, params=params, headers=headers))
 
         try:
             r = self.reqsession.request(method,
