@@ -80,14 +80,14 @@ def setup_order_place(kiteconnect,
 
     # delay order fetch so order is not in received state
     time.sleep(0.5)
-    order = kiteconnect.orders(order_id)
+    order = kiteconnect.order_history(order_id)
 
     return (updated_params, order_id, order)
 
 
 def cleanup_orders(kiteconnect, order_id=None):
     """Cleanup all pending orders and exit position for test symbol."""
-    order = kiteconnect.orders(order_id)
+    order = kiteconnect.order_history(order_id)
     status = order[-1]["status"].upper()
     variety = order[-1]["variety"]
     exchange = order[-1]["exchange"]
@@ -227,7 +227,7 @@ def test_place_order_tag(kiteconnect):
     })
 
     order_id = kiteconnect.place_order(**updated_params)
-    order_info = kiteconnect.orders(order_id=order_id)
+    order_info = kiteconnect.order_history(order_id=order_id)
     assert order_info[0]["tag"] == tag
 
     try:
@@ -337,7 +337,7 @@ def setup_order_modify_cancel(kiteconnect, variety):
     # delay order fetch so order is not in received state
     time.sleep(0.5)
 
-    order = kiteconnect.orders(order_id)
+    order = kiteconnect.order_history(order_id)
     status = order[-1]["status"].upper()
     if not is_pending_order(status):
         warnings.warn(UserWarning("Order is not open with status: ", status))
@@ -358,7 +358,7 @@ def test_order_cancel_regular(kiteconnect):
     assert returned_order_id == order_id
     time.sleep(0.5)
 
-    order = kiteconnect.orders(order_id)
+    order = kiteconnect.order_history(order_id)
     status = order[-1]["status"].upper()
     assert "CANCELLED" in status
 
@@ -384,7 +384,7 @@ def test_order_modify_limit_regular(kiteconnect):
     kiteconnect.modify_order(order_id, updated_params["variety"], quantity=to_quantity, price=to_price)
     time.sleep(0.5)
 
-    order = kiteconnect.orders(order_id)
+    order = kiteconnect.order_history(order_id)
     assert order[-1]["quantity"] == to_quantity
     assert order[-1]["price"] == to_price
 
@@ -405,7 +405,7 @@ def test_order_cancel_amo(kiteconnect):
     assert returned_order_id == order_id
     time.sleep(0.5)
 
-    order = kiteconnect.orders(order_id)
+    order = kiteconnect.order_history(order_id)
     status = order[-1]["status"].upper()
     assert "CANCELLED" in status
 
@@ -430,7 +430,7 @@ def test_order_modify_limit_amo(kiteconnect):
     kiteconnect.modify_order(order_id, updated_params["variety"], quantity=to_quantity, price=to_price)
     time.sleep(0.5)
 
-    order = kiteconnect.orders(order_id)
+    order = kiteconnect.order_history(order_id)
     assert order[-1]["quantity"] == to_quantity
     assert order[-1]["price"] == to_price
 
@@ -467,7 +467,7 @@ def test_modify_order_bo_limit_main(kiteconnect):
 
     kiteconnect.modify_order(order_id, kiteconnect.VARIETY_BO, quantity=quantity + 1, price=price + 1)
     time.sleep(0.5)
-    modified_order = kiteconnect.orders(order_id=order_id)
+    modified_order = kiteconnect.order_history(order_id=order_id)
 
     assert modified_order[-1]["quantity"] == quantity + 1
     assert modified_order[-1]["price"] == price + 1
@@ -554,7 +554,7 @@ def test_cancel_order_bo_limit_main(kiteconnect):
 
     kiteconnect.cancel_order(order_id=order_id, variety=kiteconnect.VARIETY_BO)
     time.sleep(0.5)
-    modified_order = kiteconnect.orders(order_id=order_id)
+    modified_order = kiteconnect.order_history(order_id=order_id)
 
     assert modified_order[-1]["status"] == "CANCELLED"
 
@@ -593,7 +593,7 @@ def test_exit_order_bo_limit_leg(kiteconnect):
 
     time.sleep(0.5)
     for o in leg_orders:
-        order_info = kiteconnect.orders(order_id=o["order_id"])
+        order_info = kiteconnect.order_history(order_id=o["order_id"])
         assert not is_pending_order(order_info[-1]["status"])
 
 
@@ -627,7 +627,7 @@ def test_exit_order_co_market_leg(kiteconnect):
 
     kiteconnect.exit_order(order_id=leg_order["order_id"], variety=kiteconnect.VARIETY_CO, parent_order_id=order_id)
     time.sleep(0.5)
-    leg_order_info = kiteconnect.orders(order_id=leg_order["order_id"])
+    leg_order_info = kiteconnect.order_history(order_id=leg_order["order_id"])
     assert not is_pending_order(leg_order_info[-1]["status"])
 
 
@@ -651,5 +651,5 @@ def test_cancel_order_co_limit(kiteconnect):
 
     kiteconnect.cancel_order(order_id=order_id, variety=kiteconnect.VARIETY_CO)
     time.sleep(0.5)
-    updated_order = kiteconnect.orders(order_id=order_id)
+    updated_order = kiteconnect.order_history(order_id=order_id)
     assert not is_pending_order(updated_order[-1]["status"])
