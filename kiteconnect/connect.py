@@ -217,6 +217,7 @@ class KiteConnect(object):
         checksum = h.hexdigest()
 
         resp = self._post("api.validate", {
+            "api_key": self.api_key,
             "request_token": request_token,
             "checksum": checksum
         })
@@ -513,10 +514,10 @@ class KiteConnect(object):
         the data into an array of objects with field names. For example:
 
         - `instrument_token` is the instrument identifier (retrieved from the instruments()) call.
-        - `date_from` is the From date (datetime object)
-        - `date_to` is the To date (datetime object)
+        - `from_date` is the From date (datetime object)
+        - `to_date` is the To date (datetime object)
         - `interval` is the candle interval (minute, day, 5 minute etc.)
-        - `continuous` is a boolean flag to get continous data for futures and options instruments.
+        - `continuous` is a boolean flag to get continuous data for futures and options instruments.
         """
         date_string_format = "%Y-%m-%d %H:%M:%S"
 
@@ -609,22 +610,20 @@ class KiteConnect(object):
         """Make an HTTP request."""
         params = parameters.copy() if parameters else {}
 
-        if not self.access_token or not self.api_key:
-            raise ValueError("`api_key` or `access_token` is not set.")
-
         # Form a restful URL
         uri = self._routes[route].format(**params)
         url = urljoin(self.root, uri)
 
-        # set authorization header
-        authorization_header = self.api_key + ":" + self.access_token
-
         # Custom headers
         headers = {
             "X-Kite-Version": "3",  # For version 3
-            "User-Agent": self._user_agent(),
-            "Authorization": "token {}".format(authorization_header)
+            "User-Agent": self._user_agent()
         }
+
+        if self.api_key and self.access_token:
+            # set authorization header
+            auth_header = self.api_key + ":" + self.access_token
+            headers["Authorization"] = "token {}".format(auth_header)
 
         if self.debug:
             log.debug("Request: {method} {url} {params} {headers}".format(method=method, url=url, params=params, headers=headers))
