@@ -72,8 +72,8 @@ def assert_responses(inp, sample):
         assert_responses(inp[0], sample[0])
 
     # If its a dict then iterate individual keys to test
-    if type(inp) == dict:
-        for key in inp.keys():
+    if type(sample) == dict:
+        for key in sample.keys():
             assert_responses(inp[key], sample[key])
 
 
