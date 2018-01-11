@@ -410,8 +410,9 @@ class KiteTicker(object):
             want to send API requests to a non-default endpoint, this
             can be ignored.
         - `reconnect` is a boolean to enable WebSocket autreconnect in case of network failure/disconnection.
-        - `reconnect_interval` - Interval (in seconds) between auto reconnection attemptes. Defaults to 5 seconds.
-        - `reconnect_tries` - Maximum number reconnection attempts. Defaults to 50 attempts.
+        - `reconnect_max_delay` in seconds is the maximum delay after which subsequent reconnection interval will become constant. Defaults to 60s and minimum acceptable value is 5s.
+        - `reconnect_max_tries` is maximum number reconnection attempts. Defaults to 50 attempts and maximum up to 300 attempts.
+        - `connect_timeout` in seconds is the maximum interval after which connection is considered as timeout. Defaults to 30s.
         """
         self.root = root or self.ROOT_URI
 
