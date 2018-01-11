@@ -1,13 +1,13 @@
 New features
 =============
-	- method: `profile`
-	- method: `ohlc`
-	- method: `ltp`
-	- method: `instruments_margins`
-	- constants for products, order type, transaction type, variety, validity, exchanges and margin segments
-	- Param `disable_ssl` to `KiteConnect` initializer
-	- `quote` call supports multiple instruments call
-	- `exit_order` alias for `cancel_order`
+- method: `profile`
+- method: `ohlc`
+- method: `ltp`
+- method: `instruments_margins`
+- constants for products, order type, transaction type, variety, validity, exchanges and margin segments
+- Param `disable_ssl` to `KiteConnect` initializer
+- `quote` call supports multiple instruments call
+- `exit_order` alias for `cancel_order`
 
 API method name changes
 =======================
@@ -29,20 +29,20 @@ API method name changes
 
 Param and other changes
 =======================
-	- `historical_data` - Historical data accepts datetime object for `from_date` and `to_date` instead of string since historical api precision is upto minutes.
-	- `historical_data` - `date` field in output response is a datetime object instead of string.
-	- Changes in `request_access_token` response structure
-	- Changes in `positions` response structure
-	- Changes in `quote` response structure
+- `historical_data` - Historical data accepts datetime object for `from_date` and `to_date` instead of string since historical api precision is upto minutes.
+- `historical_data` - `date` field in output response is a datetime object instead of string.
+- Changes in `request_access_token` response structure
+- Changes in `positions` response structure
+- Changes in `quote` response structure
 
 Deprecated from v2
 ==================
-	- `exceptions.UserException`
-	- `exceptions.ClientNetworkException`
-	- `exceptions.TwoFAException`
-	- Param `micro_cache` from `KiteConnect` initializer
-	- Param `order_id` from `orders` call (Renamed to `order_history`)
-	- Param `order_id` from `trades` call (Renamed to `order_trades`)
+- `exceptions.UserException`
+- `exceptions.ClientNetworkException`
+- `exceptions.TwoFAException`
+- Param `micro_cache` from `KiteConnect` initializer
+- Param `order_id` from `orders` call (Renamed to `order_history`)
+- Param `order_id` from `trades` call (Renamed to `order_trades`)
 
 KiteTicker changes
 ==================
