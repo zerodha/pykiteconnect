@@ -13,7 +13,7 @@ API method name changes
 =======================
 | v2  					| v3 						|
 | ----------------- 	| -------------------------	|
-| request_access_token	| get_access_token			|
+| request_access_token	| generate_session			|
 | invalidate_token		| invalidate_access_token	|
 | historical			| historical_data			|
 | order_place 			| place_order				|
@@ -33,7 +33,7 @@ Param and other changes
 =======================
 - `historical_data` - Historical data accepts datetime object for `from_date` and `to_date` instead of string since historical api precision is upto minutes.
 - `historical_data` - `date` field in output response is a datetime object instead of string.
-- Changes in `get_access_token` response structure
+- Changes in `generate_session` response structure
 - Changes in `positions` response structure
 - Changes in `quote` response structure
 

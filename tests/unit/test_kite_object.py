@@ -49,8 +49,8 @@ class TestKiteConnectObject:
         kiteconnect.set_access_token("<ACCESS-TOKEN>")
 
     @patch.object(KiteConnect, "_post", get_fake_token)
-    def test_get_access_token(self, kiteconnect):
-        resp = kiteconnect.get_access_token(
+    def test_generate_session(self, kiteconnect):
+        resp = kiteconnect.generate_session(
             request_token="<REQUEST-TOKEN>",
             api_secret="<API-SECRET>"
         )

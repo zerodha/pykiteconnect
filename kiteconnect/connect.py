@@ -208,9 +208,10 @@ class KiteConnect(object):
         """Get the remote login url to which a user should be redirected to initiate the login flow."""
         return "%s?api_key=%s&v=3" % (self._default_login_uri, self.api_key)
 
-    def get_access_token(self, request_token, api_secret):
+    def generate_session(self, request_token, api_secret):
         """
-        Get `access_token` by exchanging `request_token`.
+        Generate user session details like `access_token` etc by exchanging `request_token`.
+        Access token is automatically set if the session is retrieved successfully.
 
         Do the token exchange with the `request_token` obtained after the login flow,
         and retrieve the `access_token` required for all subsequent requests. The

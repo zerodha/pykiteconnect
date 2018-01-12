@@ -4,7 +4,7 @@
 #
 # Copyright (c) Zerodha technologies Pvt. Ltd.
 #
-# This is simple Falsk based webapp to generate access token and get basic
+# This is simple Flask based webapp to generate access token and get basic
 # account info like holdings and order.
 #
 # To run this you need Kite Connect python client and Flask webserver
@@ -79,7 +79,7 @@ def login():
             Try again.<a>"""
 
     kite = KiteConnect(api_key=kite_api_key)
-    data = kite.get_access_token(request_token, secret=kite_api_secret)
+    data = kite.generate_session(request_token, secret=kite_api_secret)
     holdings_url = ("https://api.kite.trade/portfolio/holdings"
                     "?api_key={api_key}&access_token={access_token}").format(
                         api_key=kite_api_key,
@@ -92,6 +92,7 @@ def login():
                                  user_data=json.dumps(data, indent=4, sort_keys=True),
                                  holdings_url=holdings_url,
                                  orders_url=orders_url)
+
 
 if __name__ == "__main__":
     logging.info("Starting server: http://{host}:{port}".format(host=HOST, port=PORT))

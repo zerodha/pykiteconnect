@@ -38,7 +38,7 @@ Getting started
     # Once you have the request_token, obtain the access_token
     # as follows.
 
-    data = kite.get_access_token("request_token_here", secret="your_secret")
+    data = kite.generate_session("request_token_here", secret="your_secret")
     kite.set_access_token(data["access_token"])
 
     # Place an order
@@ -91,7 +91,7 @@ Hence, in your web application, typically:
 - At the redirect url endpoint, obtain the
 `request_token` from the query parameters
 - Initialise a new instance of Kite client,
-use `get_access_token()` to obtain the `access_token`
+use `generate_session()` to obtain the `access_token`
 along with authenticated user data
 - Store this response in a session and use the
 stored `access_token` and initialise instances
