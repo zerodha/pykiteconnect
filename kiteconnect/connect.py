@@ -246,19 +246,19 @@ class KiteConnect(object):
 
         return self._delete("api.token.invalidate", params)
 
-    def renew_access_token(self, access_token, api_secret):
+    def renew_access_token(self, refresh_token, api_secret):
         """
-        Renew expired `access_token` using valid `refresh_token`.
+        Renew expired `refresh_token` using valid `refresh_token`.
 
-        - `access_token` is the token obtained from previous successful login flow.
+        - `refresh_token` is the token obtained from previous successful login flow.
         - `api_secret` is the API api_secret issued with the API key.
         """
-        h = hashlib.sha256(self.api_key.encode("utf-8") + access_token.encode("utf-8") + api_secret.encode("utf-8"))
+        h = hashlib.sha256(self.api_key.encode("utf-8") + refresh_token.encode("utf-8") + api_secret.encode("utf-8"))
         checksum = h.hexdigest()
 
-        resp = self._post("api.token", {
+        resp = self._post("api.token.renew", {
             "api_key": self.api_key,
-            "access_token": access_token,
+            "refresh_token": refresh_token,
             "checksum": checksum
         })
 
