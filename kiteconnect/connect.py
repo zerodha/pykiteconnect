@@ -82,8 +82,10 @@ class KiteConnect(object):
 
     # URIs to various calls
     _routes = {
-        "api.validate": "/session/token",
-        "api.invalidate": "/session/token",
+        "api.token": "/session/token",
+        "api.token.invalidate": "/session/token",
+        "api.token.renew": "/session/refresh_token",
+        "api.token.renew.invalidate": "/session/refresh_token",
         "user.profile": "/user/profile",
         "user.margins": "/user/margins",
         "user.margins.segment": "/user/margins/{segment}",
@@ -204,9 +206,9 @@ class KiteConnect(object):
 
     def login_url(self):
         """Get the remote login url to which a user should be redirected to initiate the login flow."""
-        return "%s?api_key=%s" % (self._default_login_uri, self.api_key)
+        return "%s?api_key=%s&v=3" % (self._default_login_uri, self.api_key)
 
-    def request_access_token(self, request_token, api_secret):
+    def get_access_token(self, request_token, api_secret):
         """
         Get `access_token` by exchanging `request_token`.
 
@@ -221,7 +223,7 @@ class KiteConnect(object):
         h = hashlib.sha256(self.api_key.encode("utf-8") + request_token.encode("utf-8") + api_secret.encode("utf-8"))
         checksum = h.hexdigest()
 
-        resp = self._post("api.validate", {
+        resp = self._post("api.token", {
             "api_key": self.api_key,
             "request_token": request_token,
             "checksum": checksum
@@ -232,8 +234,9 @@ class KiteConnect(object):
 
         return resp
 
-    def invalidate_token(self, access_token=None):
-        """Kill the session by invalidating the access token.
+    def invalidate_access_token(self, access_token=None):
+        """
+        Kill the session by invalidating the access token.
 
         - `access_token` to invalidate. Default is the active `access_token`.
         """
@@ -241,7 +244,38 @@ class KiteConnect(object):
         if access_token:
             params = {"access_token": access_token}
 
-        return self._delete("api.invalidate", params)
+        return self._delete("api.token.invalidate", params)
+
+    def renew_access_token(self, access_token, api_secret):
+        """
+        Renew expired `access_token` using valid `refresh_token`.
+
+        - `access_token` is the token obtained from previous successful login flow.
+        - `api_secret` is the API api_secret issued with the API key.
+        """
+        h = hashlib.sha256(self.api_key.encode("utf-8") + access_token.encode("utf-8") + api_secret.encode("utf-8"))
+        checksum = h.hexdigest()
+
+        resp = self._post("api.token", {
+            "api_key": self.api_key,
+            "access_token": access_token,
+            "checksum": checksum
+        })
+
+        if "access_token" in resp:
+            self.set_access_token(resp["access_token"])
+
+        return resp
+
+    def invalidate_refresh_token(self, refresh_token):
+        """
+        Invalidate refresh token.
+
+        - `refresh_token` is the token which is used to renew access token.
+        """
+        return self._delete("api.token.renew.invalidate", {
+            "refresh_token": refresh_token
+        })
 
     def margins(self, segment=None):
         """Get account balance and cash margin details for a particular segment.

@@ -79,7 +79,7 @@ def login():
             Try again.<a>"""
 
     kite = KiteConnect(api_key=kite_api_key)
-    data = kite.request_access_token(request_token, secret=kite_api_secret)
+    data = kite.get_access_token(request_token, secret=kite_api_secret)
     holdings_url = ("https://api.kite.trade/portfolio/holdings"
                     "?api_key={api_key}&access_token={access_token}").format(
                         api_key=kite_api_key,

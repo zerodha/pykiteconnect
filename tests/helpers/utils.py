@@ -33,8 +33,8 @@ responses_path = {
     "market.trigger_range": "",
 
     "market.quote": "quote.json",
-    "market.quote.ohlc": "",
-    "market.quote.ltp": ""
+    "market.quote.ohlc": "ohlc.json",
+    "market.quote.ltp": "ltp.json"
 }
 
 

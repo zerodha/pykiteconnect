@@ -217,3 +217,27 @@ def test_historical_data_intervals(max_interval, candle_interval, kiteconnect):
     from_date = (to_date - datetime.timedelta(days=(max_interval + 1)))
     with pytest.raises(ex.InputException):
         kiteconnect.historical_data(instrument_token, from_date, to_date, candle_interval)
+
+
+def test_quote(kiteconnect):
+    """Test quote."""
+    instruments = ["NSE:INFY"]
+    quote = kiteconnect.quote(instruments)
+    mock_resp = utils.get_json_response("market.quote")["data"]
+    utils.assert_responses(quote, mock_resp)
+
+
+def test_ohlc(kiteconnect):
+    """Test ohlc."""
+    instruments = ["NSE:INFY"]
+    ohlc = kiteconnect.ohlc(instruments)
+    mock_resp = utils.get_json_response("market.quote.ohlc")["data"]
+    utils.assert_responses(ohlc, mock_resp)
+
+
+def test_ltp(kiteconnect):
+    """Test ltp."""
+    instruments = ["NSE:INFY"]
+    ltp = kiteconnect.ltp(instruments)
+    mock_resp = utils.get_json_response("market.quote.ltp")["data"]
+    utils.assert_responses(ltp, mock_resp)

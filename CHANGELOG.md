@@ -11,27 +11,29 @@ New features
 
 API method name changes
 =======================
-| v2  				| v3 						|
-| ----------------- | -------------------------	|
-| historical		| historical_data			|
-| order_place 		| place_order				|
-| order_modify 		| modify_order				|
-| order_cancel 		| cancel_order				|
-| product_modify 	| convert_position			|
-| mf_order_place 	| place_mf_order			|
-| mf_order_cancel 	| cancel_mf_order			|
-| mf_sip_place 		| place_mf_sip				|
-| mf_sip_modify 	| modify_mf_sip				|
-| mf_sip_cancel 	| cancel_mf_sip			  	|
-| set_session_hook  | set_session_expiry_hook 	|
-| orders(order_id)	| order_history(order_id) 	|
-| trades(order_id)	| order_trades(order_id)  	|
+| v2  					| v3 						|
+| ----------------- 	| -------------------------	|
+| request_access_token	| get_access_token			|
+| invalidate_token		| invalidate_access_token	|
+| historical			| historical_data			|
+| order_place 			| place_order				|
+| order_modify 			| modify_order				|
+| order_cancel 			| cancel_order				|
+| product_modify 		| convert_position			|
+| mf_order_place 		| place_mf_order			|
+| mf_order_cancel 		| cancel_mf_order			|
+| mf_sip_place 			| place_mf_sip				|
+| mf_sip_modify 		| modify_mf_sip				|
+| mf_sip_cancel 		| cancel_mf_sip			  	|
+| set_session_hook  	| set_session_expiry_hook 	|
+| orders(order_id)		| order_history(order_id) 	|
+| trades(order_id)		| order_trades(order_id)  	|
 
 Param and other changes
 =======================
 - `historical_data` - Historical data accepts datetime object for `from_date` and `to_date` instead of string since historical api precision is upto minutes.
 - `historical_data` - `date` field in output response is a datetime object instead of string.
-- Changes in `request_access_token` response structure
+- Changes in `get_access_token` response structure
 - Changes in `positions` response structure
 - Changes in `quote` response structure
 

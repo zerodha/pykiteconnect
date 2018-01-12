@@ -1,76 +1,82 @@
 {
-  "status": "success",
-  "data": {
-    "last_price": 924.05,
-    "volume": 2482018,
-    "sell_quantity": 660318,
-    "open_interest": 0,
-    "last_quantity": 7,
-    "change": -0.15,
-    "ohlc": {
-      "high": 932.3,
-      "close": 924.2,
-      "open": 926.5,
-      "low": 920.55
-    },
-    "last_time": "2017-12-29 12:26:48",
-    "change_percent": -0.01,
-    "depth": {
-      "sell": [
-        {
-          "price": 924.05,
-          "orders": 1,
-          "quantity": 39
-        },
-        {
-          "price": 924.25,
-          "orders": 1,
-          "quantity": 63
-        },
-        {
-          "price": 924.3,
-          "orders": 1,
-          "quantity": 74
-        },
-        {
-          "price": 924.35,
-          "orders": 1,
-          "quantity": 1
-        },
-        {
-          "price": 924.4,
-          "orders": 4,
-          "quantity": 1101
-        }
-      ],
-      "buy": [
-        {
-          "price": 924,
-          "orders": 1,
-          "quantity": 15
-        },
-        {
-          "price": 923.95,
-          "orders": 1,
-          "quantity": 157
-        },
-        {
-          "price": 923.9,
-          "orders": 4,
-          "quantity": 814
-        },
-        {
-          "price": 923.85,
-          "orders": 5,
-          "quantity": 84
-        },
-        {
-          "price": 923.8,
-          "orders": 3,
-          "quantity": 294
-        }
-      ]
-    },
-    "buy_quantity": 328875
-  }
+	"status": "success",
+	"data": {
+		"NSE:INFY": {
+			"instrument_token": 408065,
+			"timestamp": "2018-01-12 10:40:29",
+			"last_price": 1074.8,
+			"last_quantity": 55,
+			"last_trade_time": "2018-01-12 10:40:28",
+			"average_price": 1077.03,
+			"volume": 1368065,
+			"buy_quantity": 240020,
+			"sell_quantity": 509481,
+			"ohlc": {
+				"open": 1085.8,
+				"high": 1085.9,
+				"low": 1070.9,
+				"close": 1075.8
+			},
+			"net_change": 0,
+			"open_interest": 0,
+			"day_high_oi": 0,
+			"day_low_oi": 0,
+			"depth": {
+				"buy": [
+					{
+						"price": 1074.8,
+						"quantity": 35,
+						"orders": 1
+					},
+					{
+						"price": 1074.65,
+						"quantity": 5,
+						"orders": 1
+					},
+					{
+						"price": 1074.6,
+						"quantity": 14,
+						"orders": 1
+					},
+					{
+						"price": 1074.5,
+						"quantity": 1529,
+						"orders": 3
+					},
+					{
+						"price": 1074.45,
+						"quantity": 139,
+						"orders": 1
+					}
+				],
+				"sell": [
+					{
+						"price": 1074.85,
+						"quantity": 32,
+						"orders": 1
+					},
+					{
+						"price": 1075,
+						"quantity": 1264,
+						"orders": 18
+					},
+					{
+						"price": 1075.1,
+						"quantity": 14,
+						"orders": 1
+					},
+					{
+						"price": 1075.2,
+						"quantity": 600,
+						"orders": 1
+					},
+					{
+						"price": 1075.25,
+						"quantity": 22,
+						"orders": 2
+					}
+				]
+			}
+		}
+	}
 }
