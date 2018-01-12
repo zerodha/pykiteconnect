@@ -75,6 +75,11 @@ class KiteConnect(object):
     MARGIN_EQUITY = "equity"
     MARGIN_COMMODITY = "commodity"
 
+    # Status constants
+    STATUS_COMPLETE = "COMPLETE"
+    STATUS_REJECTED = "REJECTED"
+    STATUS_CANCELLED = "CANCELLED"
+
     # URIs to various calls
     _routes = {
         "api.validate": "/session/token",
