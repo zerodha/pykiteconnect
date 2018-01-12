@@ -4,6 +4,8 @@ New features
 - method: `ohlc`
 - method: `ltp`
 - method: `instruments_margins`
+- method: `renew_access_token`
+- method: `invalidate_refresh_token`
 - constants for products, order type, transaction type, variety, validity, exchanges and margin segments
 - Param `disable_ssl` to `KiteConnect` initializer
 - `quote` call supports multiple instruments call
