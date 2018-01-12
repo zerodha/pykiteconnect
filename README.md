@@ -105,6 +105,18 @@ kws.connect()
 python setup.py test
 ```
 
+or
+
+```
+pytest -s tests/unit --cov-report html:cov_html --cov=./
+```
+
+# Run integration tests
+
+```
+pytest -s tests/integration/ --cov-report html:cov_html --cov=./  --api-key api_key --access-token access_token
+```
+
 # Generate documentation
 
 ```
