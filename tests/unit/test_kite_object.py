@@ -18,7 +18,7 @@ def get_fake_delete(self, route, params=None):
 class TestKiteConnectObject:
 
     def test_login_url(self, kiteconnect):
-        assert kiteconnect.login_url() == 'https://kite.trade/connect/login?api_key=<API-KEY>'
+        assert kiteconnect.login_url() == "https://kite.trade/connect/login?api_key=<API-KEY>&v=3"
 
     @responses.activate
     def test_set_session_expiry_hook_meth(self, kiteconnect):
@@ -62,5 +62,5 @@ class TestKiteConnectObject:
 
     @patch.object(KiteConnect, "_delete", get_fake_delete)
     def test_invalidate_token(self, kiteconnect):
-        resp = kiteconnect.invalidate_token(access_token="<ACCESS-TOKEN>")
+        resp = kiteconnect.invalidate_access_token(access_token="<ACCESS-TOKEN>")
         assert resp["message"] == "token invalidated"
