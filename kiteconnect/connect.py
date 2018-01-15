@@ -14,6 +14,7 @@ import json
 import dateutil.parser
 import hashlib
 import logging
+import datetime
 import requests
 
 from .__version__ import __version__, __title__
@@ -550,21 +551,23 @@ class KiteConnect(object):
         Retrieve historical data (candles) for an instrument.
 
         Although the actual response JSON from the API does not have field
-        names such has 'open', 'high' etc., this functin call structures
+        names such has 'open', 'high' etc., this function call structures
         the data into an array of objects with field names. For example:
 
         - `instrument_token` is the instrument identifier (retrieved from the instruments()) call.
-        - `from_date` is the From date (datetime object)
-        - `to_date` is the To date (datetime object)
-        - `interval` is the candle interval (minute, day, 5 minute etc.)
+        - `from_date` is the From date (datetime object or string in format of yyyy-mm-dd HH:MM:SS.
+        - `to_date` is the To date (datetime object or string in format of yyyy-mm-dd HH:MM:SS).
+        - `interval` is the candle interval (minute, day, 5 minute etc.).
         - `continuous` is a boolean flag to get continuous data for futures and options instruments.
         """
         date_string_format = "%Y-%m-%d %H:%M:%S"
+        from_date_string = from_date.strftime(date_string_format) if type(from_date) == datetime.datetime else from_date
+        to_date_string = to_date.strftime(date_string_format) if type(to_date) == datetime.datetime else to_date
 
         data = self._get("market.historical", {
             "instrument_token": instrument_token,
-            "from": from_date.strftime(date_string_format),
-            "to": to_date.strftime(date_string_format),
+            "from": from_date_string,
+            "to": to_date_string,
             "interval": interval,
             "continuous": 1 if continuous else 0
         })
