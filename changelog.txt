@@ -1,5 +1,5 @@
 - User agent is sent with all the requests
-- Historical data accepts datetime object for `from_date` and `from_date` instead of string since historical api resolves upto minutes.
+- Historical data accepts datetime object for `from_date` and `to_date` instead of string since historical api resolves upto minutes.
 - Add: `ohlc` method
 - Add: `ltp` method
 - Add: `disable_ssl` param to skip SSL verification for api call
@@ -23,7 +23,7 @@
 - `public_token` is replaced with `access_token`
 - Rename: `WebSocket` to `KiteTicker`
 - Changes to `KiteTicker` init method
-	- `reconnect` is enabled by default (Auto reconnectoion)
+	- `reconnect` is enabled by default (Auto reconnection)
 	- Deprecate: `reconnect_interval` is deprecated for option `reconnect_max_delay`
 	- Add: `reconnect_max_delay` to control maximum delay between the retries. Defaults to 60 seconds and it can't be set to lower than 5 seconds.
 	- Rename: `reconnect_tries` to `reconnect_max_tries`. Defaults to 50 and it can't be set to higher than 300.
@@ -47,7 +47,7 @@
     - `on_reconnect(ws, attempts_count)` -  Triggered when auto reconnection is attempted.
         - `attempts_count` - Current reconnect attempt number.
     - `on_noreconnect(ws)` -  Triggered when number of auto reconnection attempts exceeds `reconnect_tries`.
-- FUll mode has following new fields
+- Full mode has following new fields
     - `last_trade_time` - Last trade time (Python datetime object or None)
     - `oi` - Open interest
     - `oi_high` - Day's open interest high
