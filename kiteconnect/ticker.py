@@ -771,8 +771,8 @@ class KiteTicker(object):
 
                     d["last_trade_time"] = last_trade_time
                     d["oi"] = self._unpack_int(packet, 48, 52)
-                    d["oi_high"] = self._unpack_int(packet, 52, 56)
-                    d["oi_low"] = self._unpack_int(packet, 56, 60)
+                    d["oi_day_high"] = self._unpack_int(packet, 52, 56)
+                    d["oi_day_low"] = self._unpack_int(packet, 56, 60)
                     d["timestamp"] = timestamp
 
                     # Market depth entries.
