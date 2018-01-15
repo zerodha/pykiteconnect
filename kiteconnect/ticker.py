@@ -269,69 +269,73 @@ class KiteTicker(object):
     Tick structure (passed to the `on_ticks` callback)
     ---------------------------
         [{
-            "mode": "quote",
-            "tradable": True,
-            "instrument_token": 738561,
-            "last_price": 957,
-            "last_quantity": 100,
-            "sell_quantity": 2286,
-            "buy_quantity": 0,
-            "volume": 5333469,
-            "change": 0,
-            "average_price": 959,
-            "ohlc": {
-                "high": 973,
-                "close": 957,
-                "open": 969,
-                "low": 956
+            'instrument_token': 53490439,
+            'mode': 'full',
+            'volume': 12510,
+            'last_price': 4084.0,
+            'average_price': 4086.55,
+            'last_quantity': 1,
+            'buy_quantity': 2356
+            'sell_quantity': 2440,
+            'change': 0.46740467404674046,
+            'last_trade_time': datetime.datetime(2018, 1, 15, 13, 16, 54),
+            'timestamp': datetime.datetime(2018, 1, 15, 13, 16, 56),
+            'oi': 21845,
+            'oi_day_low': 0,
+            'oi_day_high': 0,
+            'ohlc': {
+                'high': 4093.0,
+                'close': 4065.0,
+                'open': 4088.0,
+                'low': 4080.0
             },
-            "depth": {
-                "sell": [{
-                    "price": 0,
-                    "orders": 0,
-                    "quantity": 0
+            'tradable': True,
+            'depth': {
+                'sell': [{
+                    'price': 4085.0,
+                    'orders': 1048576,
+                    'quantity': 43
                 }, {
-                    "price": 0,
-                    "orders": 0,
-                    "quantity": 0
+                    'price': 4086.0,
+                    'orders': 2752512,
+                    'quantity': 134
                 }, {
-                    "price": 0,
-                    "orders": 0,
-                    "quantity": 0
+                    'price': 4087.0,
+                    'orders': 1703936,
+                    'quantity': 133
                 }, {
-                    "price": 0,
-                    "orders": 0,
-                    "quantity": 0
+                    'price': 4088.0,
+                    'orders': 1376256,
+                    'quantity': 70
                 }, {
-                    "price": 0,
-                    "orders": 0,
-                    "quantity": 0
+                    'price': 4089.0,
+                    'orders': 1048576,
+                    'quantity': 46
                 }],
-                "buy": [{
-                    "price": 957,
-                    "orders": 196608,
-                    "quantity": 2286
+                'buy': [{
+                    'price': 4084.0,
+                    'orders': 589824,
+                    'quantity': 53
                 }, {
-                    "price": 0,
-                    "orders": 0,
-                    "quantity": 0
+                    'price': 4083.0,
+                    'orders': 1245184,
+                    'quantity': 145
                 }, {
-                    "price": 0,
-                    "orders": 0,
-                    "quantity": 0
+                    'price': 4082.0,
+                    'orders': 1114112,
+                    'quantity': 63
                 }, {
-                    "price": 0,
-                    "orders": 0,
-                    "quantity": 0
+                    'price': 4081.0,
+                    'orders': 1835008,
+                    'quantity': 69
                 }, {
-                    "price": 0,
-                    "orders": 0,
-                    "quantity": 0
+                    'price': 4080.0,
+                    'orders': 2752512,
+                    'quantity': 89
                 }]
             }
-        }
-        ...
-        ...
+        },
+        ...,
         ...]
 
     Auto reconnection
