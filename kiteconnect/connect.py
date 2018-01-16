@@ -293,14 +293,14 @@ class KiteConnect(object):
 
     # orders
     def place_order(self,
+                    variety,
                     exchange,
                     tradingsymbol,
                     transaction_type,
                     quantity,
-                    variety,
+                    product,
+                    order_type,
                     price=None,
-                    product=None,
-                    order_type=None,
                     validity=None,
                     disclosed_quantity=None,
                     trigger_price=None,
@@ -322,13 +322,9 @@ class KiteConnect(object):
                      order_id,
                      variety,
                      parent_order_id=None,
-                     exchange=None,
-                     tradingsymbol=None,
-                     transaction_type=None,
                      quantity=None,
                      price=None,
                      order_type=None,
-                     product=None,
                      trigger_price=None,
                      validity=None,
                      disclosed_quantity=None):
@@ -352,7 +348,7 @@ class KiteConnect(object):
 
     def exit_order(self, order_id, variety, parent_order_id=None):
         """Exit a BO/CO order."""
-        self.cancel_order(order_id, variety=variety, parent_order_id=parent_order_id)
+        self.cancel_order(order_id, variety, parent_order_id=parent_order_id)
 
     # orderbook and tradebook
     def orders(self):
