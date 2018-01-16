@@ -4,7 +4,7 @@
 
     API wrapper for Kite Connect REST APIs.
 
-    :copyright: (c) 2017 by Zerodha Technology.
+    :copyright: (c) 2018 by Zerodha Technology.
     :license: see LICENSE for details.
 """
 from six import StringIO, PY2
@@ -102,7 +102,7 @@ class KiteConnect(object):
 
         "portfolio.positions": "/portfolio/positions",
         "portfolio.holdings": "/portfolio/holdings",
-        "portfolio.positions.modify": "/portfolio/positions",
+        "portfolio.positions.convert": "/portfolio/positions",
 
         # MF api endpoints
         "mf.orders": "/mf/orders",
@@ -357,7 +357,7 @@ class KiteConnect(object):
 
     def order_history(self, order_id):
         """
-        Get list of order history.
+        Get history of individual order.
 
         - `order_id` is the ID of the order to retrieve order history.
         """
@@ -401,7 +401,7 @@ class KiteConnect(object):
                          old_product,
                          new_product):
         """Modify an open position's product type."""
-        return self._put("portfolio.positions.modify", {
+        return self._put("portfolio.positions.convert", {
             "exchange": exchange,
             "tradingsymbol": tradingsymbol,
             "transaction_type": transaction_type,
