@@ -39,7 +39,8 @@ def test_set_session_expiry_hook(kiteconnect):
     callback = Mock()
     kiteconnect.set_session_expiry_hook(callback)
     kiteconnect.set_access_token("some_invalid_token")
-    kiteconnect.orders()
+    with pytest.raises(ex.TokenException):
+        kiteconnect.orders()
     callback.assert_called_with()
 
 

@@ -8,7 +8,10 @@ import kiteconnect.exceptions as ex
 
 
 def get_fake_token(self, route, params=None):
-    return {"access_token": "TOKEN"}
+    return {
+        "access_token": "TOKEN",
+        "login_time": None
+    }
 
 
 def get_fake_delete(self, route, params=None):
