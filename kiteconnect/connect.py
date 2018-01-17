@@ -240,11 +240,10 @@ class KiteConnect(object):
 
         - `access_token` to invalidate. Default is the active `access_token`.
         """
-        params = None
         if access_token:
-            params = {"access_token": access_token}
+            self.set_access_token(access_token)
 
-        return self._delete("api.token.invalidate", params)
+        return self._delete("api.token.invalidate")
 
     def renew_access_token(self, refresh_token, api_secret):
         """
