@@ -18,9 +18,9 @@
 				"close": 1075.8
 			},
 			"net_change": 0,
-			"open_interest": 0,
-			"day_high_oi": 0,
-			"day_low_oi": 0,
+			"oi": 0,
+			"oi_day_high": 0,
+			"oi_day_low": 0,
 			"depth": {
 				"buy": [
 					{
