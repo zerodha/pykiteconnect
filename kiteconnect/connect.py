@@ -172,9 +172,9 @@ class KiteConnect(object):
         self.timeout = timeout or self._default_timeout
 
         pool = pool or {}
-            self.reqsession = requests.Session()
-            reqadapter = requests.adapters.HTTPAdapter(**pool)
-            self.reqsession.mount("https://", reqadapter)
+        self.reqsession = requests.Session()
+        reqadapter = requests.adapters.HTTPAdapter(**pool)
+        self.reqsession.mount("https://", reqadapter)
 
         # disable requests SSL warning
         requests.packages.urllib3.disable_warnings()
