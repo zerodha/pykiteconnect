@@ -626,7 +626,7 @@ class KiteConnect(object):
 
             # Parse date
             if len(row["expiry"]) == 10:
-                row["expiry"] == dateutil.parser.parse(row["expiry"]).date()
+                row["expiry"] = dateutil.parser.parse(row["expiry"]).date()
 
             records.append(row)
 
@@ -654,7 +654,7 @@ class KiteConnect(object):
 
             # Parse date
             if len(row["last_price_date"]) == 10:
-                row["last_price_date"] == dateutil.parser.parse(row["last_price_date"]).date()
+                row["last_price_date"] = dateutil.parser.parse(row["last_price_date"]).date()
 
             records.append(row)
 
