@@ -9,6 +9,14 @@ New features
 - Param `disable_ssl` to `KiteConnect` initializer
 - `quote` call supports multiple instruments call
 - `exit_order` alias for `cancel_order`
+- All datetime string fields has been converted to `datetime` object.
+	- `orders`, `order_history`, `trades`, `order_trades`, `mf_orders` responses fields `order_timestamp`, `exchange_timestamp`, `fill_timestamp`
+	- `mf_sips` fields `created`, `last_instalment`
+	- `generate_session` field `login_time`
+	- `quote` fields `timestamp`, `last_trade_time`
+	- `instruments` field `expiry`
+	- `mf_instruments` field `last_price_date`
+- Requests thread pooling is enabled by default with defaults requests library settings [Read more](http://docs.python-requests.org/en/master/api/#requests.adapters.HTTPAdapter)
 
 API method name changes
 =======================
