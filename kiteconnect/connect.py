@@ -232,6 +232,9 @@ class KiteConnect(object):
         if "access_token" in resp:
             self.set_access_token(resp["access_token"])
 
+        if len(resp["login_time"]) == 19:
+            resp["login_time"] = dateutil.parser.parse(resp["login_time"])
+
         return resp
 
     def invalidate_access_token(self, access_token=None):
@@ -349,10 +352,26 @@ class KiteConnect(object):
         """Exit a BO/CO order."""
         self.cancel_order(order_id, variety, parent_order_id=parent_order_id)
 
+    def _format_response(self, data):
+        """Parse and format responses."""
+
+        if type(data) == list:
+            _list = data
+        elif type(data) == dict:
+            _list = [data]
+
+        for item in _list:
+            # Convert date time string to datetime object
+            for field in ["order_timestamp", "exchange_timestamp", "created", "last_instalment", "fill_timestamp", "timestamp", "last_trade_time"]:
+                if item.get(field) and len(item[field]) == 19:
+                    item[field] = dateutil.parser.parse(item[field])
+
+        return _list[0] if type(data) == dict else _list
+
     # orderbook and tradebook
     def orders(self):
         """Get list of orders."""
-        return self._get("orders")
+        return self._format_response(self._get("orders"))
 
     def order_history(self, order_id):
         """
@@ -360,7 +379,7 @@ class KiteConnect(object):
 
         - `order_id` is the ID of the order to retrieve order history.
         """
-        return self._get("order.info", {"order_id": order_id})
+        return self._format_response(self._get("order.info", {"order_id": order_id}))
 
     def trades(self):
         """
@@ -372,7 +391,7 @@ class KiteConnect(object):
         - `order_id` is the ID of the order (optional) whose trades are to be retrieved.
         If no `order_id` is specified, all trades for the day are returned.
         """
-        return self._get("trades")
+        return self._format_response(self._get("trades"))
 
     def order_trades(self, order_id):
         """
@@ -381,7 +400,7 @@ class KiteConnect(object):
         - `order_id` is the ID of the order (optional) whose trades are to be retrieved.
             If no `order_id` is specified, all trades for the day are returned.
         """
-        return self._get("order.trades", {"order_id": order_id})
+        return self._format_response(self._get("order.trades", {"order_id": order_id}))
 
     def positions(self):
         """Retrieve the list of positions."""
@@ -413,9 +432,9 @@ class KiteConnect(object):
     def mf_orders(self, order_id=None):
         """Get all mutual fund orders or individual order info."""
         if order_id:
-            return self._get("mf.order.info", {"order_id": order_id})
+            return self._format_response(self._get("mf.order.info", {"order_id": order_id}))
         else:
-            return self._get("mf.orders")
+            return self._format_response(self._get("mf.orders"))
 
     def place_mf_order(self,
                        tradingsymbol,
@@ -439,9 +458,9 @@ class KiteConnect(object):
     def mf_sips(self, sip_id=None):
         """Get list of all mutual fund SIP's or individual SIP info."""
         if sip_id:
-            return self._get("mf.sip.info", {"sip_id": sip_id})
+            return self._format_response(self._get("mf.sip.info", {"sip_id": sip_id}))
         else:
-            return self._get("mf.sips")
+            return self._format_response(self._get("mf.sips"))
 
     def place_mf_sip(self,
                      tradingsymbol,
@@ -513,7 +532,8 @@ class KiteConnect(object):
 
         - `instruments` is a list of instruments, Instrument are in the format of `tradingsymbol:exchange`. For example NSE:INFY
         """
-        return self._get("market.quote", {"i": instruments})
+        data = self._get("market.quote", {"i": instruments})
+        return {key: self._format_response(data[key]) for key in data}
 
     def ohlc(self, instruments):
         """
@@ -531,13 +551,13 @@ class KiteConnect(object):
         """
         return self._get("market.quote.ltp", {"i": instruments})
 
-    def instruments_margins(self, segment):
-        """
-        Retrive margins provided for individual segments.
+    # def instruments_margins(self, segment):
+    #     """
+    #     Retrive margins provided for individual segments.
 
-        `segment` is segment name to retrive.
-        """
-        return self._get("market.margins", {"segment": segment})
+    #     `segment` is segment name to retrive.
+    #     """
+    #     return self._get("market.margins", {"segment": segment})
 
     def historical_data(self, instrument_token, from_date, to_date, interval, continuous=False):
         """
@@ -595,19 +615,20 @@ class KiteConnect(object):
         if not PY2:
             d = data.decode("utf-8").strip()
 
-        reader = csv.reader(StringIO(d))
-
         records = []
-        header = next(reader)
+        reader = csv.DictReader(StringIO(d))
+
         for row in reader:
-            record = dict(zip(header, row))
+            row["last_price"] = float(row["last_price"])
+            row["strike"] = float(row["strike"])
+            row["tick_size"] = float(row["tick_size"])
+            row["lot_size"] = int(row["lot_size"])
 
-            record["last_price"] = float(record["last_price"])
-            record["strike"] = float(record["strike"])
-            record["tick_size"] = float(record["tick_size"])
-            record["lot_size"] = int(record["lot_size"])
+            # Parse date
+            if len(row["expiry"]) == 10:
+                row["expiry"] == dateutil.parser.parse(row["expiry"]).date()
 
-            records.append(record)
+            records.append(row)
 
         return records
 
@@ -617,10 +638,26 @@ class KiteConnect(object):
         if not PY2:
             d = data.decode("utf-8").strip()
 
+        records = []
         reader = csv.DictReader(StringIO(d))
 
-        # Return list instead of file reader
-        records = [row for row in reader]
+        for row in reader:
+            row["redemption_allowed"] = int(row["redemption_allowed"])
+            row["minimum_purchase_amount"] = float(row["minimum_purchase_amount"])
+            row["purchase_amount_multiplier"] = float(row["purchase_amount_multiplier"])
+            row["minimum_additional_purchase_amount"] = float(row["minimum_additional_purchase_amount"])
+            row["minimum_redemption_quantity"] = float(row["minimum_redemption_quantity"])
+            row["redemption_quantity_multiplier"] = float(row["redemption_quantity_multiplier"])
+            row["purchase_allowed"] = bool(int(row["purchase_allowed"]))
+            row["redemption_allowed"] = bool(int(row["redemption_allowed"]))
+            row["last_price"] = float(row["last_price"])
+
+            # Parse date
+            if len(row["last_price_date"]) == 10:
+                row["last_price_date"] == dateutil.parser.parse(row["last_price_date"]).date()
+
+            records.append(row)
+
         return records
 
     def _user_agent(self):

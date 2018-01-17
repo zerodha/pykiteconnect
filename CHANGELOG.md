@@ -3,7 +3,6 @@ New features
 - method: `profile`
 - method: `ohlc`
 - method: `ltp`
-- method: `instruments_margins`
 - method: `renew_access_token`
 - method: `invalidate_refresh_token`
 - constants for products, order type, transaction type, variety, validity, exchanges and margin segments
