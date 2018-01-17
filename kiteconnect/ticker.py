@@ -376,7 +376,7 @@ class KiteTicker(object):
     RECONNECT_MAX_TRIES = 50
     # Default root API endpoint. It's possible to
     # override this by passing the `root` parameter during initialisation.
-    ROOT_URI = "wss://websocket.kite.trade"
+    ROOT_URI = "wss://ws.kite.trade"
 
     # Available streaming modes.
     MODE_FULL = "full"
