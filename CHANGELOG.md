@@ -42,9 +42,10 @@ Param and other changes
 =======================
 - `historical_data` - Historical data accepts datetime object for `from_date` and `to_date` instead of string since historical api precision is upto minutes.
 - `historical_data` - `date` field in output response is a datetime object instead of string.
-- Changes in `generate_session` response structure
-- Changes in `positions` response structure
-- Changes in `quote` response structure
+- [Changes in `generateSession` response structure](https://kite.trade/docs/connect/v3/user/#response-attributes)
+- [Changes in `positions` response structure](https://kite.trade/docs/connect/v3/portfolio/#response-attributes_1)
+- [Changes in `quote` response structure](https://kite.trade/docs/connect/v3/market-quotes/#retrieving-full-market-quotes)
+- [Changes in `place_order` params](https://kite.trade/docs/connect/v3/orders/#bracket-order-bo-parameters)
 
 Deprecated from v2
 ==================
