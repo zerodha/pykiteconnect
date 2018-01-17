@@ -642,7 +642,6 @@ class KiteConnect(object):
         reader = csv.DictReader(StringIO(d))
 
         for row in reader:
-            row["redemption_allowed"] = int(row["redemption_allowed"])
             row["minimum_purchase_amount"] = float(row["minimum_purchase_amount"])
             row["purchase_amount_multiplier"] = float(row["purchase_amount_multiplier"])
             row["minimum_additional_purchase_amount"] = float(row["minimum_additional_purchase_amount"])
