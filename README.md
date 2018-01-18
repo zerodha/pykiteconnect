@@ -1,4 +1,4 @@
-# The Kite Connect API Python client
+# The Kite Connect API Python client - v3
 The official Python client for communicating with the [Kite Connect API](https://kite.trade).
 
 Kite Connect is a set of REST-like APIs that expose many capabilities required to build a complete investment and trading platform. Execute orders in real time, manage user portfolio, stream live market data (WebSockets), and more, with the simple HTTP API collection.
@@ -7,12 +7,12 @@ Kite Connect is a set of REST-like APIs that expose many capabilities required t
 
 ## Documentation
 - [Python client documentation](https://kite.trade/docs/pykiteconnect)
-- [Kite Connect HTTP API documentation](https://kite.trade/docs/connect/v1)
+- [Kite Connect HTTP API documentation](https://kite.trade/docs/connect/v3)
 
 ## Installing the client
 You can install the pre release via pip
 ```
-pip install https://github.com/zerodhatech/pykiteconnect/archive/v3.7.0-beta.zip
+pip install https://github.com/zerodhatech/pykiteconnect/archive/v3.7.0.zip
 ```
 
 ## API usage
@@ -127,20 +127,5 @@ pdoc --html --html-dir docs kiteconnect
 ```
 
 ## Changelog
-- 2015-07-15	Fixed: Different response type recevied for large number of subscriptions
-- 2016-05-31	Added `WebSocket` class for streaming data.
-- 2016-04-29	`instruments()` call now returns parsed CSV records.
-- 2016-05-04	Added `historical()` call.
-- 2016-05-09	Added `parent_order_id` param for multi-legged orders.
-- 2016-07-25    Option to disable SSL cert verification (Ubuntu 12.04 openssl bug)
-- 2016-08-26    Full compatability for Python 3
-- 2016-10-21	Released **version 3.3** with following fixes and features
-				* Added `tag` support to order APIs
-				* Added proxy support for api and websocket streaming
-				* Fixed market depth `orders` integer overflow issue.
-- 2016-11-11	Added connection pooling (v3.4)
-- 2017-01-21	Bug fixes (v3.4.1)
-- 2017-04-25	Added auto reconnect feature and other bug fixes (v3.5)
-- 2017-08-01	Fix BO and CO order modify issue (v3.5.1)
-- 2017-08-15	Add mutual fund API calls (v3.6.0)
-- 2017-09-14	Addd flag to fetch continous chart and other bug fixes (v3.6.1)
+
+[Check CHANGELOG.md](CHANGELOG.md)
