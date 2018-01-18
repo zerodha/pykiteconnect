@@ -221,7 +221,7 @@ class KiteTicker(object):
         logging.basicConfig(level=logging.DEBUG)
 
         # Initialise
-        kws = KiteTicker("your_api_key", "your_access_token", "logged_in_user_id")
+        kws = KiteTicker("your_api_key", "your_access_token")
 
         def on_ticks(ws, ticks):
             # Callback to receive ticks.
@@ -397,7 +397,7 @@ class KiteTicker(object):
     # Maximum number or retries user can set
     _maximum_reconnect_max_tries = 300
 
-    def __init__(self, api_key, access_token, user_id, debug=False, root=None,
+    def __init__(self, api_key, access_token, debug=False, root=None,
                  reconnect=True, reconnect_max_tries=RECONNECT_MAX_TRIES, reconnect_max_delay=RECONNECT_MAX_DELAY,
                  connect_timeout=CONNECT_TIMEOUT):
         """
@@ -409,7 +409,6 @@ class KiteTicker(object):
             but once you have obtained it, you should
             persist it in a database or session to pass
             to the Kite Connect class initialisation for subsequent requests.
-        - `user_id` is the Zerodha client id of the authenticated user
         - `root` is the websocket API end point root. Unless you explicitly
             want to send API requests to a non-default endpoint, this
             can be ignored.
@@ -438,12 +437,11 @@ class KiteTicker(object):
 
         self.connect_timeout = connect_timeout
 
-        self.socket_url = "{root}?api_key={api_key}&user_id={user_id}"\
+        self.socket_url = "{root}?api_key={api_key}"\
             "&access_token={access_token}".format(
                 root=self.root,
                 api_key=api_key,
-                access_token=access_token,
-                user_id=user_id
+                access_token=access_token
             )
 
         # Debug enables logs
