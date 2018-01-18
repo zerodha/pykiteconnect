@@ -14,7 +14,7 @@ from kiteconnect import KiteTicker
 logging.basicConfig(level=logging.DEBUG)
 
 # Initialise
-kws = KiteTicker("your_api_key", "your_public_token", "logged_in_user_id")
+kws = KiteTicker("your_api_key", "your_access_token")
 
 def on_ticks(ws, ticks):  # noqa
     # Callback to receive ticks.
