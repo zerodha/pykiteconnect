@@ -321,8 +321,8 @@ class KiteConnect(object):
         return self._post("order.place", params)["order_id"]
 
     def modify_order(self,
-                     order_id,
                      variety,
+                     order_id,
                      parent_order_id=None,
                      quantity=None,
                      price=None,
@@ -340,7 +340,7 @@ class KiteConnect(object):
 
         return self._put("order.modify", params)["order_id"]
 
-    def cancel_order(self, order_id, variety, parent_order_id=None):
+    def cancel_order(self, variety, order_id, parent_order_id=None):
         """Cancel an order."""
         return self._delete("order.cancel", {
             "order_id": order_id,
@@ -348,9 +348,9 @@ class KiteConnect(object):
             "parent_order_id": parent_order_id
         })["order_id"]
 
-    def exit_order(self, order_id, variety, parent_order_id=None):
+    def exit_order(self, variety, order_id, parent_order_id=None):
         """Exit a BO/CO order."""
-        self.cancel_order(order_id, variety, parent_order_id=parent_order_id)
+        self.cancel_order(variety, order_id, parent_order_id=parent_order_id)
 
     def _format_response(self, data):
         """Parse and format responses."""
