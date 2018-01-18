@@ -86,7 +86,6 @@ class KiteConnect(object):
         "api.token": "/session/token",
         "api.token.invalidate": "/session/token",
         "api.token.renew": "/session/refresh_token",
-        "api.token.renew.invalidate": "/session/refresh_token",
         "user.profile": "/user/profile",
         "user.margins": "/user/margins",
         "user.margins.segment": "/user/margins/{segment}",
@@ -243,10 +242,11 @@ class KiteConnect(object):
 
         - `access_token` to invalidate. Default is the active `access_token`.
         """
-        if access_token:
-            self.set_access_token(access_token)
-
-        return self._delete("api.token.invalidate")
+        access_token = access_token or self.access_token
+        return self._delete("api.token.invalidate", {
+            "api_key": self.api_key,
+            "access_token": access_token
+        })
 
     def renew_access_token(self, refresh_token, api_secret):
         """
@@ -275,7 +275,8 @@ class KiteConnect(object):
 
         - `refresh_token` is the token which is used to renew access token.
         """
-        return self._delete("api.token.renew.invalidate", {
+        return self._delete("api.token.invalidate", {
+            "api_key": self.api_key,
             "refresh_token": refresh_token
         })
 
