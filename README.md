@@ -6,13 +6,13 @@ Kite Connect is a set of REST-like APIs that expose many capabilities required t
 [Zerodha Technology](https://zerodha.com) (c) 2017. Licensed under the MIT License.
 
 ## Documentation
-- [Python client documentation](https://kite.trade/docs/pykiteconnect)
+- [Python client documentation](https://kite.trade/docs/pykiteconnect/v3)
 - [Kite Connect HTTP API documentation](https://kite.trade/docs/connect/v3)
 
 ## Installing the client
 You can install the pre release via pip
 ```
-pip install https://github.com/zerodhatech/pykiteconnect/archive/v3.7.0.zip
+pip install git+https://github.com/zerodhatech/pykiteconnect.git#kite3
 ```
 
 ## API usage
