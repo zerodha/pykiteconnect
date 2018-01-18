@@ -97,7 +97,7 @@ def cleanup_orders(kiteconnect, order_id=None):
 
     # Cancel order if order is open
     if is_pending_order(status):
-        kiteconnect.cancel_order(order_id=order_id, variety=variety, parent_order_id=parent_order_id)
+        kiteconnect.cancel_order(variety=variety, order_id=order_id, parent_order_id=parent_order_id)
     # If complete then fetch positions and exit
     elif "COMPLETE" in status:
         positions = kiteconnect.positions()
@@ -130,7 +130,7 @@ def cleanup_orders(kiteconnect, order_id=None):
                 break
 
         if leg_order_id:
-            kiteconnect.exit_order(order_id=leg_order_id, variety=variety, parent_order_id=order_id)
+            kiteconnect.exit_order(variety=variety, order_id=leg_order_id, parent_order_id=order_id)
 
 
 # Order place tests
@@ -354,7 +354,7 @@ def test_order_cancel_regular(kiteconnect):
     else:
         return
 
-    returned_order_id = kiteconnect.cancel_order(order_id, updated_params["variety"])
+    returned_order_id = kiteconnect.cancel_order(updated_params["variety"], order_id)
     assert returned_order_id == order_id
     time.sleep(0.5)
 
@@ -381,7 +381,7 @@ def test_order_modify_limit_regular(kiteconnect):
 
     to_quantity = 2
     to_price = updated_params["price"] - 1
-    kiteconnect.modify_order(order_id, updated_params["variety"], quantity=to_quantity, price=to_price)
+    kiteconnect.modify_order(updated_params["variety"], order_id, quantity=to_quantity, price=to_price)
     time.sleep(0.5)
 
     order = kiteconnect.order_history(order_id)
@@ -401,7 +401,7 @@ def test_order_cancel_amo(kiteconnect):
     else:
         return
 
-    returned_order_id = kiteconnect.cancel_order(order_id, updated_params["variety"])
+    returned_order_id = kiteconnect.cancel_order(updated_params["variety"], order_id)
     assert returned_order_id == order_id
     time.sleep(0.5)
 
@@ -427,7 +427,7 @@ def test_order_modify_limit_amo(kiteconnect):
 
     to_quantity = 2
     to_price = updated_params["price"] - 1
-    kiteconnect.modify_order(order_id, updated_params["variety"], quantity=to_quantity, price=to_price)
+    kiteconnect.modify_order(updated_params["variety"], order_id, quantity=to_quantity, price=to_price)
     time.sleep(0.5)
 
     order = kiteconnect.order_history(order_id)
@@ -465,7 +465,7 @@ def test_modify_order_bo_limit_main(kiteconnect):
         warnings.warn(UserWarning("Order is not open with status: ", status))
         return
 
-    kiteconnect.modify_order(order_id, kiteconnect.VARIETY_BO, quantity=quantity + 1, price=price + 1)
+    kiteconnect.modify_order(kiteconnect.VARIETY_BO, order_id, quantity=quantity + 1, price=price + 1)
     time.sleep(0.5)
     modified_order = kiteconnect.order_history(order_id=order_id)
 
@@ -509,9 +509,9 @@ def test_modify_order_bo_limit_leg(kiteconnect):
 
     for o in leg_orders:
         if o["price"]:
-            kiteconnect.modify_order(o["order_id"], variety=kiteconnect.VARIETY_BO, parent_order_id=order_id, price=o["price"] + 1)
+            kiteconnect.modify_order(kiteconnect.VARIETY_BO, o["order_id"], parent_order_id=order_id, price=o["price"] + 1)
         elif o["trigger_price"]:
-            kiteconnect.modify_order(o["order_id"], variety=kiteconnect.VARIETY_BO, parent_order_id=order_id, trigger_price=o["trigger_price"] + 1)
+            kiteconnect.modify_order(kiteconnect.VARIETY_BO, o["order_id"], parent_order_id=order_id, trigger_price=o["trigger_price"] + 1)
 
     time.sleep(0.5)
     updated_orders = kiteconnect.orders()
@@ -552,7 +552,7 @@ def test_cancel_order_bo_limit_main(kiteconnect):
         warnings.warn(UserWarning("Order is not open with status: ", status))
         return
 
-    kiteconnect.cancel_order(order_id=order_id, variety=kiteconnect.VARIETY_BO)
+    kiteconnect.cancel_order(variety=kiteconnect.VARIETY_BO, order_id=order_id)
     time.sleep(0.5)
     modified_order = kiteconnect.order_history(order_id=order_id)
 
@@ -589,7 +589,7 @@ def test_exit_order_bo_limit_leg(kiteconnect):
             leg_orders.append(o)
 
     leg_order = leg_orders[0]
-    kiteconnect.exit_order(order_id=leg_order["order_id"], variety=kiteconnect.VARIETY_BO, parent_order_id=order_id)
+    kiteconnect.exit_order(variety=kiteconnect.VARIETY_BO, order_id=leg_order["order_id"], parent_order_id=order_id)
 
     time.sleep(0.5)
     for o in leg_orders:
@@ -625,7 +625,7 @@ def test_exit_order_co_market_leg(kiteconnect):
             leg_order = o
             exit
 
-    kiteconnect.exit_order(order_id=leg_order["order_id"], variety=kiteconnect.VARIETY_CO, parent_order_id=order_id)
+    kiteconnect.exit_order(variety=kiteconnect.VARIETY_CO, order_id=leg_order["order_id"], parent_order_id=order_id)
     time.sleep(0.5)
     leg_order_info = kiteconnect.order_history(order_id=leg_order["order_id"])
     assert not is_pending_order(leg_order_info[-1]["status"])
@@ -649,7 +649,7 @@ def test_cancel_order_co_limit(kiteconnect):
     assert order[-1]["product"] == kiteconnect.PRODUCT_CO
     assert order[-1]["variety"] == kiteconnect.VARIETY_CO
 
-    kiteconnect.cancel_order(order_id=order_id, variety=kiteconnect.VARIETY_CO)
+    kiteconnect.cancel_order(variety=kiteconnect.VARIETY_CO, order_id=order_id)
     time.sleep(0.5)
     updated_order = kiteconnect.order_history(order_id=order_id)
     assert not is_pending_order(updated_order[-1]["status"])
