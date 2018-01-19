@@ -12,7 +12,7 @@ Kite Connect is a set of REST-like APIs that expose many capabilities required t
 ## Installing the client
 You can install the pre release via pip
 ```
-pip install git+https://github.com/zerodhatech/pykiteconnect.git#kite3
+pip install git+https://github.com/zerodhatech/pykiteconnect@kite3#egg=kiteconnect
 ```
 
 ## API usage
