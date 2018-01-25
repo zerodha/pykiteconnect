@@ -669,6 +669,10 @@ class KiteTicker(object):
 
     def _parse_text_message(self, payload):
         """Parse text message."""
+        # Decode unicode data
+        if not six.PY2 and type(payload) == bytes:
+            payload = payload.decode("utf-8")
+
         try:
             data = json.loads(payload)
         except ValueError:

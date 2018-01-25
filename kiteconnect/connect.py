@@ -613,7 +613,8 @@ class KiteConnect(object):
     def _parse_instruments(self, data):
         # decode to string for Python 3
         d = data
-        if not PY2:
+        # Decode unicode data
+        if not PY2 and type(d) == bytes:
             d = data.decode("utf-8").strip()
 
         records = []
@@ -636,7 +637,7 @@ class KiteConnect(object):
     def _parse_mf_instruments(self, data):
         # decode to string for Python 3
         d = data
-        if not PY2:
+        if not PY2 and type(d) == bytes:
             d = data.decode("utf-8").strip()
 
         records = []
