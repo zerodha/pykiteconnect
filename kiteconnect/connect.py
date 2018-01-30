@@ -708,7 +708,7 @@ class KiteConnect(object):
                                         data=params if method in ["POST", "PUT"] else None,
                                         params=params if method in ["GET", "DELETE"] else None,
                                         headers=headers,
-                                        verify=False,
+                                        verify=not self.disable_ssl,
                                         allow_redirects=True,
                                         timeout=self.timeout,
                                         proxies=self.proxies)
