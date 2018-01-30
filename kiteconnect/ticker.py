@@ -718,7 +718,7 @@ class KiteTicker(object):
                         "low": self._unpack_int(packet, 12, 16) / divisor,
                         "open": self._unpack_int(packet, 16, 20) / divisor,
                         "close": self._unpack_int(packet, 20, 24) / divisor
-                }
+                    }
                 }
 
                 # Compute the change price using close price and last price
@@ -741,7 +741,7 @@ class KiteTicker(object):
                 mode = self.MODE_QUOTE if len(packet) == 44 else self.MODE_FULL
 
                 d = {
-                    "tradable": True,
+                    "tradable": tradable,
                     "mode": mode,
                     "instrument_token": instrument_token,
                     "last_price": self._unpack_int(packet, 4, 8) / divisor,
