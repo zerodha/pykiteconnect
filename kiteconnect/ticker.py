@@ -718,11 +718,11 @@ class KiteTicker(object):
                         "low": self._unpack_int(packet, 12, 16) / divisor,
                         "open": self._unpack_int(packet, 16, 20) / divisor,
                         "close": self._unpack_int(packet, 20, 24) / divisor
-                    },
-                    "change": self._unpack_int(packet, 24, 28) / divisor,
+                }
                 }
 
                 # Compute the change price using close price and last price
+                d["change"] = 0
                 if(d["ohlc"]["close"] != 0):
                     d["change"] = (d["last_price"] - d["ohlc"]["close"]) * 100 / d["ohlc"]["close"]
 
