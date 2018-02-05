@@ -527,30 +527,48 @@ class KiteConnect(object):
         else:
             return self._parse_instruments(self._get("market.instruments.all"))
 
-    def quote(self, instruments):
+    def quote(self, *instruments):
         """
         Retrieve quote for list of instruments.
 
         - `instruments` is a list of instruments, Instrument are in the format of `tradingsymbol:exchange`. For example NSE:INFY
         """
-        data = self._get("market.quote", {"i": instruments})
+        ins = list(instruments)
+
+        # If first element is a list then accept it as instruments list for legacy reason
+        if len(instruments) > 0 and type(instruments[0]) == list:
+            ins = instruments[0]
+
+        data = self._get("market.quote", {"i": ins})
         return {key: self._format_response(data[key]) for key in data}
 
-    def ohlc(self, instruments):
+    def ohlc(self, *instruments):
         """
         Retrieve OHLC and market depth for list of instruments.
 
         - `instruments` is a list of instruments, Instrument are in the format of `tradingsymbol:exchange`. For example NSE:INFY
         """
-        return self._get("market.quote.ohlc", {"i": instruments})
+        ins = list(instruments)
 
-    def ltp(self, instruments):
+        # If first element is a list then accept it as instruments list for legacy reason
+        if len(instruments) > 0 and type(instruments[0]) == list:
+            ins = instruments[0]
+
+        return self._get("market.quote.ohlc", {"i": ins})
+
+    def ltp(self, *instruments):
         """
         Retrieve last price for list of instruments.
 
         - `instruments` is a list of instruments, Instrument are in the format of `tradingsymbol:exchange`. For example NSE:INFY
         """
-        return self._get("market.quote.ltp", {"i": instruments})
+        ins = list(instruments)
+
+        # If first element is a list then accept it as instruments list for legacy reason
+        if len(instruments) > 0 and type(instruments[0]) == list:
+            ins = instruments[0]
+
+        return self._get("market.quote.ltp", {"i": ins})
 
     # def instruments_margins(self, segment):
     #     """
