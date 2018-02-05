@@ -3,6 +3,7 @@
 import pytest
 from mock import Mock
 import utils
+import time
 import datetime
 import warnings
 import kiteconnect.exceptions as ex
@@ -223,22 +224,72 @@ def test_historical_data_intervals(max_interval, candle_interval, kiteconnect):
 def test_quote(kiteconnect):
     """Test quote."""
     instruments = ["NSE:INFY"]
+
+    # Test sending instruments as a list
+    time.sleep(1.1)
     quote = kiteconnect.quote(instruments)
     mock_resp = utils.get_json_response("market.quote")["data"]
     utils.assert_responses(quote, mock_resp)
 
+    # Test sending instruments as args
+    time.sleep(1.1)
+    quote = kiteconnect.quote(*instruments)
+    mock_resp = utils.get_json_response("market.quote")["data"]
+    utils.assert_responses(quote, mock_resp)
 
-def test_ohlc(kiteconnect):
+
+def test_quote_ohlc(kiteconnect):
     """Test ohlc."""
     instruments = ["NSE:INFY"]
+
+    # Test sending instruments as a list
+    time.sleep(1.1)
     ohlc = kiteconnect.ohlc(instruments)
     mock_resp = utils.get_json_response("market.quote.ohlc")["data"]
     utils.assert_responses(ohlc, mock_resp)
 
+    # Test sending instruments as args
+    time.sleep(1.1)
+    ohlc = kiteconnect.ohlc(*instruments)
+    mock_resp = utils.get_json_response("market.quote.ohlc")["data"]
+    utils.assert_responses(ohlc, mock_resp)
 
-def test_ltp(kiteconnect):
+
+def test_quote_ltp(kiteconnect):
     """Test ltp."""
     instruments = ["NSE:INFY"]
+
+    # Test sending instruments as a list
+    time.sleep(1.1)
     ltp = kiteconnect.ltp(instruments)
     mock_resp = utils.get_json_response("market.quote.ltp")["data"]
     utils.assert_responses(ltp, mock_resp)
+
+    # Test sending instruments as args
+    time.sleep(1.1)
+    ltp = kiteconnect.ltp(*instruments)
+    mock_resp = utils.get_json_response("market.quote.ltp")["data"]
+    utils.assert_responses(ltp, mock_resp)
+
+
+def test_trigger_range(kiteconnect):
+    """Test ltp."""
+    instruments = ["NSE:INFY", "NSE:RELIANCE"]
+
+    # Test sending instruments as a list
+    buy_resp = kiteconnect.trigger_range(kiteconnect.TRANSACTION_TYPE_BUY, *instruments)
+    mock_resp = utils.get_json_response("market.trigger_range")["data"]
+    utils.assert_responses(buy_resp, mock_resp)
+
+    buy_resp = kiteconnect.trigger_range(kiteconnect.TRANSACTION_TYPE_SELL, *instruments)
+    mock_resp = utils.get_json_response("market.trigger_range")["data"]
+    utils.assert_responses(buy_resp, mock_resp)
+
+    # Test sending instruments as a args
+    buy_resp = kiteconnect.trigger_range(kiteconnect.TRANSACTION_TYPE_BUY, instruments)
+    mock_resp = utils.get_json_response("market.trigger_range")["data"]
+    utils.assert_responses(buy_resp, mock_resp)
+
+    buy_resp = kiteconnect.trigger_range(kiteconnect.TRANSACTION_TYPE_SELL, instruments)
+    mock_resp = utils.get_json_response("market.trigger_range")["data"]
+    utils.assert_responses(buy_resp, mock_resp)

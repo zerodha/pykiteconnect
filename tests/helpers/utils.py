@@ -30,7 +30,7 @@ responses_path = {
     "market.instruments": "instruments_nse.csv",
     "market.instruments.all": "instruments_all.csv",
     "market.historical": "historical_minute.json",
-    "market.trigger_range": "",
+    "market.trigger_range": "trigger_range.json",
 
     "market.quote": "quote.json",
     "market.quote.ohlc": "ohlc.json",

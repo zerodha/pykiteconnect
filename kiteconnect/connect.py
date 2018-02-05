@@ -122,7 +122,7 @@ class KiteConnect(object):
         "market.instruments": "/instruments/{exchange}",
         "market.margins": "/margins/{segment}",
         "market.historical": "/instruments/historical/{instrument_token}/{interval}",
-        "market.trigger_range": "/instruments/{exchange}/{tradingsymbol}/trigger_range",
+        "market.trigger_range": "/instruments/trigger_range/{transaction_type}",
 
         "market.quote": "/quote",
         "market.quote.ohlc": "/quote/ohlc",
@@ -602,12 +602,17 @@ class KiteConnect(object):
 
         return records
 
-    def trigger_range(self, exchange, tradingsymbol, transaction_type):
+    def trigger_range(self, transaction_type, *instruments):
         """Retrieve the buy/sell trigger range for Cover Orders."""
+        ins = list(instruments)
+
+        # If first element is a list then accept it as instruments list for legacy reason
+        if len(instruments) > 0 and type(instruments[0]) == list:
+            ins = instruments[0]
+
         return self._get("market.trigger_range", {
-            "exchange": exchange,
-            "tradingsymbol": tradingsymbol,
-            "transaction_type": transaction_type
+            "i": ins,
+            "transaction_type": transaction_type.lower()
         })
 
     def _parse_instruments(self, data):
