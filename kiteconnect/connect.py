@@ -644,6 +644,7 @@ class KiteConnect(object):
         reader = csv.DictReader(StringIO(d))
 
         for row in reader:
+            row["instrument_token"] = int(row["instrument_token"])
             row["last_price"] = float(row["last_price"])
             row["strike"] = float(row["strike"])
             row["tick_size"] = float(row["tick_size"])
