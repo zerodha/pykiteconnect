@@ -18,7 +18,7 @@ from kiteconnect import KiteTicker
 logging.basicConfig(level=logging.DEBUG)
 
 # Initialise.
-kws = KiteTicker("api_key", "public_token", "zerodha_user_id")
+kws = KiteTicker("api_key", "public_token")
 
 # RELIANCE BSE
 tokens = [738561]
