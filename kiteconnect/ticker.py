@@ -170,10 +170,8 @@ class KiteTickerClientFactory(WebSocketClientFactory, ReconnectingClientFactory)
 
     def clientConnectionFailed(self, connector, reason):  # noqa
         """On connection failure (When connect request fails)"""
-        log.error("WebSocket connection failed: {}.".format(reason))
-
         if self.retries > 0:
-            log.error("Try reconnecting. Retry attempt count: {}".format(self.retries))
+            log.error("Retrying connection. Retry attempt count: {}. Next retry in around: {} seconds".format(self.retries, int(round(self.delay))))
 
             # on reconnect callback
             if self.on_reconnect:
@@ -185,11 +183,7 @@ class KiteTickerClientFactory(WebSocketClientFactory, ReconnectingClientFactory)
 
     def clientConnectionLost(self, connector, reason):  # noqa
         """On connection lost (When ongoing connection got disconnected)."""
-        log.error("WebSocket connection lost: {}.".format(reason))
-
         if self.retries > 0:
-            log.error("Try reconnecting. Retry attempt count: {}".format(self.retries))
-
             # on reconnect callback
             if self.on_reconnect:
                 self.on_reconnect(self.retries)
@@ -627,11 +621,15 @@ class KiteTicker(object):
 
     def _on_close(self, ws, code, reason):
         """Call `on_close` callback when connection is closed."""
+        log.error("Connection closed: {} - {}".format(code, str(reason)))
+
         if self.on_close:
             self.on_close(self, code, reason)
 
     def _on_error(self, ws, code, reason):
         """Call `on_error` callback when connection throws an error."""
+        log.error("Connection error: {} - {}".format(code, str(reason)))
+
         if self.on_error:
             self.on_error(self, code, reason)
 
