@@ -23,9 +23,9 @@ Since some of the dependencies uses C extensions it has to compiled before insta
 
 ### Microsoft Windows
 Each Python version uses a specific compiler version (e.g. CPython 2.7 uses Visual C++ 9.0, CPython 3.3 uses Visual C++ 10.0, etc). So, you need to install the compiler version that corresponds to your Python version
-    - Python 2.6, 2.7, 3.0, 3.1, 3.2 - [Microsoft Visual C++ 9.0](https://wiki.python.org/moin/WindowsCompilers#Microsoft_Visual_C.2B-.2B-_9.0_standalone:_Visual_C.2B-.2B-_Compiler_for_Python_2.7_.28x86.2C_x64.29)
-    - Python 3.3, 3.4 - [Microsoft Visual C++ 10.0](https://wiki.python.org/moin/WindowsCompilers#Microsoft_Visual_C.2B-.2B-_10.0_standalone:_Windows_SDK_7.1_.28x86.2C_x64.2C_ia64.29)
-    - Python 3.5, 3.6 - [Microsoft Visual C++ 14.0](https://wiki.python.org/moin/WindowsCompilers#Microsoft_Visual_C.2B-.2B-_14.0_standalone:_Visual_C.2B-.2B-_Build_Tools_2015_.28x86.2C_x64.2C_ARM.29)
+- Python 2.6, 2.7, 3.0, 3.1, 3.2 - [Microsoft Visual C++ 9.0](https://wiki.python.org/moin/WindowsCompilers#Microsoft_Visual_C.2B-.2B-_9.0_standalone:_Visual_C.2B-.2B-_Compiler_for_Python_2.7_.28x86.2C_x64.29)
+- Python 3.3, 3.4 - [Microsoft Visual C++ 10.0](https://wiki.python.org/moin/WindowsCompilers#Microsoft_Visual_C.2B-.2B-_10.0_standalone:_Windows_SDK_7.1_.28x86.2C_x64.2C_ia64.29)
+- Python 3.5, 3.6 - [Microsoft Visual C++ 14.0](https://wiki.python.org/moin/WindowsCompilers#Microsoft_Visual_C.2B-.2B-_14.0_standalone:_Visual_C.2B-.2B-_Build_Tools_2015_.28x86.2C_x64.2C_ARM.29)
 
 For more details check [official Python documentation](https://wiki.python.org/moin/WindowsCompilers).
 
