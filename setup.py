@@ -37,11 +37,21 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Software Development :: Libraries"
     ],
-    install_requires=["requests", "six", "autobahn", "Twisted", "pyOpenSSL", "service-identity", "enum34", "python-dateutil"],
+    install_requires=[
+        "requests>=2.18.4",
+        "six>=1.11.0",
+        "autobahn[twisted]>=17.10.1",
+        "Twisted>=17.9.0",
+        "pyOpenSSL>=17.5.0",
+        "service-identity>=17.0.0",
+        "enum34>=1.1.6",
+        "python-dateutil>=2.6.1"
+    ],
     tests_require=["pytest", "responses", "pytest-cov", "mock", "flake8"],
     test_suite="tests",
     setup_requires=["pytest-runner"],
     extras_require={
-        "doc": ["pdoc"]
+        "doc": ["pdoc"],
+        ':sys_platform=="win32"': ["pypiwin32"]
     }
 )
