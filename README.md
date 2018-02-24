@@ -20,6 +20,12 @@ You can install the pre release via pip
 pip install kiteconnect --upgrade --pre
 ```
 
+Its recommended to update `setuptools` to latest if you are facing any issue while installing
+
+```
+pip install -U pip setuptools
+```
+
 Since some of the dependencies uses C extensions it has to compiled before installing the package.
 
 ### Linux, BSD and maxOS
