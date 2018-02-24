@@ -2,7 +2,7 @@
 """
 Kite Connect API client for Python -- [https://kite.trade](kite.trade).
 
-Zerodha technologies (c) 2017
+Zerodha technologies (c) 2018
 
 License
 -------
@@ -19,7 +19,7 @@ data (WebSockets), and more, with the simple HTTP API collection
 This module provides an easy to use abstraction over the HTTP APIs.
 The HTTP calls have been converted to methods and their JSON responses
 are returned as native Python structures, for example, dicts, lists, bools etc.
-See the **[Kite Connect API documentation](https://kite.trade/docs/connect/v1/)**
+See the **[Kite Connect API documentation](https://kite.trade/docs/connect/v3/)**
 for the complete list of APIs, supported parameters and values, and response formats.
 
 Getting started

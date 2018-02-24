@@ -8,7 +8,7 @@ The official Python client for communicating with the [Kite Connect API](https:/
 
 Kite Connect is a set of REST-like APIs that expose many capabilities required to build a complete investment and trading platform. Execute orders in real time, manage user portfolio, stream live market data (WebSockets), and more, with the simple HTTP API collection.
 
-[Zerodha Technology](https://zerodha.com) (c) 2017. Licensed under the MIT License.
+[Zerodha Technology](https://zerodha.com) (c) 2018. Licensed under the MIT License.
 
 ## Documentation
 - [Python client documentation](https://kite.trade/docs/pykiteconnect/v3)
@@ -86,7 +86,7 @@ kite.cancel_mf_order(order_id="order_id")
 kite.mf_instruments()
 ```
 
-Refer to the [Python client documentation](https://kite.trade/docs/pykiteconnect) for the complete list of supported methods.
+Refer to the [Python client documentation](https://kite.trade/docs/pykiteconnect/v3) for the complete list of supported methods.
 
 ## WebSocket usage
 ```python
