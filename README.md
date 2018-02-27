@@ -110,9 +110,14 @@ def on_connect(ws, response):
     # Set RELIANCE to tick in `full` mode.
     ws.set_mode(ws.MODE_FULL, [738561])
 
+def on_close(ws, code, reason):
+    # On connection close stop the main loop
+    ws.stop()
+
 # Assign the callbacks.
 kws.on_ticks = on_ticks
 kws.on_connect = on_connect
+kws.on_close = on_close
 
 # Infinite loop on the main thread. Nothing after this will run.
 # You have to use the pre-defined callbacks to manage subscriptions.

@@ -229,9 +229,14 @@ class KiteTicker(object):
             # Set RELIANCE to tick in `full` mode.
             ws.set_mode(ws.MODE_FULL, [738561])
 
+        def on_close(ws, code, reason):
+            # On connection close stop the main loop
+            ws.stop()
+
         # Assign the callbacks.
         kws.on_ticks = on_ticks
         kws.on_connect = on_connect
+        kws.on_close = on_close
 
         # Infinite loop on the main thread. Nothing after this will run.
         # You have to use the pre-defined callbacks to manage subscriptions.
@@ -531,6 +536,11 @@ class KiteTicker(object):
         """Close the WebSocket connection."""
         self.stop_retry()
         self._close(code, reason)
+
+    def stop(self):
+        """Stop the main loop. Should be used if main thread has to be closed in `on_close` method."""
+        reactor.stop()
+
     def stop_retry(self):
         """Stop auto retry when it is in progress."""
         if self.factory:
