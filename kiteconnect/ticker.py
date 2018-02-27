@@ -522,11 +522,15 @@ class KiteTicker(object):
         else:
             return False
 
-    def close(self, code=None, reason=None):
+    def _close(self, code=None, reason=None):
         """Close the WebSocket connection."""
         if self.ws:
             self.ws.sendClose(code, reason)
 
+    def close(self, code=None, reason=None):
+        """Close the WebSocket connection."""
+        self.stop_retry()
+        self._close(code, reason)
     def stop_retry(self):
         """Stop auto retry when it is in progress."""
         if self.factory:
@@ -548,7 +552,7 @@ class KiteTicker(object):
 
             return True
         except Exception as e:
-            self.close(reason="Error while subscribe: {}".format(str(e)))
+            self._close(reason="Error while subscribe: {}".format(str(e)))
             raise
 
     def unsubscribe(self, instrument_tokens):
@@ -570,7 +574,7 @@ class KiteTicker(object):
 
             return True
         except Exception as e:
-            self.close(reason="Error while unsubscribe: {}".format(str(e)))
+            self._close(reason="Error while unsubscribe: {}".format(str(e)))
             raise
 
     def set_mode(self, mode, instrument_tokens):
@@ -592,7 +596,7 @@ class KiteTicker(object):
 
             return True
         except Exception as e:
-            self.close(reason="Error while setting mode: {}".format(str(e)))
+            self._close(reason="Error while setting mode: {}".format(str(e)))
             raise
 
     def resubscribe(self):
