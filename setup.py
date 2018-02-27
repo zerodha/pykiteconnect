@@ -51,6 +51,6 @@ setup(
     setup_requires=["pytest-runner"],
     extras_require={
         "doc": ["pdoc"],
-        ':sys_platform=="win32"': ["pypiwin32"]
+        ':sys_platform=="win32"': ["pypiwin32<=220"]
     }
 )
