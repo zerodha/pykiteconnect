@@ -29,8 +29,20 @@ pip install -U pip setuptools
 Since some of the dependencies uses C extensions it has to compiled before installing the package.
 
 ### Linux, BSD and maxOS
-- On Linux, and BSDs, you will need a C compiler (such as GCC). On Debian/Ubuntu systems, you may first need `apt-get install python-dev libffi-dev`. On Fedora it's `yum install libffi-devel python-devel`.
-- On macOS you will need to run `xcode-select --install`.
+- On Linux, and BSDs, you will need a C compiler (such as GCC).
+
+#### Debian/Ubuntu
+```
+apt-get install libffi-dev python-dev python3-dev
+```
+#### Centos/RHEL/Fedora
+```
+yum install libffi-devel python3-devel python-devel
+```
+#### macOS/OSx
+```
+xcode-select --install
+```
 
 ### Microsoft Windows
 Each Python version uses a specific compiler version (e.g. CPython 2.7 uses Visual C++ 9.0, CPython 3.3 uses Visual C++ 10.0, etc). So, you need to install the compiler version that corresponds to your Python version
