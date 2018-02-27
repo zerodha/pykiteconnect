@@ -1057,7 +1057,7 @@ table {
   <header id="section-intro">
   <h1 class="title"><span class="name">kiteconnect</span> module</h1>
   <p>Kite Connect API client for Python -- <a href="kite.trade">https://kite.trade</a>.</p>
-<p>Zerodha technologies (c) 2017</p>
+<p>Zerodha technologies (c) 2018</p>
 <h2>License</h2>
 <p>KiteConnect Python library is licensed under the MIT License</p>
 <h2>The library</h2>
@@ -1069,7 +1069,7 @@ data (WebSockets), and more, with the simple HTTP API collection</p>
 <p>This module provides an easy to use abstraction over the HTTP APIs.
 The HTTP calls have been converted to methods and their JSON responses
 are returned as native Python structures, for example, dicts, lists, bools etc.
-See the <strong><a href="https://kite.trade/docs/connect/v1/">Kite Connect API documentation</a></strong>
+See the <strong><a href="https://kite.trade/docs/connect/v3/">Kite Connect API documentation</a></strong>
 for the complete list of APIs, supported parameters and values, and response formats.</p>
 <h2>Getting started</h2>
 <pre><code>#!python
@@ -1086,7 +1086,7 @@ kite = KiteConnect(api_key="your_api_key")
 # Once you have the request_token, obtain the access_token
 # as follows.
 
-data = kite.generate_session("request_token_here", secret="your_secret")
+data = kite.generate_session("request_token_here", api_secret="your_secret")
 kite.set_access_token(data["access_token"])
 
 # Place an order
@@ -1154,7 +1154,7 @@ it raises aptly named <strong><a href="exceptions.m.html">exceptions</a></strong
 """
 Kite Connect API client for Python -- [https://kite.trade](kite.trade).
 
-Zerodha technologies (c) 2017
+Zerodha technologies (c) 2018
 
 License
 -------
@@ -1171,7 +1171,7 @@ data (WebSockets), and more, with the simple HTTP API collection
 This module provides an easy to use abstraction over the HTTP APIs.
 The HTTP calls have been converted to methods and their JSON responses
 are returned as native Python structures, for example, dicts, lists, bools etc.
-See the **[Kite Connect API documentation](https://kite.trade/docs/connect/v1/)**
+See the **[Kite Connect API documentation](https://kite.trade/docs/connect/v3/)**
 for the complete list of APIs, supported parameters and values, and response formats.
 
 Getting started
@@ -1190,7 +1190,7 @@ Getting started
     # Once you have the request_token, obtain the access_token
     # as follows.
 
-    data = kite.generate_session("request_token_here", secret="your_secret")
+    data = kite.generate_session("request_token_here", api_secret="your_secret")
     kite.set_access_token(data["access_token"])
 
     # Place an order
@@ -1381,7 +1381,7 @@ __all__ = ["KiteConnect", "KiteTicker", "exceptions"]
         "market.instruments": "/instruments/{exchange}",
         "market.margins": "/margins/{segment}",
         "market.historical": "/instruments/historical/{instrument_token}/{interval}",
-        "market.trigger_range": "/instruments/{exchange}/{tradingsymbol}/trigger_range",
+        "market.trigger_range": "/instruments/trigger_range/{transaction_type}",
 
         "market.quote": "/quote",
         "market.quote.ohlc": "/quote/ohlc",
@@ -1786,30 +1786,48 @@ __all__ = ["KiteConnect", "KiteTicker", "exceptions"]
         else:
             return self._parse_instruments(self._get("market.instruments.all"))
 
-    def quote(self, instruments):
+    def quote(self, *instruments):
         """
         Retrieve quote for list of instruments.
 
         - `instruments` is a list of instruments, Instrument are in the format of `tradingsymbol:exchange`. For example NSE:INFY
         """
-        data = self._get("market.quote", {"i": instruments})
+        ins = list(instruments)
+
+        # If first element is a list then accept it as instruments list for legacy reason
+        if len(instruments) > 0 and type(instruments[0]) == list:
+            ins = instruments[0]
+
+        data = self._get("market.quote", {"i": ins})
         return {key: self._format_response(data[key]) for key in data}
 
-    def ohlc(self, instruments):
+    def ohlc(self, *instruments):
         """
         Retrieve OHLC and market depth for list of instruments.
 
         - `instruments` is a list of instruments, Instrument are in the format of `tradingsymbol:exchange`. For example NSE:INFY
         """
-        return self._get("market.quote.ohlc", {"i": instruments})
+        ins = list(instruments)
 
-    def ltp(self, instruments):
+        # If first element is a list then accept it as instruments list for legacy reason
+        if len(instruments) > 0 and type(instruments[0]) == list:
+            ins = instruments[0]
+
+        return self._get("market.quote.ohlc", {"i": ins})
+
+    def ltp(self, *instruments):
         """
         Retrieve last price for list of instruments.
 
         - `instruments` is a list of instruments, Instrument are in the format of `tradingsymbol:exchange`. For example NSE:INFY
         """
-        return self._get("market.quote.ltp", {"i": instruments})
+        ins = list(instruments)
+
+        # If first element is a list then accept it as instruments list for legacy reason
+        if len(instruments) > 0 and type(instruments[0]) == list:
+            ins = instruments[0]
+
+        return self._get("market.quote.ltp", {"i": ins})
 
     # def instruments_margins(self, segment):
     #     """
@@ -1861,24 +1879,31 @@ __all__ = ["KiteConnect", "KiteTicker", "exceptions"]
 
         return records
 
-    def trigger_range(self, exchange, tradingsymbol, transaction_type):
+    def trigger_range(self, transaction_type, *instruments):
         """Retrieve the buy/sell trigger range for Cover Orders."""
+        ins = list(instruments)
+
+        # If first element is a list then accept it as instruments list for legacy reason
+        if len(instruments) > 0 and type(instruments[0]) == list:
+            ins = instruments[0]
+
         return self._get("market.trigger_range", {
-            "exchange": exchange,
-            "tradingsymbol": tradingsymbol,
-            "transaction_type": transaction_type
+            "i": ins,
+            "transaction_type": transaction_type.lower()
         })
 
     def _parse_instruments(self, data):
         # decode to string for Python 3
         d = data
-        if not PY2:
+        # Decode unicode data
+        if not PY2 and type(d) == bytes:
             d = data.decode("utf-8").strip()
 
         records = []
         reader = csv.DictReader(StringIO(d))
 
         for row in reader:
+            row["instrument_token"] = int(row["instrument_token"])
             row["last_price"] = float(row["last_price"])
             row["strike"] = float(row["strike"])
             row["tick_size"] = float(row["tick_size"])
@@ -1895,7 +1920,7 @@ __all__ = ["KiteConnect", "KiteTicker", "exceptions"]
     def _parse_mf_instruments(self, data):
         # decode to string for Python 3
         d = data
-        if not PY2:
+        if not PY2 and type(d) == bytes:
             d = data.decode("utf-8").strip()
 
         records = []
@@ -1966,7 +1991,7 @@ __all__ = ["KiteConnect", "KiteTicker", "exceptions"]
                                         data=params if method in ["POST", "PUT"] else None,
                                         params=params if method in ["GET", "DELETE"] else None,
                                         headers=headers,
-                                        verify=False,
+                                        verify=not self.disable_ssl,
                                         allow_redirects=True,
                                         timeout=self.timeout,
                                         proxies=self.proxies)
@@ -2847,7 +2872,7 @@ with tens of thousands of entries in the list.</p>
             
   <div class="item">
     <div class="name def" id="kiteconnect.KiteConnect.ltp">
-    <p>def <span class="ident">ltp</span>(</p><p>self, instruments)</p>
+    <p>def <span class="ident">ltp</span>(</p><p>self, *instruments)</p>
     </div>
     
 
@@ -2860,12 +2885,16 @@ with tens of thousands of entries in the list.</p>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.ltp', this);">Show source &equiv;</a></p>
   <div id="source-kiteconnect.KiteConnect.ltp" class="source">
-    <pre><code>def ltp(self, instruments):
+    <pre><code>def ltp(self, *instruments):
     """
     Retrieve last price for list of instruments.
     - `instruments` is a list of instruments, Instrument are in the format of `tradingsymbol:exchange`. For example NSE:INFY
     """
-    return self._get("market.quote.ltp", {"i": instruments})
+    ins = list(instruments)
+    # If first element is a list then accept it as instruments list for legacy reason
+    if len(instruments) > 0 and type(instruments[0]) == list:
+        ins = instruments[0]
+    return self._get("market.quote.ltp", {"i": ins})
 </code></pre>
   </div>
 </div>
@@ -3070,7 +3099,7 @@ with tens of thousands of entries in the list.</p>
             
   <div class="item">
     <div class="name def" id="kiteconnect.KiteConnect.ohlc">
-    <p>def <span class="ident">ohlc</span>(</p><p>self, instruments)</p>
+    <p>def <span class="ident">ohlc</span>(</p><p>self, *instruments)</p>
     </div>
     
 
@@ -3083,12 +3112,16 @@ with tens of thousands of entries in the list.</p>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.ohlc', this);">Show source &equiv;</a></p>
   <div id="source-kiteconnect.KiteConnect.ohlc" class="source">
-    <pre><code>def ohlc(self, instruments):
+    <pre><code>def ohlc(self, *instruments):
     """
     Retrieve OHLC and market depth for list of instruments.
     - `instruments` is a list of instruments, Instrument are in the format of `tradingsymbol:exchange`. For example NSE:INFY
     """
-    return self._get("market.quote.ohlc", {"i": instruments})
+    ins = list(instruments)
+    # If first element is a list then accept it as instruments list for legacy reason
+    if len(instruments) > 0 and type(instruments[0]) == list:
+        ins = instruments[0]
+    return self._get("market.quote.ohlc", {"i": ins})
 </code></pre>
   </div>
 </div>
@@ -3334,7 +3367,7 @@ with tens of thousands of entries in the list.</p>
             
   <div class="item">
     <div class="name def" id="kiteconnect.KiteConnect.quote">
-    <p>def <span class="ident">quote</span>(</p><p>self, instruments)</p>
+    <p>def <span class="ident">quote</span>(</p><p>self, *instruments)</p>
     </div>
     
 
@@ -3347,12 +3380,16 @@ with tens of thousands of entries in the list.</p>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.quote', this);">Show source &equiv;</a></p>
   <div id="source-kiteconnect.KiteConnect.quote" class="source">
-    <pre><code>def quote(self, instruments):
+    <pre><code>def quote(self, *instruments):
     """
     Retrieve quote for list of instruments.
     - `instruments` is a list of instruments, Instrument are in the format of `tradingsymbol:exchange`. For example NSE:INFY
     """
-    data = self._get("market.quote", {"i": instruments})
+    ins = list(instruments)
+    # If first element is a list then accept it as instruments list for legacy reason
+    if len(instruments) > 0 and type(instruments[0]) == list:
+        ins = instruments[0]
+    data = self._get("market.quote", {"i": ins})
     return {key: self._format_response(data[key]) for key in data}
 </code></pre>
   </div>
@@ -3500,7 +3537,7 @@ If no <code>order_id</code> is specified, all trades for the day are returned.</
             
   <div class="item">
     <div class="name def" id="kiteconnect.KiteConnect.trigger_range">
-    <p>def <span class="ident">trigger_range</span>(</p><p>self, exchange, tradingsymbol, transaction_type)</p>
+    <p>def <span class="ident">trigger_range</span>(</p><p>self, transaction_type, *instruments)</p>
     </div>
     
 
@@ -3510,12 +3547,15 @@ If no <code>order_id</code> is specified, all trades for the day are returned.</
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.trigger_range', this);">Show source &equiv;</a></p>
   <div id="source-kiteconnect.KiteConnect.trigger_range" class="source">
-    <pre><code>def trigger_range(self, exchange, tradingsymbol, transaction_type):
+    <pre><code>def trigger_range(self, transaction_type, *instruments):
     """Retrieve the buy/sell trigger range for Cover Orders."""
+    ins = list(instruments)
+    # If first element is a list then accept it as instruments list for legacy reason
+    if len(instruments) > 0 and type(instruments[0]) == list:
+        ins = instruments[0]
     return self._get("market.trigger_range", {
-        "exchange": exchange,
-        "tradingsymbol": tradingsymbol,
-        "transaction_type": transaction_type
+        "i": ins,
+        "transaction_type": transaction_type.lower()
     })
 </code></pre>
   </div>
@@ -3539,7 +3579,7 @@ from kiteconnect import KiteTicker
 logging.basicConfig(level=logging.DEBUG)
 
 # Initialise
-kws = KiteTicker("your_api_key", "your_access_token", "logged_in_user_id")
+kws = KiteTicker("your_api_key", "your_access_token")
 
 def on_ticks(ws, ticks):
     # Callback to receive ticks.
@@ -3692,7 +3732,7 @@ attempt and <code>on_noreconnect</code> is called when reconnection attempts rea
         logging.basicConfig(level=logging.DEBUG)
 
         # Initialise
-        kws = KiteTicker("your_api_key", "your_access_token", "logged_in_user_id")
+        kws = KiteTicker("your_api_key", "your_access_token")
 
         def on_ticks(ws, ticks):
             # Callback to receive ticks.
@@ -3868,7 +3908,7 @@ attempt and <code>on_noreconnect</code> is called when reconnection attempts rea
     # Maximum number or retries user can set
     _maximum_reconnect_max_tries = 300
 
-    def __init__(self, api_key, access_token, user_id, debug=False, root=None,
+    def __init__(self, api_key, access_token, debug=False, root=None,
                  reconnect=True, reconnect_max_tries=RECONNECT_MAX_TRIES, reconnect_max_delay=RECONNECT_MAX_DELAY,
                  connect_timeout=CONNECT_TIMEOUT):
         """
@@ -3880,7 +3920,6 @@ attempt and <code>on_noreconnect</code> is called when reconnection attempts rea
             but once you have obtained it, you should
             persist it in a database or session to pass
             to the Kite Connect class initialisation for subsequent requests.
-        - `user_id` is the Zerodha client id of the authenticated user
         - `root` is the websocket API end point root. Unless you explicitly
             want to send API requests to a non-default endpoint, this
             can be ignored.
@@ -3909,12 +3948,11 @@ attempt and <code>on_noreconnect</code> is called when reconnection attempts rea
 
         self.connect_timeout = connect_timeout
 
-        self.socket_url = "{root}?api_key={api_key}&user_id={user_id}"\
+        self.socket_url = "{root}?api_key={api_key}"\
             "&access_token={access_token}".format(
                 root=self.root,
                 api_key=api_key,
-                access_token=access_token,
-                user_id=user_id
+                access_token=access_token
             )
 
         # Debug enables logs
@@ -4100,11 +4138,15 @@ attempt and <code>on_noreconnect</code> is called when reconnection attempts rea
 
     def _on_close(self, ws, code, reason):
         """Call `on_close` callback when connection is closed."""
+        log.error("Connection closed: {} - {}".format(code, str(reason)))
+
         if self.on_close:
             self.on_close(self, code, reason)
 
     def _on_error(self, ws, code, reason):
         """Call `on_error` callback when connection throws an error."""
+        log.error("Connection error: {} - {}".format(code, str(reason)))
+
         if self.on_error:
             self.on_error(self, code, reason)
 
@@ -4142,6 +4184,10 @@ attempt and <code>on_noreconnect</code> is called when reconnection attempts rea
 
     def _parse_text_message(self, payload):
         """Parse text message."""
+        # Decode unicode data
+        if not six.PY2 and type(payload) == bytes:
+            payload = payload.decode("utf-8")
+
         try:
             data = json.loads(payload)
         except ValueError:
@@ -4187,11 +4233,11 @@ attempt and <code>on_noreconnect</code> is called when reconnection attempts rea
                         "low": self._unpack_int(packet, 12, 16) / divisor,
                         "open": self._unpack_int(packet, 16, 20) / divisor,
                         "close": self._unpack_int(packet, 20, 24) / divisor
-                    },
-                    "change": self._unpack_int(packet, 24, 28) / divisor,
+                    }
                 }
 
                 # Compute the change price using close price and last price
+                d["change"] = 0
                 if(d["ohlc"]["close"] != 0):
                     d["change"] = (d["last_price"] - d["ohlc"]["close"]) * 100 / d["ohlc"]["close"]
 
@@ -4210,7 +4256,7 @@ attempt and <code>on_noreconnect</code> is called when reconnection attempts rea
                 mode = self.MODE_QUOTE if len(packet) == 44 else self.MODE_FULL
 
                 d = {
-                    "tradable": True,
+                    "tradable": tradable,
                     "mode": mode,
                     "instrument_token": instrument_token,
                     "last_price": self._unpack_int(packet, 4, 8) / divisor,
@@ -4527,7 +4573,7 @@ attempt and <code>on_noreconnect</code> is called when reconnection attempts rea
             
   <div class="item">
     <div class="name def" id="kiteconnect.KiteTicker.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, api_key, access_token, user_id, debug=False, root=None, reconnect=True, reconnect_max_tries=50, reconnect_max_delay=60, connect_timeout=30)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, api_key, access_token, debug=False, root=None, reconnect=True, reconnect_max_tries=50, reconnect_max_delay=60, connect_timeout=30)</p>
     </div>
     
 
@@ -4541,7 +4587,6 @@ attempt and <code>on_noreconnect</code> is called when reconnection attempts rea
     but once you have obtained it, you should
     persist it in a database or session to pass
     to the Kite Connect class initialisation for subsequent requests.</li>
-<li><code>user_id</code> is the Zerodha client id of the authenticated user</li>
 <li><code>root</code> is the websocket API end point root. Unless you explicitly
     want to send API requests to a non-default endpoint, this
     can be ignored.</li>
@@ -4553,7 +4598,7 @@ attempt and <code>on_noreconnect</code> is called when reconnection attempts rea
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteTicker.__init__', this);">Show source &equiv;</a></p>
   <div id="source-kiteconnect.KiteTicker.__init__" class="source">
-    <pre><code>def __init__(self, api_key, access_token, user_id, debug=False, root=None,
+    <pre><code>def __init__(self, api_key, access_token, debug=False, root=None,
              reconnect=True, reconnect_max_tries=RECONNECT_MAX_TRIES, reconnect_max_delay=RECONNECT_MAX_DELAY,
              connect_timeout=CONNECT_TIMEOUT):
     """
@@ -4564,7 +4609,6 @@ attempt and <code>on_noreconnect</code> is called when reconnection attempts rea
         but once you have obtained it, you should
         persist it in a database or session to pass
         to the Kite Connect class initialisation for subsequent requests.
-    - `user_id` is the Zerodha client id of the authenticated user
     - `root` is the websocket API end point root. Unless you explicitly
         want to send API requests to a non-default endpoint, this
         can be ignored.
@@ -4589,12 +4633,11 @@ attempt and <code>on_noreconnect</code> is called when reconnection attempts rea
     else:
         self.reconnect_max_delay = reconnect_max_delay
     self.connect_timeout = connect_timeout
-    self.socket_url = "{root}?api_key={api_key}&user_id={user_id}"\
+    self.socket_url = "{root}?api_key={api_key}"\
         "&access_token={access_token}".format(
             root=self.root,
             api_key=api_key,
-            access_token=access_token,
-            user_id=user_id
+            access_token=access_token
         )
     # Debug enables logs
     self.debug = debug
