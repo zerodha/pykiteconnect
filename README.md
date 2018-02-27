@@ -28,7 +28,7 @@ pip install -U pip setuptools
 
 Since some of the dependencies uses C extensions it has to compiled before installing the package.
 
-### Linux, BSD and maxOS
+### Linux, BSD and macOS
 - On Linux, and BSDs, you will need a C compiler (such as GCC).
 
 #### Debian/Ubuntu
