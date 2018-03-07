@@ -21,6 +21,7 @@ twisted_wheel_name = "Twisted-17.9.0-cp{version}-cp{version}m-{platform}.whl"
 twisted_py_versions = ["34", "35", "36"]
 
 
+# Install package using pip
 def pip_install(pkg):
     os.system("pip install " + pkg)
 
@@ -32,6 +33,7 @@ class install(_install):
         py_version = "{}{}".format(sys.version_info.major, sys.version_info.minor)
 
         # Check if platform is Windows and package for Python version is available
+        # Currently python version with enable unicode UCS4 is not supported
         if os.name == "nt" and sys.version_info.major > 2 and py_version in twisted_py_versions:
             # Install twisted wheels for windows
             platform = distutils.util.get_platform().replace("-", "_")
@@ -39,7 +41,6 @@ class install(_install):
             pip_install(public_wheels_path.format(wheel_name=wheel_name))
         else:
             # Install from Pypi for other platforms
-
             pip_install("Twisted>=17.9.0")
 
         _install.do_egg_install(self)
