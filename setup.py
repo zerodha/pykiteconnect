@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import os
-import pip
 import sys
 import distutils.util
 from codecs import open
@@ -22,10 +21,14 @@ twisted_wheel_name = "Twisted-17.9.0-cp{version}-cp{version}m-{platform}.whl"
 twisted_py_versions = ["34", "35", "36"]
 
 
+def pip_install(pkg):
+    os.system("pip install " + pkg)
+
+
 class install(_install):
     def run(self):
         # Service identity has to be installed before twisted.
-        pip.main(["install", "service-identity>=17.0.0"])
+        pip_install("service-identity>=17.0.0")
         py_version = "{}{}".format(sys.version_info.major, sys.version_info.minor)
 
         # Check if platform is Windows and package for Python version is available
@@ -33,10 +36,11 @@ class install(_install):
             # Install twisted wheels for windows
             platform = distutils.util.get_platform().replace("-", "_")
             wheel_name = twisted_wheel_name.format(version=py_version, platform=platform)
-            pip.main(["install", public_wheels_path.format(wheel_name=wheel_name)])
+            pip_install(public_wheels_path.format(wheel_name=wheel_name))
         else:
             # Install from Pypi for other platforms
-            pip.main(["install", "Twisted>=17.9.0"])
+
+            pip_install("Twisted>=17.9.0")
 
         _install.do_egg_install(self)
 

@@ -69,4 +69,4 @@ install:
 build: off
 
 test_script:
-  - py.test
+  - python setup.py test
