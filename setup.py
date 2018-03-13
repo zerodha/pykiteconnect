@@ -2,9 +2,10 @@
 
 import os
 import sys
+import warnings
 import distutils.util
 from codecs import open
-from setuptools import setup
+from setuptools import setup, Command
 from setuptools.command.install import install as _install
 
 current_dir = os.path.abspath(os.path.dirname(__file__))
@@ -44,6 +45,25 @@ class install(_install):
             pip_install("Twisted>=17.9.0")
 
         _install.do_egg_install(self)
+
+
+class FakeBdist(Command):
+
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        warnings.warn(
+            "{name}{version} does not support building wheels".format(
+                name=about["__title__"],
+                version=about["__version__"]
+            )
+        )
 
 
 setup(
@@ -87,5 +107,5 @@ setup(
         "doc": ["pdoc"],
         ':sys_platform=="win32"': ["pypiwin32<=220"]
     },
-    cmdclass={"install": install}
+    cmdclass={"install": install, "bdist_wheel": FakeBdist}
 )
