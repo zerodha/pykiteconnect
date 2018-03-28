@@ -804,7 +804,7 @@ class KiteTicker(object):
                         depth["sell" if i >= 5 else "buy"].append({
                             "quantity": self._unpack_int(packet, p, p + 4),
                             "price": self._unpack_int(packet, p + 4, p + 8) / divisor,
-                            "orders": self._unpack_int(packet, p + 8, p + 12)
+                            "orders": self._unpack_int(packet, p + 8, p + 10, byte_format="H")
                         })
 
                     d["depth"] = depth
@@ -813,9 +813,9 @@ class KiteTicker(object):
 
         return data
 
-    def _unpack_int(self, bin, start, end):
+    def _unpack_int(self, bin, start, end, byte_format="I"):
         """Unpack binary data as unsgined interger."""
-        return struct.unpack(">I", bin[start:end])[0]
+        return struct.unpack(">" + byte_format, bin[start:end])[0]
 
     def _split_packets(self, bin):
         """Split the data to individual packets of ticks."""
@@ -823,12 +823,12 @@ class KiteTicker(object):
         if len(bin) < 2:
             return []
 
-        number_of_packets = struct.unpack(">H", bin[0:2])[0]
+        number_of_packets = self._unpack_int(bin, 0, 2, byte_format="H")
         packets = []
 
         j = 2
         for i in range(number_of_packets):
-            packet_length = struct.unpack(">H", bin[j:j + 2])[0]
+            packet_length = self._unpack_int(bin, j, j + 2, byte_format="H")
             packets.append(bin[j + 2: j + 2 + packet_length])
             j = j + 2 + packet_length
 
