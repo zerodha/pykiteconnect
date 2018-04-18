@@ -130,6 +130,7 @@ def on_connect(ws, response):
 
 def on_close(ws, code, reason):
     # On connection close stop the main loop
+    # Reconnection will not happen after executing `ws.stop()`
     ws.stop()
 
 # Assign the callbacks.

@@ -230,7 +230,8 @@ class KiteTicker(object):
             ws.set_mode(ws.MODE_FULL, [738561])
 
         def on_close(ws, code, reason):
-            # On connection close stop the main loop
+            # On connection close stop the event loop.
+            # Reconnection will not happen after executing `ws.stop()`
             ws.stop()
 
         # Assign the callbacks.
@@ -340,7 +341,8 @@ class KiteTicker(object):
     Auto reconnection
     -----------------
 
-    Auto reonnection is enabled by default and it can be disabled by passing `reconnect` param while initialising `KiteTicker`.
+    Auto reconnection is enabled by default and it can be disabled by passing `reconnect` param while initialising `KiteTicker`.
+    On a side note, reconnection mechanism cannot happen if event loop is terminated using `stop` method inide `on_close` callback.
 
     Auto reonnection mechanism is based on [Exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff) algorithm in which
     next retry interval will be increased exponentially. `reconnect_max_delay` and `reconnect_max_tries` params can be used to tewak
@@ -487,7 +489,13 @@ class KiteTicker(object):
         return (__title__ + "-python/").capitalize() + __version__
 
     def connect(self, threaded=False, disable_ssl_verification=False, proxy=None):
-        """Connect to websocket."""
+        """
+        Establish a websocket connection.
+
+        - `threaded` is a boolean indicating if the websocket client has to be run in threaded mode or not
+        - `disable_ssl_verification` disables building ssl context
+        - `proxy` is a dictionary with keys `host` and `port` which denotes the proxy settings
+        """
         # Custom headers
         headers = {
             "X-Kite-Version": "3",  # For version 3
@@ -538,7 +546,9 @@ class KiteTicker(object):
         self._close(code, reason)
 
     def stop(self):
-        """Stop the main loop. Should be used if main thread has to be closed in `on_close` method."""
+        """Stop the event loop. Should be used if main thread has to be closed in `on_close` method.
+        Reconnection mechanism cannot happen past this method
+        """
         reactor.stop()
 
     def stop_retry(self):
