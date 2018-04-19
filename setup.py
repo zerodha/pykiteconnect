@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import io
 import os
 import sys
 import warnings
@@ -66,10 +67,15 @@ class FakeBdist(Command):
         )
 
 
+with io.open('README.md', 'rt', encoding='utf8') as f:
+    readme = f.read()
+
 setup(
     name=about["__title__"],
     version=about["__version__"],
     description=about["__description__"],
+    long_description=readme,
+    long_description_content_type='text/markdown',
     author=about["__author__"],
     author_email=about["__author_email__"],
     url=about["__url__"],
