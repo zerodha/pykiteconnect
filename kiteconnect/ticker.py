@@ -519,14 +519,17 @@ class KiteTicker(object):
 
         # Run in seperate thread of blocking
         opts = {}
-        if threaded:
-            # Signals are not allowed in non main thread by twisted so supress it.
-            opts["installSignalHandlers"] = False
-            self.websocket_thread = threading.Thread(target=reactor.run, kwargs=opts)
-            self.websocket_thread.daemon = True
-            self.websocket_thread.start()
-        else:
-            reactor.run(**opts)
+
+        # Run when reactor is not running
+        if not reactor.running:
+            if threaded:
+                # Signals are not allowed in non main thread by twisted so suppress it.
+                opts["installSignalHandlers"] = False
+                self.websocket_thread = threading.Thread(target=reactor.run, kwargs=opts)
+                self.websocket_thread.daemon = True
+                self.websocket_thread.start()
+            else:
+                reactor.run(**opts)
 
     def is_connected(self):
         """Check if WebSocket connection is established."""
