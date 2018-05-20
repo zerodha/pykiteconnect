@@ -1,0 +1,23 @@
+language: python
+python:
+  - "2.7"
+  - "3.4"
+  - "3.5"
+  - "3.6"
+  - "nightly"
+  - "pypy"
+  - "pypy3"
+
+# command to install dependencies
+install:
+  - pip install --upgrade setuptools
+  - pip install -r dev_requirements.txt
+  - pip install -e .
+# script run flake8
+before_script: flake8
+# command to run tests
+script:
+  - py.test --cov=./
+# Collect coverage
+after_success:
+  - codecov

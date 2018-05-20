@@ -1,0 +1,4963 @@
+<!doctype html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+
+    <title>kiteconnect API documentation</title>
+    <meta name="description" content="Kite Connect API client for Python -- [https://kite.trade](kite.trade).
+
+Zerodha technologies (c) 20..." />
+
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
+  
+  <style type="text/css">
+  
+* {
+  box-sizing: border-box;
+}
+/*! normalize.css v1.1.1 | MIT License | git.io/normalize */
+
+/* ==========================================================================
+   HTML5 display definitions
+   ========================================================================== */
+
+/**
+ * Correct `block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+summary {
+    display: block;
+}
+
+/**
+ * Correct `inline-block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+audio,
+canvas,
+video {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+}
+
+/**
+ * Prevent modern browsers from displaying `audio` without controls.
+ * Remove excess height in iOS 5 devices.
+ */
+
+audio:not([controls]) {
+    display: none;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Firefox 3, and Safari 4.
+ * Known issue: no IE 6 support.
+ */
+
+[hidden] {
+    display: none;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+/**
+ * 1. Prevent system color scheme's background color being used in Firefox, IE,
+ *    and Opera.
+ * 2. Prevent system color scheme's text color being used in Firefox, IE, and
+ *    Opera.
+ * 3. Correct text resizing oddly in IE 6/7 when body `font-size` is set using
+ *    `em` units.
+ * 4. Prevent iOS text size adjust after orientation change, without disabling
+ *    user zoom.
+ */
+
+html {
+    background: #fff; /* 1 */
+    color: #000; /* 2 */
+    font-size: 100%; /* 3 */
+    -webkit-text-size-adjust: 100%; /* 4 */
+    -ms-text-size-adjust: 100%; /* 4 */
+}
+
+/**
+ * Address `font-family` inconsistency between `textarea` and other form
+ * elements.
+ */
+
+html,
+button,
+input,
+select,
+textarea {
+    font-family: sans-serif;
+}
+
+/**
+ * Address margins handled incorrectly in IE 6/7.
+ */
+
+body {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Links
+   ========================================================================== */
+
+/**
+ * Address `outline` inconsistency between Chrome and other browsers.
+ */
+
+a:focus {
+    outline: thin dotted;
+}
+
+/**
+ * Improve readability when focused and also mouse hovered in all browsers.
+ */
+
+a:active,
+a:hover {
+    outline: 0;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+/**
+ * Address font sizes and margins set differently in IE 6/7.
+ * Address font sizes within `section` and `article` in Firefox 4+, Safari 5,
+ * and Chrome.
+ */
+
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin: 0.83em 0;
+}
+
+h3 {
+    font-size: 1.17em;
+    margin: 1em 0;
+}
+
+h4 {
+    font-size: 1em;
+    margin: 1.33em 0;
+}
+
+h5 {
+    font-size: 0.83em;
+    margin: 1.67em 0;
+}
+
+h6 {
+    font-size: 0.67em;
+    margin: 2.33em 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Safari 5, and Chrome.
+ */
+
+abbr[title] {
+    border-bottom: 1px dotted;
+}
+
+/**
+ * Address style set to `bolder` in Firefox 3+, Safari 4/5, and Chrome.
+ */
+
+b,
+strong {
+    font-weight: bold;
+}
+
+blockquote {
+    margin: 1em 40px;
+}
+
+/**
+ * Address styling not present in Safari 5 and Chrome.
+ */
+
+dfn {
+    font-style: italic;
+}
+
+/**
+ * Address differences between Firefox and other browsers.
+ * Known issue: no IE 6/7 normalization.
+ */
+
+hr {
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 6/7/8/9.
+ */
+
+mark {
+    background: #ff0;
+    color: #000;
+}
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+p,
+pre {
+    margin: 1em 0;
+}
+
+/**
+ * Correct font family set oddly in IE 6, Safari 4/5, and Chrome.
+ */
+
+code,
+kbd,
+pre,
+samp {
+    font-family: monospace, serif;
+    _font-family: 'courier new', monospace;
+    font-size: 1em;
+}
+
+/**
+ * Improve readability of pre-formatted text in all browsers.
+ */
+
+pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/**
+ * Address CSS quotes not supported in IE 6/7.
+ */
+
+q {
+    quotes: none;
+}
+
+/**
+ * Address `quotes` property not supported in Safari 4.
+ */
+
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+
+/**
+ * Address inconsistent and variable font size in all browsers.
+ */
+
+small {
+    font-size: 80%;
+}
+
+/**
+ * Prevent `sub` and `sup` affecting `line-height` in all browsers.
+ */
+
+sub,
+sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+sup {
+    top: -0.5em;
+}
+
+sub {
+    bottom: -0.25em;
+}
+
+/* ==========================================================================
+   Lists
+   ========================================================================== */
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+dl,
+menu,
+ol,
+ul {
+    margin: 1em 0;
+}
+
+dd {
+    margin: 0 0 0 40px;
+}
+
+/**
+ * Address paddings set differently in IE 6/7.
+ */
+
+menu,
+ol,
+ul {
+    padding: 0 0 0 40px;
+}
+
+/**
+ * Correct list images handled incorrectly in IE 7.
+ */
+
+nav ul,
+nav ol {
+    list-style: none;
+    list-style-image: none;
+}
+
+/* ==========================================================================
+   Embedded content
+   ========================================================================== */
+
+/**
+ * 1. Remove border when inside `a` element in IE 6/7/8/9 and Firefox 3.
+ * 2. Improve image quality when scaled in IE 7.
+ */
+
+img {
+    border: 0; /* 1 */
+    -ms-interpolation-mode: bicubic; /* 2 */
+}
+
+/**
+ * Correct overflow displayed oddly in IE 9.
+ */
+
+svg:not(:root) {
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Figures
+   ========================================================================== */
+
+/**
+ * Address margin not present in IE 6/7/8/9, Safari 5, and Opera 11.
+ */
+
+figure {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+
+/**
+ * Correct margin displayed oddly in IE 6/7.
+ */
+
+form {
+    margin: 0;
+}
+
+/**
+ * Define consistent border, margin, and padding.
+ */
+
+fieldset {
+    border: 1px solid #c0c0c0;
+    margin: 0 2px;
+    padding: 0.35em 0.625em 0.75em;
+}
+
+/**
+ * 1. Correct color not being inherited in IE 6/7/8/9.
+ * 2. Correct text not wrapping in Firefox 3.
+ * 3. Correct alignment displayed oddly in IE 6/7.
+ */
+
+legend {
+    border: 0; /* 1 */
+    padding: 0;
+    white-space: normal; /* 2 */
+    *margin-left: -7px; /* 3 */
+}
+
+/**
+ * 1. Correct font size not being inherited in all browsers.
+ * 2. Address margins set differently in IE 6/7, Firefox 3+, Safari 5,
+ *    and Chrome.
+ * 3. Improve appearance and consistency in all browsers.
+ */
+
+button,
+input,
+select,
+textarea {
+    font-size: 100%; /* 1 */
+    margin: 0; /* 2 */
+    vertical-align: baseline; /* 3 */
+    *vertical-align: middle; /* 3 */
+}
+
+/**
+ * Address Firefox 3+ setting `line-height` on `input` using `!important` in
+ * the UA stylesheet.
+ */
+
+button,
+input {
+    line-height: normal;
+}
+
+/**
+ * Address inconsistent `text-transform` inheritance for `button` and `select`.
+ * All other form control elements do not inherit `text-transform` values.
+ * Correct `button` style inheritance in Chrome, Safari 5+, and IE 6+.
+ * Correct `select` style inheritance in Firefox 4+ and Opera.
+ */
+
+button,
+select {
+    text-transform: none;
+}
+
+/**
+ * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`
+ *    and `video` controls.
+ * 2. Correct inability to style clickable `input` types in iOS.
+ * 3. Improve usability and consistency of cursor style between image-type
+ *    `input` and others.
+ * 4. Remove inner spacing in IE 7 without affecting normal text inputs.
+ *    Known issue: inner spacing remains in IE 6.
+ */
+
+button,
+html input[type="button"], /* 1 */
+input[type="reset"],
+input[type="submit"] {
+    -webkit-appearance: button; /* 2 */
+    cursor: pointer; /* 3 */
+    *overflow: visible;  /* 4 */
+}
+
+/**
+ * Re-set default cursor for disabled elements.
+ */
+
+button[disabled],
+html input[disabled] {
+    cursor: default;
+}
+
+/**
+ * 1. Address box sizing set to content-box in IE 8/9.
+ * 2. Remove excess padding in IE 8/9.
+ * 3. Remove excess padding in IE 7.
+ *    Known issue: excess padding remains in IE 6.
+ */
+
+input[type="checkbox"],
+input[type="radio"] {
+    box-sizing: border-box; /* 1 */
+    padding: 0; /* 2 */
+    *height: 13px; /* 3 */
+    *width: 13px; /* 3 */
+}
+
+/**
+ * 1. Address `appearance` set to `searchfield` in Safari 5 and Chrome.
+ * 2. Address `box-sizing` set to `border-box` in Safari 5 and Chrome
+ *    (include `-moz` to future-proof).
+ */
+
+input[type="search"] {
+    -webkit-appearance: textfield; /* 1 */
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box; /* 2 */
+    box-sizing: content-box;
+}
+
+/**
+ * Remove inner padding and search cancel button in Safari 5 and Chrome
+ * on OS X.
+ */
+
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+/**
+ * Remove inner padding and border in Firefox 3+.
+ */
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
+/**
+ * 1. Remove default vertical scrollbar in IE 6/7/8/9.
+ * 2. Improve readability and alignment in all browsers.
+ */
+
+textarea {
+    overflow: auto; /* 1 */
+    vertical-align: top; /* 2 */
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+
+/**
+ * Remove most spacing between table cells.
+ */
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+  </style>
+
+  <style type="text/css">
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+  }
+  body {
+    background: #fff;
+    font-family: "Source Sans Pro", "Helvetica Neueue", Helvetica, sans;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.6em;
+  }
+  #content {
+    width: 70%;
+    max-width: 850px;
+    float: left;
+    padding: 30px 60px;
+    border-left: 1px solid #ddd;
+  }
+  #sidebar {
+    width: 25%;
+    float: left;
+    padding: 30px;
+    overflow: hidden;
+  }
+  #nav {
+    font-size: 130%;
+    margin: 0 0 15px 0;
+  }
+
+  #top {
+    display: block;
+    position: fixed;
+    bottom: 5px;
+    left: 5px;
+    font-size: .85em;
+    text-transform: uppercase;
+  }
+
+  #footer {
+    font-size: .75em;
+    padding: 5px 30px;
+    border-top: 1px solid #ddd;
+    text-align: right;
+  }
+    #footer p {
+      margin: 0 0 0 30px;
+      display: inline-block;
+    }
+
+  h1, h2, h3, h4, h5 {
+    font-weight: 300;
+  }
+  h1 {
+    font-size: 2.5em;
+    line-height: 1.1em;
+    margin: 0 0 .50em 0;
+  }
+
+  h2 {
+    font-size: 1.75em;
+    margin: 1em 0 .50em 0;
+  }
+
+  h3 {
+    margin: 25px 0 10px 0;
+  }
+
+  h4 {
+    margin: 0;
+    font-size: 105%;
+  }
+
+  a {
+    color: #058;
+    text-decoration: none;
+    transition: color .3s ease-in-out;
+  }
+
+  a:hover {
+    color: #e08524;
+    transition: color .3s ease-in-out;
+  }
+
+  pre, code, .mono, .name {
+    font-family: "Ubuntu Mono", "Cousine", "DejaVu Sans Mono", monospace;
+  }
+
+  .title .name {
+    font-weight: bold;
+  }
+  .section-title {
+    margin-top: 2em;
+  }
+  .ident {
+    color: #900;
+  }
+
+  code {
+    background: #f9f9f9;
+  } 
+
+  pre {
+    background: #fefefe;
+    border: 1px solid #ddd;
+    box-shadow: 2px 2px 0 #f3f3f3;
+    margin: 0 30px;
+    padding: 15px 30px;
+  }
+
+  .codehilite {
+    margin: 0 30px 10px 30px;
+  }
+
+    .codehilite pre {
+      margin: 0;
+    }
+    .codehilite .err { background: #ff3300; color: #fff !important; } 
+
+  table#module-list {
+    font-size: 110%;
+  }
+
+    table#module-list tr td:first-child {
+      padding-right: 10px;
+      white-space: nowrap;
+    }
+
+    table#module-list td {
+      vertical-align: top;
+      padding-bottom: 8px;
+    }
+
+      table#module-list td p {
+        margin: 0 0 7px 0;
+      }
+
+  .def {
+    display: table;
+  }
+
+    .def p {
+      display: table-cell;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .def p:first-child {
+      white-space: nowrap;
+    }
+
+    .def p:last-child {
+      width: 100%;
+    }
+
+
+  #index {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+    ul#index .class_name {
+      /* font-size: 110%; */
+      font-weight: bold;
+    }
+    #index ul {
+      margin: 0;
+    }
+
+  .item {
+    margin: 0 0 15px 0;
+  }
+
+    .item .class {
+      margin: 0 0 25px 30px;
+    }
+
+      .item .class ul.class_list {
+        margin: 0 0 20px 0;
+      }
+
+    .item .name {
+      background: #fafafa;
+      margin: 0;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 3px;
+      display: inline-block;
+      min-width: 40%;
+    }
+      .item .name:hover {
+        background: #f6f6f6;
+      }
+
+    .item .empty_desc {
+      margin: 0 0 5px 0;
+      padding: 0;
+    }
+
+    .item .inheritance {
+      margin: 3px 0 0 30px;
+    }
+
+    .item .inherited {
+      color: #666;
+    }
+
+    .item .desc {
+      padding: 0 8px;
+      margin: 0;
+    }
+
+      .item .desc p {
+        margin: 0 0 10px 0;
+      }
+
+    .source_cont {
+      margin: 0;
+      padding: 0;
+    }
+
+    .source_link a {
+      background: #ffc300;
+      font-weight: 400;
+      font-size: .75em;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 1px 1px 0 #f4b700;
+      
+      padding: 3px 8px;
+      border-radius: 2px;
+      transition: background .3s ease-in-out;
+    }
+      .source_link a:hover {
+        background: #FF7200;
+        text-shadow: none;
+        transition: background .3s ease-in-out;
+      }
+
+    .source {
+      display: none;
+      max-height: 600px;
+      overflow-y: scroll;
+      margin-bottom: 15px;
+    }
+
+      .source .codehilite {
+        margin: 0;
+      }
+
+  .desc h1, .desc h2, .desc h3 {
+    font-size: 100% !important;
+  }
+  .clear {
+    clear: both;
+  }
+
+  @media all and (max-width: 950px) {
+    #sidebar {
+      width: 35%;
+    }
+    #content {
+      width: 65%;
+    }
+  }
+  @media all and (max-width: 650px) {
+    #top {
+      display: none;
+    }
+    #sidebar {
+      float: none;
+      width: auto;
+    }
+    #content {
+      float: none;
+      width: auto;
+      padding: 30px;
+    }
+
+    #index ul {
+      padding: 0;
+      margin-bottom: 15px;
+    }
+    #index ul li {
+      display: inline-block;
+      margin-right: 30px;
+    }
+    #footer {
+      text-align: left;
+    }
+    #footer p {
+      display: block;
+      margin: inherit;
+    }
+  }
+
+  /*****************************/
+
+  </style>
+
+
+  <style type="text/css">
+  
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   These examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+
+@media only screen and (min-width: 35em) {
+    /* Style adjustments for viewports that meet the condition */
+}
+
+@media print,
+       (-o-min-device-pixel-ratio: 5/4),
+       (-webkit-min-device-pixel-ratio: 1.25),
+       (min-resolution: 120dpi) {
+    /* Style adjustments for high resolution devices */
+}
+
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid required HTTP connection: h5bp.com/r
+   ========================================================================== */
+
+@media print {
+    * {
+        background: transparent !important;
+        color: #000 !important; /* Black prints faster: h5bp.com/s */
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    /*
+     * Don't show links for images, or javascript/internal links
+     */
+
+    .ir a:after,
+    a[href^="javascript:"]:after,
+    a[href^="#"]:after {
+        content: "";
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    thead {
+        display: table-header-group; /* h5bp.com/t */
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    @page {
+        margin: 0.5cm;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}
+
+  </style>
+
+  <script type="text/javascript">
+  function toggle(id, $link) {
+    $node = document.getElementById(id);
+    if (!$node)
+    return;
+    if (!$node.style.display || $node.style.display == 'none') {
+    $node.style.display = 'block';
+    $link.innerHTML = 'Hide source &nequiv;';
+    } else {
+    $node.style.display = 'none';
+    $link.innerHTML = 'Show source &equiv;';
+    }
+  }
+  </script>
+</head>
+<body>
+<a href="#" id="top">Top</a>
+
+<div id="container">
+    
+  
+  <div id="sidebar">
+    <h1>Index</h1>
+    <ul id="index">
+
+
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
+      <ul>
+        <li class="mono">
+        <span class="class_name"><a href="#kiteconnect.KiteConnect">KiteConnect</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.__init__">__init__</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.cancel_mf_order">cancel_mf_order</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.cancel_mf_sip">cancel_mf_sip</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.cancel_order">cancel_order</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.convert_position">convert_position</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.exit_order">exit_order</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.generate_session">generate_session</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.historical_data">historical_data</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.holdings">holdings</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.instruments">instruments</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.invalidate_access_token">invalidate_access_token</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.invalidate_refresh_token">invalidate_refresh_token</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.login_url">login_url</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.ltp">ltp</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.margins">margins</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.mf_holdings">mf_holdings</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.mf_instruments">mf_instruments</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.mf_orders">mf_orders</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.mf_sips">mf_sips</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.modify_mf_sip">modify_mf_sip</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.modify_order">modify_order</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.ohlc">ohlc</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.order_history">order_history</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.order_trades">order_trades</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.orders">orders</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.place_mf_order">place_mf_order</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.place_mf_sip">place_mf_sip</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.place_order">place_order</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.positions">positions</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.profile">profile</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.quote">quote</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.renew_access_token">renew_access_token</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.set_access_token">set_access_token</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.set_session_expiry_hook">set_session_expiry_hook</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.trades">trades</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteConnect.trigger_range">trigger_range</a></li>
+  </ul>
+
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#kiteconnect.KiteTicker">KiteTicker</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#kiteconnect.KiteTicker.__init__">__init__</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteTicker.close">close</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteTicker.connect">connect</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteTicker.is_connected">is_connected</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteTicker.resubscribe">resubscribe</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteTicker.set_mode">set_mode</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteTicker.stop_retry">stop_retry</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteTicker.subscribe">subscribe</a></li>
+    <li class="mono"><a href="#kiteconnect.KiteTicker.unsubscribe">unsubscribe</a></li>
+  </ul>
+
+        </li>
+      </ul>
+    </li>
+
+    <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
+      <ul>
+        <li class="mono"><a href="exceptions.m.html">kiteconnect.exceptions</a></li>
+      </ul>
+    </li>
+    </ul>
+  </div>
+
+    <article id="content">
+      
+  
+
+  
+
+
+  <header id="section-intro">
+  <h1 class="title"><span class="name">kiteconnect</span> module</h1>
+  <p>Kite Connect API client for Python -- <a href="kite.trade">https://kite.trade</a>.</p>
+<p>Zerodha technologies (c) 2018</p>
+<h2>License</h2>
+<p>KiteConnect Python library is licensed under the MIT License</p>
+<h2>The library</h2>
+<p>Kite Connect is a set of REST-like APIs that expose
+many capabilities required to build a complete
+investment and trading platform. Execute orders in
+real time, manage user portfolio, stream live market
+data (WebSockets), and more, with the simple HTTP API collection</p>
+<p>This module provides an easy to use abstraction over the HTTP APIs.
+The HTTP calls have been converted to methods and their JSON responses
+are returned as native Python structures, for example, dicts, lists, bools etc.
+See the <strong><a href="https://kite.trade/docs/connect/v3/">Kite Connect API documentation</a></strong>
+for the complete list of APIs, supported parameters and values, and response formats.</p>
+<h2>Getting started</h2>
+<pre><code>#!python
+import logging
+from kiteconnect import KiteConnect
+
+logging.basicConfig(level=logging.DEBUG)
+
+kite = KiteConnect(api_key="your_api_key")
+
+# Redirect the user to the login url obtained
+# from kite.login_url(), and receive the request_token
+# from the registered redirect url after the login flow.
+# Once you have the request_token, obtain the access_token
+# as follows.
+
+data = kite.generate_session("request_token_here", api_secret="your_secret")
+kite.set_access_token(data["access_token"])
+
+# Place an order
+try:
+    order_id = kite.place_order(tradingsymbol="INFY",
+                                exchange=kite.EXCHANGE_NSE,
+                                transaction_type=kite.TRANSACTION_TYPE_BUY,
+                                quantity=1,
+                                order_type=kite.ORDER_TYPE_MARKET,
+                                product=kite.PRODUCT_NRML)
+
+    logging.info("Order placed. ID is: {}".format(order_id))
+except Exception as e:
+    logging.info("Order placement failed: {}".format(e.message))
+
+# Fetch all orders
+kite.orders()
+
+# Get instruments
+kite.instruments()
+
+# Place an mutual fund order
+kite.place_mf_order(
+    tradingsymbol="INF090I01239",
+    transaction_type=kite.TRANSACTION_TYPE_BUY,
+    amount=5000,
+    tag="mytag"
+)
+
+# Cancel a mutual fund order
+kite.cancel_mf_order(order_id="order_id")
+
+# Get mutual fund instruments
+kite.mf_instruments()
+</code></pre>
+<h2>A typical web application</h2>
+<p>In a typical web application where a new instance of
+views, controllers etc. are created per incoming HTTP
+request, you will need to initialise a new instance of
+Kite client per request as well. This is because each
+individual instance represents a single user that's
+authenticated, unlike an <strong>admin</strong> API where you may
+use one instance to manage many users.</p>
+<p>Hence, in your web application, typically:</p>
+<ul>
+<li>You will initialise an instance of the Kite client</li>
+<li>Redirect the user to the <code>login_url()</code></li>
+<li>At the redirect url endpoint, obtain the
+<code>request_token</code> from the query parameters</li>
+<li>Initialise a new instance of Kite client,
+use <code>generate_session()</code> to obtain the <code>access_token</code>
+along with authenticated user data</li>
+<li>Store this response in a session and use the
+stored <code>access_token</code> and initialise instances
+of Kite client for subsequent API calls.</li>
+</ul>
+<h2>Exceptions</h2>
+<p>Kite Connect client saves you the hassle of detecting API errors
+by looking at HTTP codes or JSON error responses. Instead,
+it raises aptly named <strong><a href="exceptions.m.html">exceptions</a></strong> that you can catch.</p>
+  
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect" class="source">
+    <pre><code># -*- coding: utf-8 -*-
+"""
+Kite Connect API client for Python -- [https://kite.trade](kite.trade).
+
+Zerodha technologies (c) 2018
+
+License
+-------
+KiteConnect Python library is licensed under the MIT License
+
+The library
+-----------
+Kite Connect is a set of REST-like APIs that expose
+many capabilities required to build a complete
+investment and trading platform. Execute orders in
+real time, manage user portfolio, stream live market
+data (WebSockets), and more, with the simple HTTP API collection
+
+This module provides an easy to use abstraction over the HTTP APIs.
+The HTTP calls have been converted to methods and their JSON responses
+are returned as native Python structures, for example, dicts, lists, bools etc.
+See the **[Kite Connect API documentation](https://kite.trade/docs/connect/v3/)**
+for the complete list of APIs, supported parameters and values, and response formats.
+
+Getting started
+---------------
+    #!python
+    import logging
+    from kiteconnect import KiteConnect
+
+    logging.basicConfig(level=logging.DEBUG)
+
+    kite = KiteConnect(api_key="your_api_key")
+
+    # Redirect the user to the login url obtained
+    # from kite.login_url(), and receive the request_token
+    # from the registered redirect url after the login flow.
+    # Once you have the request_token, obtain the access_token
+    # as follows.
+
+    data = kite.generate_session("request_token_here", api_secret="your_secret")
+    kite.set_access_token(data["access_token"])
+
+    # Place an order
+    try:
+        order_id = kite.place_order(tradingsymbol="INFY",
+                                    exchange=kite.EXCHANGE_NSE,
+                                    transaction_type=kite.TRANSACTION_TYPE_BUY,
+                                    quantity=1,
+                                    order_type=kite.ORDER_TYPE_MARKET,
+                                    product=kite.PRODUCT_NRML)
+
+        logging.info("Order placed. ID is: {}".format(order_id))
+    except Exception as e:
+        logging.info("Order placement failed: {}".format(e.message))
+
+    # Fetch all orders
+    kite.orders()
+
+    # Get instruments
+    kite.instruments()
+
+    # Place an mutual fund order
+    kite.place_mf_order(
+        tradingsymbol="INF090I01239",
+        transaction_type=kite.TRANSACTION_TYPE_BUY,
+        amount=5000,
+        tag="mytag"
+    )
+
+    # Cancel a mutual fund order
+    kite.cancel_mf_order(order_id="order_id")
+
+    # Get mutual fund instruments
+    kite.mf_instruments()
+
+A typical web application
+-------------------------
+In a typical web application where a new instance of
+views, controllers etc. are created per incoming HTTP
+request, you will need to initialise a new instance of
+Kite client per request as well. This is because each
+individual instance represents a single user that's
+authenticated, unlike an **admin** API where you may
+use one instance to manage many users.
+
+Hence, in your web application, typically:
+
+- You will initialise an instance of the Kite client
+- Redirect the user to the `login_url()`
+- At the redirect url endpoint, obtain the
+`request_token` from the query parameters
+- Initialise a new instance of Kite client,
+use `generate_session()` to obtain the `access_token`
+along with authenticated user data
+- Store this response in a session and use the
+stored `access_token` and initialise instances
+of Kite client for subsequent API calls.
+
+Exceptions
+----------
+Kite Connect client saves you the hassle of detecting API errors
+by looking at HTTP codes or JSON error responses. Instead,
+it raises aptly named **[exceptions](exceptions.m.html)** that you can catch.
+"""
+
+from __future__ import unicode_literals, absolute_import
+
+from kiteconnect import exceptions
+from kiteconnect.connect import KiteConnect
+from kiteconnect.ticker import KiteTicker
+
+__all__ = ["KiteConnect", "KiteTicker", "exceptions"]
+</code></pre>
+  </div>
+
+  </header>
+
+  <section id="section-items">
+
+
+    <h2 class="section-title" id="header-classes">Classes</h2>
+      
+      <div class="item">
+      <p id="kiteconnect.KiteConnect" class="name">class <span class="ident">KiteConnect</span></p>
+      
+  
+    <div class="desc"><p>The Kite Connect API wrapper class.</p>
+<p>In production, you may initialise a single instance of this class per <code>api_key</code>.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect" class="source">
+    <pre><code>class KiteConnect(object):
+    """
+    The Kite Connect API wrapper class.
+
+    In production, you may initialise a single instance of this class per `api_key`.
+    """
+
+    # Default root API endpoint. It's possible to
+    # override this by passing the `root` parameter during initialisation.
+    _default_root_uri = "https://api.kite.trade"
+    _default_login_uri = "https://kite.trade/connect/login"
+    _default_timeout = 7  # In seconds
+
+    # Constants
+    # Products
+    PRODUCT_MIS = "MIS"
+    PRODUCT_CNC = "CNC"
+    PRODUCT_NRML = "NRML"
+    PRODUCT_CO = "CO"
+    PRODUCT_BO = "BO"
+
+    # Order types
+    ORDER_TYPE_MARKET = "MARKET"
+    ORDER_TYPE_LIMIT = "LIMIT"
+    ORDER_TYPE_SLM = "SL-M"
+    ORDER_TYPE_SL = "SL"
+
+    # Varities
+    VARIETY_REGULAR = "regular"
+    VARIETY_BO = "bo"
+    VARIETY_CO = "co"
+    VARIETY_AMO = "amo"
+
+    # Transaction type
+    TRANSACTION_TYPE_BUY = "BUY"
+    TRANSACTION_TYPE_SELL = "SELL"
+
+    # Validity
+    VALIDITY_DAY = "DAY"
+    VALIDITY_IOC = "IOC"
+
+    # Exchanges
+    EXCHANGE_NSE = "NSE"
+    EXCHANGE_BSE = "BSE"
+    EXCHANGE_NFO = "NFO"
+    EXCHANGE_CDS = "CDS"
+    EXCHANGE_BFO = "BFO"
+    EXCHANGE_MCX = "MCX"
+
+    # Margins segments
+    MARGIN_EQUITY = "equity"
+    MARGIN_COMMODITY = "commodity"
+
+    # Status constants
+    STATUS_COMPLETE = "COMPLETE"
+    STATUS_REJECTED = "REJECTED"
+    STATUS_CANCELLED = "CANCELLED"
+
+    # URIs to various calls
+    _routes = {
+        "api.token": "/session/token",
+        "api.token.invalidate": "/session/token",
+        "api.token.renew": "/session/refresh_token",
+        "user.profile": "/user/profile",
+        "user.margins": "/user/margins",
+        "user.margins.segment": "/user/margins/{segment}",
+
+        "orders": "/orders",
+        "trades": "/trades",
+
+        "order.info": "/orders/{order_id}",
+        "order.place": "/orders/{variety}",
+        "order.modify": "/orders/{variety}/{order_id}",
+        "order.cancel": "/orders/{variety}/{order_id}",
+        "order.trades": "/orders/{order_id}/trades",
+
+        "portfolio.positions": "/portfolio/positions",
+        "portfolio.holdings": "/portfolio/holdings",
+        "portfolio.positions.convert": "/portfolio/positions",
+
+        # MF api endpoints
+        "mf.orders": "/mf/orders",
+        "mf.order.info": "/mf/orders/{order_id}",
+        "mf.order.place": "/mf/orders",
+        "mf.order.cancel": "/mf/orders/{order_id}",
+
+        "mf.sips": "/mf/sips",
+        "mf.sip.info": "/mf/sips/{sip_id}",
+        "mf.sip.place": "/mf/sips",
+        "mf.sip.modify": "/mf/sips/{sip_id}",
+        "mf.sip.cancel": "/mf/sips/{sip_id}",
+
+        "mf.holdings": "/mf/holdings",
+        "mf.instruments": "/mf/instruments",
+
+        "market.instruments.all": "/instruments",
+        "market.instruments": "/instruments/{exchange}",
+        "market.margins": "/margins/{segment}",
+        "market.historical": "/instruments/historical/{instrument_token}/{interval}",
+        "market.trigger_range": "/instruments/trigger_range/{transaction_type}",
+
+        "market.quote": "/quote",
+        "market.quote.ohlc": "/quote/ohlc",
+        "market.quote.ltp": "/quote/ltp",
+    }
+
+    def __init__(self,
+                 api_key,
+                 access_token=None,
+                 root=None,
+                 debug=False,
+                 timeout=None,
+                 proxies=None,
+                 pool=None,
+                 disable_ssl=False):
+        """
+        Initialise a new Kite Connect client instance.
+
+        - `api_key` is the key issued to you
+        - `access_token` is the token obtained after the login flow in
+            exchange for the `request_token` . Pre-login, this will default to None,
+        but once you have obtained it, you should
+        persist it in a database or session to pass
+        to the Kite Connect class initialisation for subsequent requests.
+        - `root` is the API end point root. Unless you explicitly
+        want to send API requests to a non-default endpoint, this
+        can be ignored.
+        - `debug`, if set to True, will serialise and print requests
+        and responses to stdout.
+        - `timeout` is the time (seconds) for which the API client will wait for
+        a request to complete before it fails. Defaults to 7 seconds
+        - `proxies` to set requests proxy.
+        Check [python requests documentation](http://docs.python-requests.org/en/master/user/advanced/#proxies) for usage and examples.
+        - `pool` is manages request pools. It takes a dict of params accepted by HTTPAdapter as described here in [python requests documentation](http://docs.python-requests.org/en/master/api/#requests.adapters.HTTPAdapter)
+        - `disable_ssl` disables the SSL verification while making a request.
+        If set requests won't throw SSLError if its set to custom `root` url without SSL.
+        """
+        self.debug = debug
+        self.api_key = api_key
+        self.session_expiry_hook = None
+        self.disable_ssl = disable_ssl
+        self.access_token = access_token
+        self.proxies = proxies if proxies else {}
+
+        self.root = root or self._default_root_uri
+        self.timeout = timeout or self._default_timeout
+
+        pool = pool or {}
+        self.reqsession = requests.Session()
+        reqadapter = requests.adapters.HTTPAdapter(**pool)
+        self.reqsession.mount("https://", reqadapter)
+
+        # disable requests SSL warning
+        requests.packages.urllib3.disable_warnings()
+
+    def set_session_expiry_hook(self, method):
+        """
+        Set a callback hook for session (`TokenError` -- timeout, expiry etc.) errors.
+
+        An `access_token` (login session) can become invalid for a number of
+        reasons, but it doesn't make sense for the client to
+        try and catch it during every API call.
+
+        A callback method that handles session errors
+        can be set here and when the client encounters
+        a token error at any point, it'll be called.
+
+        This callback, for instance, can log the user out of the UI,
+        clear session cookies, or initiate a fresh login.
+        """
+        if not callable(method):
+            raise TypeError("Invalid input type. Only functions are accepted.")
+
+        self.session_expiry_hook = method
+
+    def set_access_token(self, access_token):
+        """Set the `access_token` received after a successful authentication."""
+        self.access_token = access_token
+
+    def login_url(self):
+        """Get the remote login url to which a user should be redirected to initiate the login flow."""
+        return "%s?api_key=%s&v=3" % (self._default_login_uri, self.api_key)
+
+    def generate_session(self, request_token, api_secret):
+        """
+        Generate user session details like `access_token` etc by exchanging `request_token`.
+        Access token is automatically set if the session is retrieved successfully.
+
+        Do the token exchange with the `request_token` obtained after the login flow,
+        and retrieve the `access_token` required for all subsequent requests. The
+        response contains not just the `access_token`, but metadata for
+        the user who has authenticated.
+
+        - `request_token` is the token obtained from the GET paramers after a successful login redirect.
+        - `api_secret` is the API api_secret issued with the API key.
+        """
+        h = hashlib.sha256(self.api_key.encode("utf-8") + request_token.encode("utf-8") + api_secret.encode("utf-8"))
+        checksum = h.hexdigest()
+
+        resp = self._post("api.token", {
+            "api_key": self.api_key,
+            "request_token": request_token,
+            "checksum": checksum
+        })
+
+        if "access_token" in resp:
+            self.set_access_token(resp["access_token"])
+
+        if resp["login_time"] and len(resp["login_time"]) == 19:
+            resp["login_time"] = dateutil.parser.parse(resp["login_time"])
+
+        return resp
+
+    def invalidate_access_token(self, access_token=None):
+        """
+        Kill the session by invalidating the access token.
+
+        - `access_token` to invalidate. Default is the active `access_token`.
+        """
+        access_token = access_token or self.access_token
+        return self._delete("api.token.invalidate", {
+            "api_key": self.api_key,
+            "access_token": access_token
+        })
+
+    def renew_access_token(self, refresh_token, api_secret):
+        """
+        Renew expired `refresh_token` using valid `refresh_token`.
+
+        - `refresh_token` is the token obtained from previous successful login flow.
+        - `api_secret` is the API api_secret issued with the API key.
+        """
+        h = hashlib.sha256(self.api_key.encode("utf-8") + refresh_token.encode("utf-8") + api_secret.encode("utf-8"))
+        checksum = h.hexdigest()
+
+        resp = self._post("api.token.renew", {
+            "api_key": self.api_key,
+            "refresh_token": refresh_token,
+            "checksum": checksum
+        })
+
+        if "access_token" in resp:
+            self.set_access_token(resp["access_token"])
+
+        return resp
+
+    def invalidate_refresh_token(self, refresh_token):
+        """
+        Invalidate refresh token.
+
+        - `refresh_token` is the token which is used to renew access token.
+        """
+        return self._delete("api.token.invalidate", {
+            "api_key": self.api_key,
+            "refresh_token": refresh_token
+        })
+
+    def margins(self, segment=None):
+        """Get account balance and cash margin details for a particular segment.
+
+        - `segment` is the trading segment (eg: equity or commodity)
+        """
+        if segment:
+            return self._get("user.margins.segment", {"segment": segment})
+        else:
+            return self._get("user.margins")
+
+    def profile(self):
+        """Get user profile details."""
+        return self._get("user.profile")
+
+    # orders
+    def place_order(self,
+                    variety,
+                    exchange,
+                    tradingsymbol,
+                    transaction_type,
+                    quantity,
+                    product,
+                    order_type,
+                    price=None,
+                    validity=None,
+                    disclosed_quantity=None,
+                    trigger_price=None,
+                    squareoff=None,
+                    stoploss=None,
+                    trailing_stoploss=None,
+                    tag=None):
+        """Place an order."""
+        params = locals()
+        del(params["self"])
+
+        for k in list(params.keys()):
+            if params[k] is None:
+                del(params[k])
+
+        return self._post("order.place", params)["order_id"]
+
+    def modify_order(self,
+                     variety,
+                     order_id,
+                     parent_order_id=None,
+                     quantity=None,
+                     price=None,
+                     order_type=None,
+                     trigger_price=None,
+                     validity=None,
+                     disclosed_quantity=None):
+        """Modify an open order."""
+        params = locals()
+        del(params["self"])
+
+        for k in list(params.keys()):
+            if params[k] is None:
+                del(params[k])
+
+        return self._put("order.modify", params)["order_id"]
+
+    def cancel_order(self, variety, order_id, parent_order_id=None):
+        """Cancel an order."""
+        return self._delete("order.cancel", {
+            "order_id": order_id,
+            "variety": variety,
+            "parent_order_id": parent_order_id
+        })["order_id"]
+
+    def exit_order(self, variety, order_id, parent_order_id=None):
+        """Exit a BO/CO order."""
+        self.cancel_order(variety, order_id, parent_order_id=parent_order_id)
+
+    def _format_response(self, data):
+        """Parse and format responses."""
+
+        if type(data) == list:
+            _list = data
+        elif type(data) == dict:
+            _list = [data]
+
+        for item in _list:
+            # Convert date time string to datetime object
+            for field in ["order_timestamp", "exchange_timestamp", "created", "last_instalment", "fill_timestamp", "timestamp", "last_trade_time"]:
+                if item.get(field) and len(item[field]) == 19:
+                    item[field] = dateutil.parser.parse(item[field])
+
+        return _list[0] if type(data) == dict else _list
+
+    # orderbook and tradebook
+    def orders(self):
+        """Get list of orders."""
+        return self._format_response(self._get("orders"))
+
+    def order_history(self, order_id):
+        """
+        Get history of individual order.
+
+        - `order_id` is the ID of the order to retrieve order history.
+        """
+        return self._format_response(self._get("order.info", {"order_id": order_id}))
+
+    def trades(self):
+        """
+        Retrieve the list of trades executed (all or ones under a particular order).
+
+        An order can be executed in tranches based on market conditions.
+        These trades are individually recorded under an order.
+
+        - `order_id` is the ID of the order (optional) whose trades are to be retrieved.
+        If no `order_id` is specified, all trades for the day are returned.
+        """
+        return self._format_response(self._get("trades"))
+
+    def order_trades(self, order_id):
+        """
+        Retrieve the list of trades executed for a particular order.
+
+        - `order_id` is the ID of the order (optional) whose trades are to be retrieved.
+            If no `order_id` is specified, all trades for the day are returned.
+        """
+        return self._format_response(self._get("order.trades", {"order_id": order_id}))
+
+    def positions(self):
+        """Retrieve the list of positions."""
+        return self._get("portfolio.positions")
+
+    def holdings(self):
+        """Retrieve the list of equity holdings."""
+        return self._get("portfolio.holdings")
+
+    def convert_position(self,
+                         exchange,
+                         tradingsymbol,
+                         transaction_type,
+                         position_type,
+                         quantity,
+                         old_product,
+                         new_product):
+        """Modify an open position's product type."""
+        return self._put("portfolio.positions.convert", {
+            "exchange": exchange,
+            "tradingsymbol": tradingsymbol,
+            "transaction_type": transaction_type,
+            "position_type": position_type,
+            "quantity": quantity,
+            "old_product": old_product,
+            "new_product": new_product
+        })
+
+    def mf_orders(self, order_id=None):
+        """Get all mutual fund orders or individual order info."""
+        if order_id:
+            return self._format_response(self._get("mf.order.info", {"order_id": order_id}))
+        else:
+            return self._format_response(self._get("mf.orders"))
+
+    def place_mf_order(self,
+                       tradingsymbol,
+                       transaction_type,
+                       quantity=None,
+                       amount=None,
+                       tag=None):
+        """Place a mutual fund order."""
+        return self._post("mf.order.place", {
+            "tradingsymbol": tradingsymbol,
+            "transaction_type": transaction_type,
+            "quantity": quantity,
+            "amount": amount,
+            "tag": tag
+        })
+
+    def cancel_mf_order(self, order_id):
+        """Cancel a mutual fund order."""
+        return self._delete("mf.order.cancel", {"order_id": order_id})
+
+    def mf_sips(self, sip_id=None):
+        """Get list of all mutual fund SIP's or individual SIP info."""
+        if sip_id:
+            return self._format_response(self._get("mf.sip.info", {"sip_id": sip_id}))
+        else:
+            return self._format_response(self._get("mf.sips"))
+
+    def place_mf_sip(self,
+                     tradingsymbol,
+                     amount,
+                     instalments,
+                     frequency,
+                     initial_amount=None,
+                     instalment_day=None,
+                     tag=None):
+        """Place a mutual fund SIP."""
+        return self._post("mf.sip.place", {
+            "tradingsymbol": tradingsymbol,
+            "amount": amount,
+            "initial_amount": initial_amount,
+            "instalments": instalments,
+            "frequency": frequency,
+            "instalment_day": instalment_day,
+            "tag": tag
+        })
+
+    def modify_mf_sip(self,
+                      sip_id,
+                      amount=None,
+                      status=None,
+                      instalments=None,
+                      frequency=None,
+                      instalment_day=None):
+        """Modify a mutual fund SIP."""
+        return self._put("mf.sip.modify", {
+            "sip_id": sip_id,
+            "amount": amount,
+            "status": status,
+            "instalments": instalments,
+            "frequency": frequency,
+            "instalment_day": instalment_day
+        })
+
+    def cancel_mf_sip(self, sip_id):
+        """Cancel a mutual fund SIP."""
+        return self._delete("mf.sip.cancel", {"sip_id": sip_id})
+
+    def mf_holdings(self):
+        """Get list of mutual fund holdings."""
+        return self._get("mf.holdings")
+
+    def mf_instruments(self):
+        """Get list of mutual fund instruments."""
+        return self._parse_mf_instruments(self._get("mf.instruments"))
+
+    def instruments(self, exchange=None):
+        """
+        Retrieve the list of market instruments available to trade.
+
+        Note that the results could be large, several hundred KBs in size,
+        with tens of thousands of entries in the list.
+
+        - `exchange` is specific exchange to fetch (Optional)
+        """
+        if exchange:
+            params = {"exchange": exchange}
+
+            return self._parse_instruments(self._get("market.instruments", params))
+        else:
+            return self._parse_instruments(self._get("market.instruments.all"))
+
+    def quote(self, *instruments):
+        """
+        Retrieve quote for list of instruments.
+
+        - `instruments` is a list of instruments, Instrument are in the format of `tradingsymbol:exchange`. For example NSE:INFY
+        """
+        ins = list(instruments)
+
+        # If first element is a list then accept it as instruments list for legacy reason
+        if len(instruments) > 0 and type(instruments[0]) == list:
+            ins = instruments[0]
+
+        data = self._get("market.quote", {"i": ins})
+        return {key: self._format_response(data[key]) for key in data}
+
+    def ohlc(self, *instruments):
+        """
+        Retrieve OHLC and market depth for list of instruments.
+
+        - `instruments` is a list of instruments, Instrument are in the format of `tradingsymbol:exchange`. For example NSE:INFY
+        """
+        ins = list(instruments)
+
+        # If first element is a list then accept it as instruments list for legacy reason
+        if len(instruments) > 0 and type(instruments[0]) == list:
+            ins = instruments[0]
+
+        return self._get("market.quote.ohlc", {"i": ins})
+
+    def ltp(self, *instruments):
+        """
+        Retrieve last price for list of instruments.
+
+        - `instruments` is a list of instruments, Instrument are in the format of `tradingsymbol:exchange`. For example NSE:INFY
+        """
+        ins = list(instruments)
+
+        # If first element is a list then accept it as instruments list for legacy reason
+        if len(instruments) > 0 and type(instruments[0]) == list:
+            ins = instruments[0]
+
+        return self._get("market.quote.ltp", {"i": ins})
+
+    # def instruments_margins(self, segment):
+    #     """
+    #     Retrive margins provided for individual segments.
+
+    #     `segment` is segment name to retrive.
+    #     """
+    #     return self._get("market.margins", {"segment": segment})
+
+    def historical_data(self, instrument_token, from_date, to_date, interval, continuous=False):
+        """
+        Retrieve historical data (candles) for an instrument.
+
+        Although the actual response JSON from the API does not have field
+        names such has 'open', 'high' etc., this function call structures
+        the data into an array of objects with field names. For example:
+
+        - `instrument_token` is the instrument identifier (retrieved from the instruments()) call.
+        - `from_date` is the From date (datetime object or string in format of yyyy-mm-dd HH:MM:SS.
+        - `to_date` is the To date (datetime object or string in format of yyyy-mm-dd HH:MM:SS).
+        - `interval` is the candle interval (minute, day, 5 minute etc.).
+        - `continuous` is a boolean flag to get continuous data for futures and options instruments.
+        """
+        date_string_format = "%Y-%m-%d %H:%M:%S"
+        from_date_string = from_date.strftime(date_string_format) if type(from_date) == datetime.datetime else from_date
+        to_date_string = to_date.strftime(date_string_format) if type(to_date) == datetime.datetime else to_date
+
+        data = self._get("market.historical", {
+            "instrument_token": instrument_token,
+            "from": from_date_string,
+            "to": to_date_string,
+            "interval": interval,
+            "continuous": 1 if continuous else 0
+        })
+
+        return self._format_historical(data)
+
+    def _format_historical(self, data):
+        records = []
+        for d in data["candles"]:
+            records.append({
+                "date": dateutil.parser.parse(d[0]),
+                "open": d[1],
+                "high": d[2],
+                "low": d[3],
+                "close": d[4],
+                "volume": d[5]
+            })
+
+        return records
+
+    def trigger_range(self, transaction_type, *instruments):
+        """Retrieve the buy/sell trigger range for Cover Orders."""
+        ins = list(instruments)
+
+        # If first element is a list then accept it as instruments list for legacy reason
+        if len(instruments) > 0 and type(instruments[0]) == list:
+            ins = instruments[0]
+
+        return self._get("market.trigger_range", {
+            "i": ins,
+            "transaction_type": transaction_type.lower()
+        })
+
+    def _parse_instruments(self, data):
+        # decode to string for Python 3
+        d = data
+        # Decode unicode data
+        if not PY2 and type(d) == bytes:
+            d = data.decode("utf-8").strip()
+
+        records = []
+        reader = csv.DictReader(StringIO(d))
+
+        for row in reader:
+            row["instrument_token"] = int(row["instrument_token"])
+            row["last_price"] = float(row["last_price"])
+            row["strike"] = float(row["strike"])
+            row["tick_size"] = float(row["tick_size"])
+            row["lot_size"] = int(row["lot_size"])
+
+            # Parse date
+            if len(row["expiry"]) == 10:
+                row["expiry"] = dateutil.parser.parse(row["expiry"]).date()
+
+            records.append(row)
+
+        return records
+
+    def _parse_mf_instruments(self, data):
+        # decode to string for Python 3
+        d = data
+        if not PY2 and type(d) == bytes:
+            d = data.decode("utf-8").strip()
+
+        records = []
+        reader = csv.DictReader(StringIO(d))
+
+        for row in reader:
+            row["minimum_purchase_amount"] = float(row["minimum_purchase_amount"])
+            row["purchase_amount_multiplier"] = float(row["purchase_amount_multiplier"])
+            row["minimum_additional_purchase_amount"] = float(row["minimum_additional_purchase_amount"])
+            row["minimum_redemption_quantity"] = float(row["minimum_redemption_quantity"])
+            row["redemption_quantity_multiplier"] = float(row["redemption_quantity_multiplier"])
+            row["purchase_allowed"] = bool(int(row["purchase_allowed"]))
+            row["redemption_allowed"] = bool(int(row["redemption_allowed"]))
+            row["last_price"] = float(row["last_price"])
+
+            # Parse date
+            if len(row["last_price_date"]) == 10:
+                row["last_price_date"] = dateutil.parser.parse(row["last_price_date"]).date()
+
+            records.append(row)
+
+        return records
+
+    def _user_agent(self):
+        return (__title__ + "-python/").capitalize() + __version__
+
+    def _get(self, route, params=None):
+        """Alias for sending a GET request."""
+        return self._request(route, "GET", params)
+
+    def _post(self, route, params=None):
+        """Alias for sending a POST request."""
+        return self._request(route, "POST", params)
+
+    def _put(self, route, params=None):
+        """Alias for sending a PUT request."""
+        return self._request(route, "PUT", params)
+
+    def _delete(self, route, params=None):
+        """Alias for sending a DELETE request."""
+        return self._request(route, "DELETE", params)
+
+    def _request(self, route, method, parameters=None):
+        """Make an HTTP request."""
+        params = parameters.copy() if parameters else {}
+
+        # Form a restful URL
+        uri = self._routes[route].format(**params)
+        url = urljoin(self.root, uri)
+
+        # Custom headers
+        headers = {
+            "X-Kite-Version": "3",  # For version 3
+            "User-Agent": self._user_agent()
+        }
+
+        if self.api_key and self.access_token:
+            # set authorization header
+            auth_header = self.api_key + ":" + self.access_token
+            headers["Authorization"] = "token {}".format(auth_header)
+
+        if self.debug:
+            log.debug("Request: {method} {url} {params} {headers}".format(method=method, url=url, params=params, headers=headers))
+
+        try:
+            r = self.reqsession.request(method,
+                                        url,
+                                        data=params if method in ["POST", "PUT"] else None,
+                                        params=params if method in ["GET", "DELETE"] else None,
+                                        headers=headers,
+                                        verify=not self.disable_ssl,
+                                        allow_redirects=True,
+                                        timeout=self.timeout,
+                                        proxies=self.proxies)
+        # Any requests lib related exceptions are raised here - http://docs.python-requests.org/en/master/_modules/requests/exceptions/
+        except Exception as e:
+            raise e
+
+        if self.debug:
+            log.debug("Response: {code} {content}".format(code=r.status_code, content=r.content))
+
+        # Validate the content type.
+        if "json" in r.headers["content-type"]:
+            try:
+                data = json.loads(r.content.decode("utf8"))
+            except ValueError:
+                raise ex.DataException("Couldn't parse the JSON response received from the server: {content}".format(
+                    content=r.content))
+
+            # api error
+            if data.get("error_type"):
+                # Call session hook if its registered and TokenException is raised
+                if self.session_expiry_hook and r.status_code == 403 and data["error_type"] == "TokenException":
+                    self.session_expiry_hook()
+
+                # native Kite errors
+                exp = getattr(ex, data["error_type"], ex.GeneralException)
+                raise exp(data["message"], code=r.status_code)
+
+            return data["data"]
+        elif "csv" in r.headers["content-type"]:
+            return r.content
+        else:
+            raise ex.DataException("Unknown Content-Type ({content_type}) with response: ({content})".format(
+                content_type=r.headers["content-type"],
+                content=r.content))
+</code></pre>
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#kiteconnect.KiteConnect">KiteConnect</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Class variables</h3>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.EXCHANGE_BFO" class="name">var <span class="ident">EXCHANGE_BFO</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.EXCHANGE_BSE" class="name">var <span class="ident">EXCHANGE_BSE</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.EXCHANGE_CDS" class="name">var <span class="ident">EXCHANGE_CDS</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.EXCHANGE_MCX" class="name">var <span class="ident">EXCHANGE_MCX</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.EXCHANGE_NFO" class="name">var <span class="ident">EXCHANGE_NFO</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.EXCHANGE_NSE" class="name">var <span class="ident">EXCHANGE_NSE</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.MARGIN_COMMODITY" class="name">var <span class="ident">MARGIN_COMMODITY</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.MARGIN_EQUITY" class="name">var <span class="ident">MARGIN_EQUITY</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.ORDER_TYPE_LIMIT" class="name">var <span class="ident">ORDER_TYPE_LIMIT</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.ORDER_TYPE_MARKET" class="name">var <span class="ident">ORDER_TYPE_MARKET</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.ORDER_TYPE_SL" class="name">var <span class="ident">ORDER_TYPE_SL</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.ORDER_TYPE_SLM" class="name">var <span class="ident">ORDER_TYPE_SLM</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.PRODUCT_BO" class="name">var <span class="ident">PRODUCT_BO</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.PRODUCT_CNC" class="name">var <span class="ident">PRODUCT_CNC</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.PRODUCT_CO" class="name">var <span class="ident">PRODUCT_CO</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.PRODUCT_MIS" class="name">var <span class="ident">PRODUCT_MIS</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.PRODUCT_NRML" class="name">var <span class="ident">PRODUCT_NRML</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.STATUS_CANCELLED" class="name">var <span class="ident">STATUS_CANCELLED</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.STATUS_COMPLETE" class="name">var <span class="ident">STATUS_COMPLETE</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.STATUS_REJECTED" class="name">var <span class="ident">STATUS_REJECTED</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.TRANSACTION_TYPE_BUY" class="name">var <span class="ident">TRANSACTION_TYPE_BUY</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.TRANSACTION_TYPE_SELL" class="name">var <span class="ident">TRANSACTION_TYPE_SELL</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.VALIDITY_DAY" class="name">var <span class="ident">VALIDITY_DAY</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.VALIDITY_IOC" class="name">var <span class="ident">VALIDITY_IOC</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.VARIETY_AMO" class="name">var <span class="ident">VARIETY_AMO</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.VARIETY_BO" class="name">var <span class="ident">VARIETY_BO</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.VARIETY_CO" class="name">var <span class="ident">VARIETY_CO</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.VARIETY_REGULAR" class="name">var <span class="ident">VARIETY_REGULAR</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.access_token" class="name">var <span class="ident">access_token</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.api_key" class="name">var <span class="ident">api_key</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.debug" class="name">var <span class="ident">debug</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.disable_ssl" class="name">var <span class="ident">disable_ssl</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.proxies" class="name">var <span class="ident">proxies</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.reqsession" class="name">var <span class="ident">reqsession</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.root" class="name">var <span class="ident">root</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.session_expiry_hook" class="name">var <span class="ident">session_expiry_hook</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteConnect.timeout" class="name">var <span class="ident">timeout</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, api_key, access_token=None, root=None, debug=False, timeout=None, proxies=None, pool=None, disable_ssl=False)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Initialise a new Kite Connect client instance.</p>
+<ul>
+<li><code>api_key</code> is the key issued to you</li>
+<li><code>access_token</code> is the token obtained after the login flow in
+    exchange for the <code>request_token</code> . Pre-login, this will default to None,
+but once you have obtained it, you should
+persist it in a database or session to pass
+to the Kite Connect class initialisation for subsequent requests.</li>
+<li><code>root</code> is the API end point root. Unless you explicitly
+want to send API requests to a non-default endpoint, this
+can be ignored.</li>
+<li><code>debug</code>, if set to True, will serialise and print requests
+and responses to stdout.</li>
+<li><code>timeout</code> is the time (seconds) for which the API client will wait for
+a request to complete before it fails. Defaults to 7 seconds</li>
+<li><code>proxies</code> to set requests proxy.
+Check <a href="http://docs.python-requests.org/en/master/user/advanced/#proxies">python requests documentation</a> for usage and examples.</li>
+<li><code>pool</code> is manages request pools. It takes a dict of params accepted by HTTPAdapter as described here in <a href="http://docs.python-requests.org/en/master/api/#requests.adapters.HTTPAdapter">python requests documentation</a></li>
+<li><code>disable_ssl</code> disables the SSL verification while making a request.
+If set requests won't throw SSLError if its set to custom <code>root</code> url without SSL.</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.__init__" class="source">
+    <pre><code>def __init__(self,
+             api_key,
+             access_token=None,
+             root=None,
+             debug=False,
+             timeout=None,
+             proxies=None,
+             pool=None,
+             disable_ssl=False):
+    """
+    Initialise a new Kite Connect client instance.
+    - `api_key` is the key issued to you
+    - `access_token` is the token obtained after the login flow in
+        exchange for the `request_token` . Pre-login, this will default to None,
+    but once you have obtained it, you should
+    persist it in a database or session to pass
+    to the Kite Connect class initialisation for subsequent requests.
+    - `root` is the API end point root. Unless you explicitly
+    want to send API requests to a non-default endpoint, this
+    can be ignored.
+    - `debug`, if set to True, will serialise and print requests
+    and responses to stdout.
+    - `timeout` is the time (seconds) for which the API client will wait for
+    a request to complete before it fails. Defaults to 7 seconds
+    - `proxies` to set requests proxy.
+    Check [python requests documentation](http://docs.python-requests.org/en/master/user/advanced/#proxies) for usage and examples.
+    - `pool` is manages request pools. It takes a dict of params accepted by HTTPAdapter as described here in [python requests documentation](http://docs.python-requests.org/en/master/api/#requests.adapters.HTTPAdapter)
+    - `disable_ssl` disables the SSL verification while making a request.
+    If set requests won't throw SSLError if its set to custom `root` url without SSL.
+    """
+    self.debug = debug
+    self.api_key = api_key
+    self.session_expiry_hook = None
+    self.disable_ssl = disable_ssl
+    self.access_token = access_token
+    self.proxies = proxies if proxies else {}
+    self.root = root or self._default_root_uri
+    self.timeout = timeout or self._default_timeout
+    pool = pool or {}
+    self.reqsession = requests.Session()
+    reqadapter = requests.adapters.HTTPAdapter(**pool)
+    self.reqsession.mount("https://", reqadapter)
+    # disable requests SSL warning
+    requests.packages.urllib3.disable_warnings()
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.cancel_mf_order">
+    <p>def <span class="ident">cancel_mf_order</span>(</p><p>self, order_id)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Cancel a mutual fund order.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.cancel_mf_order', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.cancel_mf_order" class="source">
+    <pre><code>def cancel_mf_order(self, order_id):
+    """Cancel a mutual fund order."""
+    return self._delete("mf.order.cancel", {"order_id": order_id})
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.cancel_mf_sip">
+    <p>def <span class="ident">cancel_mf_sip</span>(</p><p>self, sip_id)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Cancel a mutual fund SIP.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.cancel_mf_sip', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.cancel_mf_sip" class="source">
+    <pre><code>def cancel_mf_sip(self, sip_id):
+    """Cancel a mutual fund SIP."""
+    return self._delete("mf.sip.cancel", {"sip_id": sip_id})
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.cancel_order">
+    <p>def <span class="ident">cancel_order</span>(</p><p>self, variety, order_id, parent_order_id=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Cancel an order.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.cancel_order', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.cancel_order" class="source">
+    <pre><code>def cancel_order(self, variety, order_id, parent_order_id=None):
+    """Cancel an order."""
+    return self._delete("order.cancel", {
+        "order_id": order_id,
+        "variety": variety,
+        "parent_order_id": parent_order_id
+    })["order_id"]
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.convert_position">
+    <p>def <span class="ident">convert_position</span>(</p><p>self, exchange, tradingsymbol, transaction_type, position_type, quantity, old_product, new_product)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Modify an open position's product type.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.convert_position', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.convert_position" class="source">
+    <pre><code>def convert_position(self,
+                     exchange,
+                     tradingsymbol,
+                     transaction_type,
+                     position_type,
+                     quantity,
+                     old_product,
+                     new_product):
+    """Modify an open position's product type."""
+    return self._put("portfolio.positions.convert", {
+        "exchange": exchange,
+        "tradingsymbol": tradingsymbol,
+        "transaction_type": transaction_type,
+        "position_type": position_type,
+        "quantity": quantity,
+        "old_product": old_product,
+        "new_product": new_product
+    })
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.exit_order">
+    <p>def <span class="ident">exit_order</span>(</p><p>self, variety, order_id, parent_order_id=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Exit a BO/CO order.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.exit_order', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.exit_order" class="source">
+    <pre><code>def exit_order(self, variety, order_id, parent_order_id=None):
+    """Exit a BO/CO order."""
+    self.cancel_order(variety, order_id, parent_order_id=parent_order_id)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.generate_session">
+    <p>def <span class="ident">generate_session</span>(</p><p>self, request_token, api_secret)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Generate user session details like <code>access_token</code> etc by exchanging <code>request_token</code>.
+Access token is automatically set if the session is retrieved successfully.</p>
+<p>Do the token exchange with the <code>request_token</code> obtained after the login flow,
+and retrieve the <code>access_token</code> required for all subsequent requests. The
+response contains not just the <code>access_token</code>, but metadata for
+the user who has authenticated.</p>
+<ul>
+<li><code>request_token</code> is the token obtained from the GET paramers after a successful login redirect.</li>
+<li><code>api_secret</code> is the API api_secret issued with the API key.</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.generate_session', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.generate_session" class="source">
+    <pre><code>def generate_session(self, request_token, api_secret):
+    """
+    Generate user session details like `access_token` etc by exchanging `request_token`.
+    Access token is automatically set if the session is retrieved successfully.
+    Do the token exchange with the `request_token` obtained after the login flow,
+    and retrieve the `access_token` required for all subsequent requests. The
+    response contains not just the `access_token`, but metadata for
+    the user who has authenticated.
+    - `request_token` is the token obtained from the GET paramers after a successful login redirect.
+    - `api_secret` is the API api_secret issued with the API key.
+    """
+    h = hashlib.sha256(self.api_key.encode("utf-8") + request_token.encode("utf-8") + api_secret.encode("utf-8"))
+    checksum = h.hexdigest()
+    resp = self._post("api.token", {
+        "api_key": self.api_key,
+        "request_token": request_token,
+        "checksum": checksum
+    })
+    if "access_token" in resp:
+        self.set_access_token(resp["access_token"])
+    if resp["login_time"] and len(resp["login_time"]) == 19:
+        resp["login_time"] = dateutil.parser.parse(resp["login_time"])
+    return resp
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.historical_data">
+    <p>def <span class="ident">historical_data</span>(</p><p>self, instrument_token, from_date, to_date, interval, continuous=False)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Retrieve historical data (candles) for an instrument.</p>
+<p>Although the actual response JSON from the API does not have field
+names such has 'open', 'high' etc., this function call structures
+the data into an array of objects with field names. For example:</p>
+<ul>
+<li><code>instrument_token</code> is the instrument identifier (retrieved from the instruments()) call.</li>
+<li><code>from_date</code> is the From date (datetime object or string in format of yyyy-mm-dd HH:MM:SS.</li>
+<li><code>to_date</code> is the To date (datetime object or string in format of yyyy-mm-dd HH:MM:SS).</li>
+<li><code>interval</code> is the candle interval (minute, day, 5 minute etc.).</li>
+<li><code>continuous</code> is a boolean flag to get continuous data for futures and options instruments.</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.historical_data', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.historical_data" class="source">
+    <pre><code>def historical_data(self, instrument_token, from_date, to_date, interval, continuous=False):
+    """
+    Retrieve historical data (candles) for an instrument.
+    Although the actual response JSON from the API does not have field
+    names such has 'open', 'high' etc., this function call structures
+    the data into an array of objects with field names. For example:
+    - `instrument_token` is the instrument identifier (retrieved from the instruments()) call.
+    - `from_date` is the From date (datetime object or string in format of yyyy-mm-dd HH:MM:SS.
+    - `to_date` is the To date (datetime object or string in format of yyyy-mm-dd HH:MM:SS).
+    - `interval` is the candle interval (minute, day, 5 minute etc.).
+    - `continuous` is a boolean flag to get continuous data for futures and options instruments.
+    """
+    date_string_format = "%Y-%m-%d %H:%M:%S"
+    from_date_string = from_date.strftime(date_string_format) if type(from_date) == datetime.datetime else from_date
+    to_date_string = to_date.strftime(date_string_format) if type(to_date) == datetime.datetime else to_date
+    data = self._get("market.historical", {
+        "instrument_token": instrument_token,
+        "from": from_date_string,
+        "to": to_date_string,
+        "interval": interval,
+        "continuous": 1 if continuous else 0
+    })
+    return self._format_historical(data)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.holdings">
+    <p>def <span class="ident">holdings</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Retrieve the list of equity holdings.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.holdings', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.holdings" class="source">
+    <pre><code>def holdings(self):
+    """Retrieve the list of equity holdings."""
+    return self._get("portfolio.holdings")
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.instruments">
+    <p>def <span class="ident">instruments</span>(</p><p>self, exchange=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Retrieve the list of market instruments available to trade.</p>
+<p>Note that the results could be large, several hundred KBs in size,
+with tens of thousands of entries in the list.</p>
+<ul>
+<li><code>exchange</code> is specific exchange to fetch (Optional)</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.instruments', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.instruments" class="source">
+    <pre><code>def instruments(self, exchange=None):
+    """
+    Retrieve the list of market instruments available to trade.
+    Note that the results could be large, several hundred KBs in size,
+    with tens of thousands of entries in the list.
+    - `exchange` is specific exchange to fetch (Optional)
+    """
+    if exchange:
+        params = {"exchange": exchange}
+        return self._parse_instruments(self._get("market.instruments", params))
+    else:
+        return self._parse_instruments(self._get("market.instruments.all"))
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.invalidate_access_token">
+    <p>def <span class="ident">invalidate_access_token</span>(</p><p>self, access_token=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Kill the session by invalidating the access token.</p>
+<ul>
+<li><code>access_token</code> to invalidate. Default is the active <code>access_token</code>.</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.invalidate_access_token', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.invalidate_access_token" class="source">
+    <pre><code>def invalidate_access_token(self, access_token=None):
+    """
+    Kill the session by invalidating the access token.
+    - `access_token` to invalidate. Default is the active `access_token`.
+    """
+    access_token = access_token or self.access_token
+    return self._delete("api.token.invalidate", {
+        "api_key": self.api_key,
+        "access_token": access_token
+    })
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.invalidate_refresh_token">
+    <p>def <span class="ident">invalidate_refresh_token</span>(</p><p>self, refresh_token)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Invalidate refresh token.</p>
+<ul>
+<li><code>refresh_token</code> is the token which is used to renew access token.</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.invalidate_refresh_token', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.invalidate_refresh_token" class="source">
+    <pre><code>def invalidate_refresh_token(self, refresh_token):
+    """
+    Invalidate refresh token.
+    - `refresh_token` is the token which is used to renew access token.
+    """
+    return self._delete("api.token.invalidate", {
+        "api_key": self.api_key,
+        "refresh_token": refresh_token
+    })
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.login_url">
+    <p>def <span class="ident">login_url</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get the remote login url to which a user should be redirected to initiate the login flow.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.login_url', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.login_url" class="source">
+    <pre><code>def login_url(self):
+    """Get the remote login url to which a user should be redirected to initiate the login flow."""
+    return "%s?api_key=%s&v=3" % (self._default_login_uri, self.api_key)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.ltp">
+    <p>def <span class="ident">ltp</span>(</p><p>self, *instruments)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Retrieve last price for list of instruments.</p>
+<ul>
+<li><code>instruments</code> is a list of instruments, Instrument are in the format of <code>tradingsymbol:exchange</code>. For example NSE:INFY</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.ltp', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.ltp" class="source">
+    <pre><code>def ltp(self, *instruments):
+    """
+    Retrieve last price for list of instruments.
+    - `instruments` is a list of instruments, Instrument are in the format of `tradingsymbol:exchange`. For example NSE:INFY
+    """
+    ins = list(instruments)
+    # If first element is a list then accept it as instruments list for legacy reason
+    if len(instruments) > 0 and type(instruments[0]) == list:
+        ins = instruments[0]
+    return self._get("market.quote.ltp", {"i": ins})
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.margins">
+    <p>def <span class="ident">margins</span>(</p><p>self, segment=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get account balance and cash margin details for a particular segment.</p>
+<ul>
+<li><code>segment</code> is the trading segment (eg: equity or commodity)</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.margins', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.margins" class="source">
+    <pre><code>def margins(self, segment=None):
+    """Get account balance and cash margin details for a particular segment.
+    - `segment` is the trading segment (eg: equity or commodity)
+    """
+    if segment:
+        return self._get("user.margins.segment", {"segment": segment})
+    else:
+        return self._get("user.margins")
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.mf_holdings">
+    <p>def <span class="ident">mf_holdings</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get list of mutual fund holdings.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.mf_holdings', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.mf_holdings" class="source">
+    <pre><code>def mf_holdings(self):
+    """Get list of mutual fund holdings."""
+    return self._get("mf.holdings")
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.mf_instruments">
+    <p>def <span class="ident">mf_instruments</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get list of mutual fund instruments.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.mf_instruments', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.mf_instruments" class="source">
+    <pre><code>def mf_instruments(self):
+    """Get list of mutual fund instruments."""
+    return self._parse_mf_instruments(self._get("mf.instruments"))
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.mf_orders">
+    <p>def <span class="ident">mf_orders</span>(</p><p>self, order_id=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get all mutual fund orders or individual order info.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.mf_orders', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.mf_orders" class="source">
+    <pre><code>def mf_orders(self, order_id=None):
+    """Get all mutual fund orders or individual order info."""
+    if order_id:
+        return self._format_response(self._get("mf.order.info", {"order_id": order_id}))
+    else:
+        return self._format_response(self._get("mf.orders"))
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.mf_sips">
+    <p>def <span class="ident">mf_sips</span>(</p><p>self, sip_id=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get list of all mutual fund SIP's or individual SIP info.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.mf_sips', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.mf_sips" class="source">
+    <pre><code>def mf_sips(self, sip_id=None):
+    """Get list of all mutual fund SIP's or individual SIP info."""
+    if sip_id:
+        return self._format_response(self._get("mf.sip.info", {"sip_id": sip_id}))
+    else:
+        return self._format_response(self._get("mf.sips"))
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.modify_mf_sip">
+    <p>def <span class="ident">modify_mf_sip</span>(</p><p>self, sip_id, amount=None, status=None, instalments=None, frequency=None, instalment_day=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Modify a mutual fund SIP.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.modify_mf_sip', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.modify_mf_sip" class="source">
+    <pre><code>def modify_mf_sip(self,
+                  sip_id,
+                  amount=None,
+                  status=None,
+                  instalments=None,
+                  frequency=None,
+                  instalment_day=None):
+    """Modify a mutual fund SIP."""
+    return self._put("mf.sip.modify", {
+        "sip_id": sip_id,
+        "amount": amount,
+        "status": status,
+        "instalments": instalments,
+        "frequency": frequency,
+        "instalment_day": instalment_day
+    })
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.modify_order">
+    <p>def <span class="ident">modify_order</span>(</p><p>self, variety, order_id, parent_order_id=None, quantity=None, price=None, order_type=None, trigger_price=None, validity=None, disclosed_quantity=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Modify an open order.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.modify_order', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.modify_order" class="source">
+    <pre><code>def modify_order(self,
+                 variety,
+                 order_id,
+                 parent_order_id=None,
+                 quantity=None,
+                 price=None,
+                 order_type=None,
+                 trigger_price=None,
+                 validity=None,
+                 disclosed_quantity=None):
+    """Modify an open order."""
+    params = locals()
+    del(params["self"])
+    for k in list(params.keys()):
+        if params[k] is None:
+            del(params[k])
+    return self._put("order.modify", params)["order_id"]
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.ohlc">
+    <p>def <span class="ident">ohlc</span>(</p><p>self, *instruments)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Retrieve OHLC and market depth for list of instruments.</p>
+<ul>
+<li><code>instruments</code> is a list of instruments, Instrument are in the format of <code>tradingsymbol:exchange</code>. For example NSE:INFY</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.ohlc', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.ohlc" class="source">
+    <pre><code>def ohlc(self, *instruments):
+    """
+    Retrieve OHLC and market depth for list of instruments.
+    - `instruments` is a list of instruments, Instrument are in the format of `tradingsymbol:exchange`. For example NSE:INFY
+    """
+    ins = list(instruments)
+    # If first element is a list then accept it as instruments list for legacy reason
+    if len(instruments) > 0 and type(instruments[0]) == list:
+        ins = instruments[0]
+    return self._get("market.quote.ohlc", {"i": ins})
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.order_history">
+    <p>def <span class="ident">order_history</span>(</p><p>self, order_id)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get history of individual order.</p>
+<ul>
+<li><code>order_id</code> is the ID of the order to retrieve order history.</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.order_history', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.order_history" class="source">
+    <pre><code>def order_history(self, order_id):
+    """
+    Get history of individual order.
+    - `order_id` is the ID of the order to retrieve order history.
+    """
+    return self._format_response(self._get("order.info", {"order_id": order_id}))
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.order_trades">
+    <p>def <span class="ident">order_trades</span>(</p><p>self, order_id)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Retrieve the list of trades executed for a particular order.</p>
+<ul>
+<li><code>order_id</code> is the ID of the order (optional) whose trades are to be retrieved.
+    If no <code>order_id</code> is specified, all trades for the day are returned.</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.order_trades', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.order_trades" class="source">
+    <pre><code>def order_trades(self, order_id):
+    """
+    Retrieve the list of trades executed for a particular order.
+    - `order_id` is the ID of the order (optional) whose trades are to be retrieved.
+        If no `order_id` is specified, all trades for the day are returned.
+    """
+    return self._format_response(self._get("order.trades", {"order_id": order_id}))
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.orders">
+    <p>def <span class="ident">orders</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get list of orders.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.orders', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.orders" class="source">
+    <pre><code>def orders(self):
+    """Get list of orders."""
+    return self._format_response(self._get("orders"))
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.place_mf_order">
+    <p>def <span class="ident">place_mf_order</span>(</p><p>self, tradingsymbol, transaction_type, quantity=None, amount=None, tag=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Place a mutual fund order.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.place_mf_order', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.place_mf_order" class="source">
+    <pre><code>def place_mf_order(self,
+                   tradingsymbol,
+                   transaction_type,
+                   quantity=None,
+                   amount=None,
+                   tag=None):
+    """Place a mutual fund order."""
+    return self._post("mf.order.place", {
+        "tradingsymbol": tradingsymbol,
+        "transaction_type": transaction_type,
+        "quantity": quantity,
+        "amount": amount,
+        "tag": tag
+    })
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.place_mf_sip">
+    <p>def <span class="ident">place_mf_sip</span>(</p><p>self, tradingsymbol, amount, instalments, frequency, initial_amount=None, instalment_day=None, tag=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Place a mutual fund SIP.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.place_mf_sip', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.place_mf_sip" class="source">
+    <pre><code>def place_mf_sip(self,
+                 tradingsymbol,
+                 amount,
+                 instalments,
+                 frequency,
+                 initial_amount=None,
+                 instalment_day=None,
+                 tag=None):
+    """Place a mutual fund SIP."""
+    return self._post("mf.sip.place", {
+        "tradingsymbol": tradingsymbol,
+        "amount": amount,
+        "initial_amount": initial_amount,
+        "instalments": instalments,
+        "frequency": frequency,
+        "instalment_day": instalment_day,
+        "tag": tag
+    })
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.place_order">
+    <p>def <span class="ident">place_order</span>(</p><p>self, variety, exchange, tradingsymbol, transaction_type, quantity, product, order_type, price=None, validity=None, disclosed_quantity=None, trigger_price=None, squareoff=None, stoploss=None, trailing_stoploss=None, tag=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Place an order.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.place_order', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.place_order" class="source">
+    <pre><code>def place_order(self,
+                variety,
+                exchange,
+                tradingsymbol,
+                transaction_type,
+                quantity,
+                product,
+                order_type,
+                price=None,
+                validity=None,
+                disclosed_quantity=None,
+                trigger_price=None,
+                squareoff=None,
+                stoploss=None,
+                trailing_stoploss=None,
+                tag=None):
+    """Place an order."""
+    params = locals()
+    del(params["self"])
+    for k in list(params.keys()):
+        if params[k] is None:
+            del(params[k])
+    return self._post("order.place", params)["order_id"]
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.positions">
+    <p>def <span class="ident">positions</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Retrieve the list of positions.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.positions', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.positions" class="source">
+    <pre><code>def positions(self):
+    """Retrieve the list of positions."""
+    return self._get("portfolio.positions")
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.profile">
+    <p>def <span class="ident">profile</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get user profile details.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.profile', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.profile" class="source">
+    <pre><code>def profile(self):
+    """Get user profile details."""
+    return self._get("user.profile")
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.quote">
+    <p>def <span class="ident">quote</span>(</p><p>self, *instruments)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Retrieve quote for list of instruments.</p>
+<ul>
+<li><code>instruments</code> is a list of instruments, Instrument are in the format of <code>tradingsymbol:exchange</code>. For example NSE:INFY</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.quote', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.quote" class="source">
+    <pre><code>def quote(self, *instruments):
+    """
+    Retrieve quote for list of instruments.
+    - `instruments` is a list of instruments, Instrument are in the format of `tradingsymbol:exchange`. For example NSE:INFY
+    """
+    ins = list(instruments)
+    # If first element is a list then accept it as instruments list for legacy reason
+    if len(instruments) > 0 and type(instruments[0]) == list:
+        ins = instruments[0]
+    data = self._get("market.quote", {"i": ins})
+    return {key: self._format_response(data[key]) for key in data}
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.renew_access_token">
+    <p>def <span class="ident">renew_access_token</span>(</p><p>self, refresh_token, api_secret)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Renew expired <code>refresh_token</code> using valid <code>refresh_token</code>.</p>
+<ul>
+<li><code>refresh_token</code> is the token obtained from previous successful login flow.</li>
+<li><code>api_secret</code> is the API api_secret issued with the API key.</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.renew_access_token', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.renew_access_token" class="source">
+    <pre><code>def renew_access_token(self, refresh_token, api_secret):
+    """
+    Renew expired `refresh_token` using valid `refresh_token`.
+    - `refresh_token` is the token obtained from previous successful login flow.
+    - `api_secret` is the API api_secret issued with the API key.
+    """
+    h = hashlib.sha256(self.api_key.encode("utf-8") + refresh_token.encode("utf-8") + api_secret.encode("utf-8"))
+    checksum = h.hexdigest()
+    resp = self._post("api.token.renew", {
+        "api_key": self.api_key,
+        "refresh_token": refresh_token,
+        "checksum": checksum
+    })
+    if "access_token" in resp:
+        self.set_access_token(resp["access_token"])
+    return resp
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.set_access_token">
+    <p>def <span class="ident">set_access_token</span>(</p><p>self, access_token)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Set the <code>access_token</code> received after a successful authentication.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.set_access_token', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.set_access_token" class="source">
+    <pre><code>def set_access_token(self, access_token):
+    """Set the `access_token` received after a successful authentication."""
+    self.access_token = access_token
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.set_session_expiry_hook">
+    <p>def <span class="ident">set_session_expiry_hook</span>(</p><p>self, method)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Set a callback hook for session (<code>TokenError</code> -- timeout, expiry etc.) errors.</p>
+<p>An <code>access_token</code> (login session) can become invalid for a number of
+reasons, but it doesn't make sense for the client to
+try and catch it during every API call.</p>
+<p>A callback method that handles session errors
+can be set here and when the client encounters
+a token error at any point, it'll be called.</p>
+<p>This callback, for instance, can log the user out of the UI,
+clear session cookies, or initiate a fresh login.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.set_session_expiry_hook', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.set_session_expiry_hook" class="source">
+    <pre><code>def set_session_expiry_hook(self, method):
+    """
+    Set a callback hook for session (`TokenError` -- timeout, expiry etc.) errors.
+    An `access_token` (login session) can become invalid for a number of
+    reasons, but it doesn't make sense for the client to
+    try and catch it during every API call.
+    A callback method that handles session errors
+    can be set here and when the client encounters
+    a token error at any point, it'll be called.
+    This callback, for instance, can log the user out of the UI,
+    clear session cookies, or initiate a fresh login.
+    """
+    if not callable(method):
+        raise TypeError("Invalid input type. Only functions are accepted.")
+    self.session_expiry_hook = method
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.trades">
+    <p>def <span class="ident">trades</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Retrieve the list of trades executed (all or ones under a particular order).</p>
+<p>An order can be executed in tranches based on market conditions.
+These trades are individually recorded under an order.</p>
+<ul>
+<li><code>order_id</code> is the ID of the order (optional) whose trades are to be retrieved.
+If no <code>order_id</code> is specified, all trades for the day are returned.</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.trades', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.trades" class="source">
+    <pre><code>def trades(self):
+    """
+    Retrieve the list of trades executed (all or ones under a particular order).
+    An order can be executed in tranches based on market conditions.
+    These trades are individually recorded under an order.
+    - `order_id` is the ID of the order (optional) whose trades are to be retrieved.
+    If no `order_id` is specified, all trades for the day are returned.
+    """
+    return self._format_response(self._get("trades"))
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteConnect.trigger_range">
+    <p>def <span class="ident">trigger_range</span>(</p><p>self, transaction_type, *instruments)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Retrieve the buy/sell trigger range for Cover Orders.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteConnect.trigger_range', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteConnect.trigger_range" class="source">
+    <pre><code>def trigger_range(self, transaction_type, *instruments):
+    """Retrieve the buy/sell trigger range for Cover Orders."""
+    ins = list(instruments)
+    # If first element is a list then accept it as instruments list for legacy reason
+    if len(instruments) > 0 and type(instruments[0]) == list:
+        ins = instruments[0]
+    return self._get("market.trigger_range", {
+        "i": ins,
+        "transaction_type": transaction_type.lower()
+    })
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="kiteconnect.KiteTicker" class="name">class <span class="ident">KiteTicker</span></p>
+      
+  
+    <div class="desc"><p>The WebSocket client for connecting to Kite Connect's streaming quotes service.</p>
+<h2>Getting started:</h2>
+<pre><code>#!python
+import logging
+from kiteconnect import KiteTicker
+
+logging.basicConfig(level=logging.DEBUG)
+
+# Initialise
+kws = KiteTicker("your_api_key", "your_access_token")
+
+def on_ticks(ws, ticks):
+    # Callback to receive ticks.
+    logging.debug("Ticks: {}".format(ticks))
+
+def on_connect(ws, response):
+    # Callback on successful connect.
+    # Subscribe to a list of instrument_tokens (RELIANCE and ACC here).
+    ws.subscribe([738561, 5633])
+
+    # Set RELIANCE to tick in `full` mode.
+    ws.set_mode(ws.MODE_FULL, [738561])
+
+# Assign the callbacks.
+kws.on_ticks = on_ticks
+kws.on_connect = on_connect
+
+# Infinite loop on the main thread. Nothing after this will run.
+# You have to use the pre-defined callbacks to manage subscriptions.
+kws.connect()
+</code></pre>
+<h2>Callbacks</h2>
+<p>In below examples <code>ws</code> is the currently initialised WebSocket object.</p>
+<ul>
+<li><code>on_ticks(ws, ticks)</code> -  Triggered when ticks are recevied.<ul>
+<li><code>ticks</code> - List of <code>tick</code> object. Check below for sample structure.</li>
+</ul>
+</li>
+<li><code>on_close(ws, code, reason)</code> -  Triggered when connection is closed.<ul>
+<li><code>code</code> - WebSocket standard close event code (https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent)</li>
+<li><code>reason</code> - DOMString indicating the reason the server closed the connection</li>
+</ul>
+</li>
+<li><code>on_error(ws, code, reason)</code> -  Triggered when connection is closed with an error.<ul>
+<li><code>code</code> - WebSocket standard close event code (https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent)</li>
+<li><code>reason</code> - DOMString indicating the reason the server closed the connection</li>
+</ul>
+</li>
+<li><code>on_connect</code> -  Triggered when connection is established successfully.<ul>
+<li><code>response</code> - Response received from server on successful connection.</li>
+</ul>
+</li>
+<li><code>on_message(ws, payload, is_binary)</code> -  Triggered when message is received from the server.<ul>
+<li><code>payload</code> - Raw response from the server (either text or binary).</li>
+<li><code>is_binary</code> - Bool to check if response is binary type.</li>
+</ul>
+</li>
+<li><code>on_reconnect(ws, attempts_count)</code> -  Triggered when auto reconnection is attempted.<ul>
+<li><code>attempts_count</code> - Current reconnect attempt number.</li>
+</ul>
+</li>
+<li><code>on_noreconnect(ws)</code> -  Triggered when number of auto reconnection attempts exceeds <code>reconnect_tries</code>.</li>
+<li><code>on_order_update(ws, data)</code> -  Triggered when there is an order update for the connected user.</li>
+</ul>
+<h2>Tick structure (passed to the <code>on_ticks</code> callback)</h2>
+<pre><code>[{
+    'instrument_token': 53490439,
+    'mode': 'full',
+    'volume': 12510,
+    'last_price': 4084.0,
+    'average_price': 4086.55,
+    'last_quantity': 1,
+    'buy_quantity': 2356
+    'sell_quantity': 2440,
+    'change': 0.46740467404674046,
+    'last_trade_time': datetime.datetime(2018, 1, 15, 13, 16, 54),
+    'timestamp': datetime.datetime(2018, 1, 15, 13, 16, 56),
+    'oi': 21845,
+    'oi_day_low': 0,
+    'oi_day_high': 0,
+    'ohlc': {
+        'high': 4093.0,
+        'close': 4065.0,
+        'open': 4088.0,
+        'low': 4080.0
+    },
+    'tradable': True,
+    'depth': {
+        'sell': [{
+            'price': 4085.0,
+            'orders': 1048576,
+            'quantity': 43
+        }, {
+            'price': 4086.0,
+            'orders': 2752512,
+            'quantity': 134
+        }, {
+            'price': 4087.0,
+            'orders': 1703936,
+            'quantity': 133
+        }, {
+            'price': 4088.0,
+            'orders': 1376256,
+            'quantity': 70
+        }, {
+            'price': 4089.0,
+            'orders': 1048576,
+            'quantity': 46
+        }],
+        'buy': [{
+            'price': 4084.0,
+            'orders': 589824,
+            'quantity': 53
+        }, {
+            'price': 4083.0,
+            'orders': 1245184,
+            'quantity': 145
+        }, {
+            'price': 4082.0,
+            'orders': 1114112,
+            'quantity': 63
+        }, {
+            'price': 4081.0,
+            'orders': 1835008,
+            'quantity': 69
+        }, {
+            'price': 4080.0,
+            'orders': 2752512,
+            'quantity': 89
+        }]
+    }
+},
+...,
+...]
+</code></pre>
+<h2>Auto reconnection</h2>
+<p>Auto reonnection is enabled by default and it can be disabled by passing <code>reconnect</code> param while initialising <code>KiteTicker</code>.</p>
+<p>Auto reonnection mechanism is based on <a href="https://en.wikipedia.org/wiki/Exponential_backoff">Exponential backoff</a> algorithm in which
+next retry interval will be increased exponentially. <code>reconnect_max_delay</code> and <code>reconnect_max_tries</code> params can be used to tewak
+the alogrithm where <code>reconnect_max_delay</code> is the maximum delay after which subsequent reconnection interval will become constant and
+<code>reconnect_max_tries</code> is maximum number of retries before its quiting reconnection.</p>
+<p>For example if <code>reconnect_max_delay</code> is 60 seconds and <code>reconnect_max_tries</code> is 50 then the first reconnection interval starts from
+minimum interval which is 2 seconds and keep increasing up to 60 seconds after which it becomes constant and when reconnection attempt
+is reached upto 50 then it stops reconnecting.</p>
+<p>method <code>stop_retry</code> can be used to stop ongoing reconnect attempts and <code>on_reconnect</code> callback will be called with current reconnect
+attempt and <code>on_noreconnect</code> is called when reconnection attempts reaches max retries.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteTicker', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteTicker" class="source">
+    <pre><code>class KiteTicker(object):
+    """
+    The WebSocket client for connecting to Kite Connect's streaming quotes service.
+
+    Getting started:
+    ---------------
+        #!python
+        import logging
+        from kiteconnect import KiteTicker
+
+        logging.basicConfig(level=logging.DEBUG)
+
+        # Initialise
+        kws = KiteTicker("your_api_key", "your_access_token")
+
+        def on_ticks(ws, ticks):
+            # Callback to receive ticks.
+            logging.debug("Ticks: {}".format(ticks))
+
+        def on_connect(ws, response):
+            # Callback on successful connect.
+            # Subscribe to a list of instrument_tokens (RELIANCE and ACC here).
+            ws.subscribe([738561, 5633])
+
+            # Set RELIANCE to tick in `full` mode.
+            ws.set_mode(ws.MODE_FULL, [738561])
+
+        # Assign the callbacks.
+        kws.on_ticks = on_ticks
+        kws.on_connect = on_connect
+
+        # Infinite loop on the main thread. Nothing after this will run.
+        # You have to use the pre-defined callbacks to manage subscriptions.
+        kws.connect()
+
+    Callbacks
+    ---------
+    In below examples `ws` is the currently initialised WebSocket object.
+
+    - `on_ticks(ws, ticks)` -  Triggered when ticks are recevied.
+        - `ticks` - List of `tick` object. Check below for sample structure.
+    - `on_close(ws, code, reason)` -  Triggered when connection is closed.
+        - `code` - WebSocket standard close event code (https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent)
+        - `reason` - DOMString indicating the reason the server closed the connection
+    - `on_error(ws, code, reason)` -  Triggered when connection is closed with an error.
+        - `code` - WebSocket standard close event code (https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent)
+        - `reason` - DOMString indicating the reason the server closed the connection
+    - `on_connect` -  Triggered when connection is established successfully.
+        - `response` - Response received from server on successful connection.
+    - `on_message(ws, payload, is_binary)` -  Triggered when message is received from the server.
+        - `payload` - Raw response from the server (either text or binary).
+        - `is_binary` - Bool to check if response is binary type.
+    - `on_reconnect(ws, attempts_count)` -  Triggered when auto reconnection is attempted.
+        - `attempts_count` - Current reconnect attempt number.
+    - `on_noreconnect(ws)` -  Triggered when number of auto reconnection attempts exceeds `reconnect_tries`.
+    - `on_order_update(ws, data)` -  Triggered when there is an order update for the connected user.
+
+
+    Tick structure (passed to the `on_ticks` callback)
+    ---------------------------
+        [{
+            'instrument_token': 53490439,
+            'mode': 'full',
+            'volume': 12510,
+            'last_price': 4084.0,
+            'average_price': 4086.55,
+            'last_quantity': 1,
+            'buy_quantity': 2356
+            'sell_quantity': 2440,
+            'change': 0.46740467404674046,
+            'last_trade_time': datetime.datetime(2018, 1, 15, 13, 16, 54),
+            'timestamp': datetime.datetime(2018, 1, 15, 13, 16, 56),
+            'oi': 21845,
+            'oi_day_low': 0,
+            'oi_day_high': 0,
+            'ohlc': {
+                'high': 4093.0,
+                'close': 4065.0,
+                'open': 4088.0,
+                'low': 4080.0
+            },
+            'tradable': True,
+            'depth': {
+                'sell': [{
+                    'price': 4085.0,
+                    'orders': 1048576,
+                    'quantity': 43
+                }, {
+                    'price': 4086.0,
+                    'orders': 2752512,
+                    'quantity': 134
+                }, {
+                    'price': 4087.0,
+                    'orders': 1703936,
+                    'quantity': 133
+                }, {
+                    'price': 4088.0,
+                    'orders': 1376256,
+                    'quantity': 70
+                }, {
+                    'price': 4089.0,
+                    'orders': 1048576,
+                    'quantity': 46
+                }],
+                'buy': [{
+                    'price': 4084.0,
+                    'orders': 589824,
+                    'quantity': 53
+                }, {
+                    'price': 4083.0,
+                    'orders': 1245184,
+                    'quantity': 145
+                }, {
+                    'price': 4082.0,
+                    'orders': 1114112,
+                    'quantity': 63
+                }, {
+                    'price': 4081.0,
+                    'orders': 1835008,
+                    'quantity': 69
+                }, {
+                    'price': 4080.0,
+                    'orders': 2752512,
+                    'quantity': 89
+                }]
+            }
+        },
+        ...,
+        ...]
+
+    Auto reconnection
+    -----------------
+
+    Auto reonnection is enabled by default and it can be disabled by passing `reconnect` param while initialising `KiteTicker`.
+
+    Auto reonnection mechanism is based on [Exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff) algorithm in which
+    next retry interval will be increased exponentially. `reconnect_max_delay` and `reconnect_max_tries` params can be used to tewak
+    the alogrithm where `reconnect_max_delay` is the maximum delay after which subsequent reconnection interval will become constant and
+    `reconnect_max_tries` is maximum number of retries before its quiting reconnection.
+
+    For example if `reconnect_max_delay` is 60 seconds and `reconnect_max_tries` is 50 then the first reconnection interval starts from
+    minimum interval which is 2 seconds and keep increasing up to 60 seconds after which it becomes constant and when reconnection attempt
+    is reached upto 50 then it stops reconnecting.
+
+    method `stop_retry` can be used to stop ongoing reconnect attempts and `on_reconnect` callback will be called with current reconnect
+    attempt and `on_noreconnect` is called when reconnection attempts reaches max retries.
+    """
+
+    EXCHANGE_MAP = {
+        "nse": 1,
+        "nfo": 2,
+        "cds": 3,
+        "bse": 4,
+        "bfo": 5,
+        "bsecds": 6,
+        "mcx": 7,
+        "mcxsx": 8,
+        "indices": 9
+    }
+
+    # Default connection timeout
+    CONNECT_TIMEOUT = 30
+    # Default Reconnect max delay.
+    RECONNECT_MAX_DELAY = 60
+    # Default reconnect attempts
+    RECONNECT_MAX_TRIES = 50
+    # Default root API endpoint. It's possible to
+    # override this by passing the `root` parameter during initialisation.
+    ROOT_URI = "wss://ws.kite.trade"
+
+    # Available streaming modes.
+    MODE_FULL = "full"
+    MODE_QUOTE = "quote"
+    MODE_LTP = "ltp"
+
+    # Flag to set if its first connect
+    _is_first_connect = True
+
+    # Available actions.
+    _message_code = 11
+    _message_subscribe = "subscribe"
+    _message_unsubscribe = "unsubscribe"
+    _message_setmode = "mode"
+
+    # Minimum delay which should be set between retries. User can't set less than this
+    _minimum_reconnect_max_delay = 5
+    # Maximum number or retries user can set
+    _maximum_reconnect_max_tries = 300
+
+    def __init__(self, api_key, access_token, debug=False, root=None,
+                 reconnect=True, reconnect_max_tries=RECONNECT_MAX_TRIES, reconnect_max_delay=RECONNECT_MAX_DELAY,
+                 connect_timeout=CONNECT_TIMEOUT):
+        """
+        Initialise websocket client instance.
+
+        - `api_key` is the API key issued to you
+        - `access_token` is the token obtained after the login flow in
+            exchange for the `request_token`. Pre-login, this will default to None,
+            but once you have obtained it, you should
+            persist it in a database or session to pass
+            to the Kite Connect class initialisation for subsequent requests.
+        - `root` is the websocket API end point root. Unless you explicitly
+            want to send API requests to a non-default endpoint, this
+            can be ignored.
+        - `reconnect` is a boolean to enable WebSocket autreconnect in case of network failure/disconnection.
+        - `reconnect_max_delay` in seconds is the maximum delay after which subsequent reconnection interval will become constant. Defaults to 60s and minimum acceptable value is 5s.
+        - `reconnect_max_tries` is maximum number reconnection attempts. Defaults to 50 attempts and maximum up to 300 attempts.
+        - `connect_timeout` in seconds is the maximum interval after which connection is considered as timeout. Defaults to 30s.
+        """
+        self.root = root or self.ROOT_URI
+
+        # Set max reconnect tries
+        if reconnect_max_tries > self._maximum_reconnect_max_tries:
+            log.warning("`reconnect_max_tries` can not be more than {val}. Setting to highest possible value - {val}.".format(
+                val=self._maximum_reconnect_max_tries))
+            self.reconnect_max_tries = self._maximum_reconnect_max_tries
+        else:
+            self.reconnect_max_tries = reconnect_max_tries
+
+        # Set max reconnect delay
+        if reconnect_max_delay < self._minimum_reconnect_max_delay:
+            log.warning("`reconnect_max_delay` can not be less than {val}. Setting to lowest possible value - {val}.".format(
+                val=self._minimum_reconnect_max_delay))
+            self.reconnect_max_delay = self._minimum_reconnect_max_delay
+        else:
+            self.reconnect_max_delay = reconnect_max_delay
+
+        self.connect_timeout = connect_timeout
+
+        self.socket_url = "{root}?api_key={api_key}"\
+            "&access_token={access_token}".format(
+                root=self.root,
+                api_key=api_key,
+                access_token=access_token
+            )
+
+        # Debug enables logs
+        self.debug = debug
+
+        # Placeholders for callbacks.
+        self.on_ticks = None
+        self.on_open = None
+        self.on_close = None
+        self.on_error = None
+        self.on_connect = None
+        self.on_message = None
+        self.on_reconnect = None
+        self.on_noreconnect = None
+
+        # Text message updates
+        self.on_order_update = None
+
+        # List of current subscribed tokens
+        self.subscribed_tokens = {}
+
+    def _create_connection(self, url, **kwargs):
+        """Create a WebSocket client connection."""
+        self.factory = KiteTickerClientFactory(url, **kwargs)
+
+        # Alias for current websocket connection
+        self.ws = self.factory.ws
+
+        self.factory.debug = self.debug
+
+        # Register private callbacks
+        self.factory.on_open = self._on_open
+        self.factory.on_error = self._on_error
+        self.factory.on_close = self._on_close
+        self.factory.on_message = self._on_message
+        self.factory.on_connect = self._on_connect
+        self.factory.on_reconnect = self._on_reconnect
+        self.factory.on_noreconnect = self._on_noreconnect
+
+        self.factory.maxDelay = self.reconnect_max_delay
+        self.factory.maxRetries = self.reconnect_max_tries
+
+    def _user_agent(self):
+        return (__title__ + "-python/").capitalize() + __version__
+
+    def connect(self, threaded=False, disable_ssl_verification=False, proxy=None):
+        """Connect to websocket."""
+        # Custom headers
+        headers = {
+            "X-Kite-Version": "3",  # For version 3
+        }
+
+        # Init WebSocket client factory
+        self._create_connection(self.socket_url,
+                                useragent=self._user_agent(),
+                                proxy=proxy, headers=headers)
+
+        # Set SSL context
+        context_factory = None
+        if self.factory.isSecure and not disable_ssl_verification:
+            context_factory = ssl.ClientContextFactory()
+
+        # Establish WebSocket connection to a server
+        connectWS(self.factory, contextFactory=context_factory, timeout=self.connect_timeout)
+
+        if self.debug:
+            twisted_log.startLogging(sys.stdout)
+
+        # Run in seperate thread of blocking
+        opts = {}
+        if threaded:
+            # Signals are not allowed in non main thread by twisted so supress it.
+            opts["installSignalHandlers"] = False
+            self.websocket_thread = threading.Thread(target=reactor.run, kwargs=opts)
+            self.websocket_thread.daemon = True
+            self.websocket_thread.start()
+        else:
+            reactor.run(**opts)
+
+    def is_connected(self):
+        """Check if WebSocket connection is established."""
+        if self.ws and self.ws.state == self.ws.STATE_OPEN:
+            return True
+        else:
+            return False
+
+    def close(self, code=None, reason=None):
+        """Close the WebSocket connection."""
+        if self.ws:
+            self.ws.sendClose(code, reason)
+
+    def stop_retry(self):
+        """Stop auto retry when it is in progress."""
+        if self.factory:
+            self.factory.stopTrying()
+
+    def subscribe(self, instrument_tokens):
+        """
+        Subscribe to a list of instrument_tokens.
+
+        - `instrument_tokens` is list of instrument instrument_tokens to subscribe
+        """
+        try:
+            self.ws.sendMessage(
+                six.b(json.dumps({"a": self._message_subscribe, "v": instrument_tokens}))
+            )
+
+            for token in instrument_tokens:
+                self.subscribed_tokens[token] = self.MODE_QUOTE
+
+            return True
+        except Exception as e:
+            self.close(reason="Error while subscribe: {}".format(str(e)))
+            raise
+
+    def unsubscribe(self, instrument_tokens):
+        """
+        Unsubscribe the given list of instrument_tokens.
+
+        - `instrument_tokens` is list of instrument_tokens to unsubscribe.
+        """
+        try:
+            self.ws.sendMessage(
+                six.b(json.dumps({"a": self._message_unsubscribe, "v": instrument_tokens}))
+            )
+
+            for token in instrument_tokens:
+                try:
+                    del(self.subscribed_tokens[token])
+                except KeyError:
+                    pass
+
+            return True
+        except Exception as e:
+            self.close(reason="Error while unsubscribe: {}".format(str(e)))
+            raise
+
+    def set_mode(self, mode, instrument_tokens):
+        """
+        Set streaming mode for the given list of tokens.
+
+        - `mode` is the mode to set. It can be one of the following class constants:
+            MODE_LTP, MODE_QUOTE, or MODE_FULL.
+        - `instrument_tokens` is list of instrument tokens on which the mode should be applied
+        """
+        try:
+            self.ws.sendMessage(
+                six.b(json.dumps({"a": self._message_setmode, "v": [mode, instrument_tokens]}))
+            )
+
+            # Update modes
+            for token in instrument_tokens:
+                self.subscribed_tokens[token] = mode
+
+            return True
+        except Exception as e:
+            self.close(reason="Error while setting mode: {}".format(str(e)))
+            raise
+
+    def resubscribe(self):
+        """Resubscribe to all current subscribed tokens."""
+        modes = {}
+
+        for token in self.subscribed_tokens:
+            m = self.subscribed_tokens[token]
+
+            if not modes.get(m):
+                modes[m] = []
+
+            modes[m].append(token)
+
+        for mode in modes:
+            if self.debug:
+                log.debug("Resubscribe and set mode: {} - {}".format(mode, modes[mode]))
+
+            self.subscribe(modes[mode])
+            self.set_mode(mode, modes[mode])
+
+    def _on_connect(self, ws, response):
+        self.ws = ws
+        if self.on_connect:
+            self.on_connect(self, response)
+
+    def _on_close(self, ws, code, reason):
+        """Call `on_close` callback when connection is closed."""
+        log.error("Connection closed: {} - {}".format(code, str(reason)))
+
+        if self.on_close:
+            self.on_close(self, code, reason)
+
+    def _on_error(self, ws, code, reason):
+        """Call `on_error` callback when connection throws an error."""
+        log.error("Connection error: {} - {}".format(code, str(reason)))
+
+        if self.on_error:
+            self.on_error(self, code, reason)
+
+    def _on_message(self, ws, payload, is_binary):
+        """Call `on_message` callback when text message is received."""
+        if self.on_message:
+            self.on_message(self, payload, is_binary)
+
+        # If the message is binary, parse it and send it to the callback.
+        if self.on_ticks and is_binary and len(payload) > 4:
+            self.on_ticks(self, self._parse_binary(payload))
+
+        # Parse text messages
+        if not is_binary:
+            self._parse_text_message(payload)
+
+    def _on_open(self, ws):
+        if self.on_open:
+            return self.on_open(self)
+
+        # Resubscribe if its reconnect
+        if not self._is_first_connect:
+            self.resubscribe()
+
+        # Set first connect to false once its connected first time
+        self._is_first_connect = False
+
+    def _on_reconnect(self, attempts_count):
+        if self.on_reconnect:
+            return self.on_reconnect(self, attempts_count)
+
+    def _on_noreconnect(self):
+        if self.on_noreconnect:
+            return self.on_noreconnect(self)
+
+    def _parse_text_message(self, payload):
+        """Parse text message."""
+        # Decode unicode data
+        if not six.PY2 and type(payload) == bytes:
+            payload = payload.decode("utf-8")
+
+        try:
+            data = json.loads(payload)
+        except ValueError:
+            return
+
+        # Order update callback
+        if self.on_order_update and data.get("type") == "order" and data.get("data"):
+            self.on_order_update(self, data["data"])
+
+    def _parse_binary(self, bin):
+        """Parse binary data to a (list of) ticks structure."""
+        packets = self._split_packets(bin)  # split data to individual ticks packet
+        data = []
+
+        for packet in packets:
+            instrument_token = self._unpack_int(packet, 0, 4)
+            segment = instrument_token & 0xff  # Retrive segment constant from instrument_token
+
+            divisor = 10000000.0 if segment == self.EXCHANGE_MAP["cds"] else 100.0
+
+            # All indices are not tradable
+            tradable = False if segment == self.EXCHANGE_MAP["indices"] else True
+
+            # LTP packets
+            if len(packet) == 8:
+                data.append({
+                    "tradable": tradable,
+                    "mode": self.MODE_LTP,
+                    "instrument_token": instrument_token,
+                    "last_price": self._unpack_int(packet, 4, 8) / divisor
+                })
+            # Indices quote and full mode
+            elif len(packet) == 28 or len(packet) == 32:
+                mode = self.MODE_QUOTE if len(packet) == 28 else self.MODE_FULL
+
+                d = {
+                    "tradable": tradable,
+                    "mode": mode,
+                    "instrument_token": instrument_token,
+                    "last_price": self._unpack_int(packet, 4, 8) / divisor,
+                    "ohlc": {
+                        "high": self._unpack_int(packet, 8, 12) / divisor,
+                        "low": self._unpack_int(packet, 12, 16) / divisor,
+                        "open": self._unpack_int(packet, 16, 20) / divisor,
+                        "close": self._unpack_int(packet, 20, 24) / divisor
+                    }
+                }
+
+                # Compute the change price using close price and last price
+                d["change"] = 0
+                if(d["ohlc"]["close"] != 0):
+                    d["change"] = (d["last_price"] - d["ohlc"]["close"]) * 100 / d["ohlc"]["close"]
+
+                # Full mode with timestamp
+                if len(packet) == 32:
+                    try:
+                        timestamp = datetime.fromtimestamp(self._unpack_int(packet, 28, 32))
+                    except TypeError:
+                        timestamp = None
+
+                    d["timestamp"] = timestamp
+
+                data.append(d)
+            # Quote and full mode
+            elif len(packet) == 44 or len(packet) == 184:
+                mode = self.MODE_QUOTE if len(packet) == 44 else self.MODE_FULL
+
+                d = {
+                    "tradable": tradable,
+                    "mode": mode,
+                    "instrument_token": instrument_token,
+                    "last_price": self._unpack_int(packet, 4, 8) / divisor,
+                    "last_quantity": self._unpack_int(packet, 8, 12),
+                    "average_price": self._unpack_int(packet, 12, 16) / divisor,
+                    "volume": self._unpack_int(packet, 16, 20),
+                    "buy_quantity": self._unpack_int(packet, 20, 24),
+                    "sell_quantity": self._unpack_int(packet, 24, 28),
+                    "ohlc": {
+                        "open": self._unpack_int(packet, 28, 32) / divisor,
+                        "high": self._unpack_int(packet, 32, 36) / divisor,
+                        "low": self._unpack_int(packet, 36, 40) / divisor,
+                        "close": self._unpack_int(packet, 40, 44) / divisor
+                    }
+                }
+
+                # Compute the change price using close price and last price
+                d["change"] = 0
+                if(d["ohlc"]["close"] != 0):
+                    d["change"] = (d["last_price"] - d["ohlc"]["close"]) * 100 / d["ohlc"]["close"]
+
+                # Parse full mode
+                if len(packet) == 184:
+                    try:
+                        last_trade_time = datetime.fromtimestamp(self._unpack_int(packet, 44, 48))
+                    except TypeError:
+                        last_trade_time = None
+
+                    try:
+                        timestamp = datetime.fromtimestamp(self._unpack_int(packet, 60, 64))
+                    except TypeError:
+                        timestamp = None
+
+                    d["last_trade_time"] = last_trade_time
+                    d["oi"] = self._unpack_int(packet, 48, 52)
+                    d["oi_day_high"] = self._unpack_int(packet, 52, 56)
+                    d["oi_day_low"] = self._unpack_int(packet, 56, 60)
+                    d["timestamp"] = timestamp
+
+                    # Market depth entries.
+                    depth = {
+                        "buy": [],
+                        "sell": []
+                    }
+
+                    # Compile the market depth lists.
+                    for i, p in enumerate(range(64, len(packet), 12)):
+                        depth["sell" if i >= 5 else "buy"].append({
+                            "quantity": self._unpack_int(packet, p, p + 4),
+                            "price": self._unpack_int(packet, p + 4, p + 8) / divisor,
+                            "orders": self._unpack_int(packet, p + 8, p + 12)
+                        })
+
+                    d["depth"] = depth
+
+                data.append(d)
+
+        return data
+
+    def _unpack_int(self, bin, start, end):
+        """Unpack binary data as unsgined interger."""
+        return struct.unpack(">I", bin[start:end])[0]
+
+    def _split_packets(self, bin):
+        """Split the data to individual packets of ticks."""
+        # Ignore heartbeat data.
+        if len(bin) < 2:
+            return []
+
+        number_of_packets = struct.unpack(">H", bin[0:2])[0]
+        packets = []
+
+        j = 2
+        for i in range(number_of_packets):
+            packet_length = struct.unpack(">H", bin[j:j + 2])[0]
+            packets.append(bin[j + 2: j + 2 + packet_length])
+            j = j + 2 + packet_length
+
+        return packets
+</code></pre>
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#kiteconnect.KiteTicker">KiteTicker</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Class variables</h3>
+            <div class="item">
+            <p id="kiteconnect.KiteTicker.CONNECT_TIMEOUT" class="name">var <span class="ident">CONNECT_TIMEOUT</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteTicker.EXCHANGE_MAP" class="name">var <span class="ident">EXCHANGE_MAP</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteTicker.MODE_FULL" class="name">var <span class="ident">MODE_FULL</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteTicker.MODE_LTP" class="name">var <span class="ident">MODE_LTP</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteTicker.MODE_QUOTE" class="name">var <span class="ident">MODE_QUOTE</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteTicker.RECONNECT_MAX_DELAY" class="name">var <span class="ident">RECONNECT_MAX_DELAY</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteTicker.RECONNECT_MAX_TRIES" class="name">var <span class="ident">RECONNECT_MAX_TRIES</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteTicker.ROOT_URI" class="name">var <span class="ident">ROOT_URI</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="kiteconnect.KiteTicker.connect_timeout" class="name">var <span class="ident">connect_timeout</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteTicker.debug" class="name">var <span class="ident">debug</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteTicker.on_close" class="name">var <span class="ident">on_close</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteTicker.on_connect" class="name">var <span class="ident">on_connect</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteTicker.on_error" class="name">var <span class="ident">on_error</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteTicker.on_message" class="name">var <span class="ident">on_message</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteTicker.on_noreconnect" class="name">var <span class="ident">on_noreconnect</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteTicker.on_open" class="name">var <span class="ident">on_open</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteTicker.on_order_update" class="name">var <span class="ident">on_order_update</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteTicker.on_reconnect" class="name">var <span class="ident">on_reconnect</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteTicker.on_ticks" class="name">var <span class="ident">on_ticks</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteTicker.root" class="name">var <span class="ident">root</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteTicker.socket_url" class="name">var <span class="ident">socket_url</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="kiteconnect.KiteTicker.subscribed_tokens" class="name">var <span class="ident">subscribed_tokens</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteTicker.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, api_key, access_token, debug=False, root=None, reconnect=True, reconnect_max_tries=50, reconnect_max_delay=60, connect_timeout=30)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Initialise websocket client instance.</p>
+<ul>
+<li><code>api_key</code> is the API key issued to you</li>
+<li><code>access_token</code> is the token obtained after the login flow in
+    exchange for the <code>request_token</code>. Pre-login, this will default to None,
+    but once you have obtained it, you should
+    persist it in a database or session to pass
+    to the Kite Connect class initialisation for subsequent requests.</li>
+<li><code>root</code> is the websocket API end point root. Unless you explicitly
+    want to send API requests to a non-default endpoint, this
+    can be ignored.</li>
+<li><code>reconnect</code> is a boolean to enable WebSocket autreconnect in case of network failure/disconnection.</li>
+<li><code>reconnect_max_delay</code> in seconds is the maximum delay after which subsequent reconnection interval will become constant. Defaults to 60s and minimum acceptable value is 5s.</li>
+<li><code>reconnect_max_tries</code> is maximum number reconnection attempts. Defaults to 50 attempts and maximum up to 300 attempts.</li>
+<li><code>connect_timeout</code> in seconds is the maximum interval after which connection is considered as timeout. Defaults to 30s.</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteTicker.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteTicker.__init__" class="source">
+    <pre><code>def __init__(self, api_key, access_token, debug=False, root=None,
+             reconnect=True, reconnect_max_tries=RECONNECT_MAX_TRIES, reconnect_max_delay=RECONNECT_MAX_DELAY,
+             connect_timeout=CONNECT_TIMEOUT):
+    """
+    Initialise websocket client instance.
+    - `api_key` is the API key issued to you
+    - `access_token` is the token obtained after the login flow in
+        exchange for the `request_token`. Pre-login, this will default to None,
+        but once you have obtained it, you should
+        persist it in a database or session to pass
+        to the Kite Connect class initialisation for subsequent requests.
+    - `root` is the websocket API end point root. Unless you explicitly
+        want to send API requests to a non-default endpoint, this
+        can be ignored.
+    - `reconnect` is a boolean to enable WebSocket autreconnect in case of network failure/disconnection.
+    - `reconnect_max_delay` in seconds is the maximum delay after which subsequent reconnection interval will become constant. Defaults to 60s and minimum acceptable value is 5s.
+    - `reconnect_max_tries` is maximum number reconnection attempts. Defaults to 50 attempts and maximum up to 300 attempts.
+    - `connect_timeout` in seconds is the maximum interval after which connection is considered as timeout. Defaults to 30s.
+    """
+    self.root = root or self.ROOT_URI
+    # Set max reconnect tries
+    if reconnect_max_tries > self._maximum_reconnect_max_tries:
+        log.warning("`reconnect_max_tries` can not be more than {val}. Setting to highest possible value - {val}.".format(
+            val=self._maximum_reconnect_max_tries))
+        self.reconnect_max_tries = self._maximum_reconnect_max_tries
+    else:
+        self.reconnect_max_tries = reconnect_max_tries
+    # Set max reconnect delay
+    if reconnect_max_delay < self._minimum_reconnect_max_delay:
+        log.warning("`reconnect_max_delay` can not be less than {val}. Setting to lowest possible value - {val}.".format(
+            val=self._minimum_reconnect_max_delay))
+        self.reconnect_max_delay = self._minimum_reconnect_max_delay
+    else:
+        self.reconnect_max_delay = reconnect_max_delay
+    self.connect_timeout = connect_timeout
+    self.socket_url = "{root}?api_key={api_key}"\
+        "&access_token={access_token}".format(
+            root=self.root,
+            api_key=api_key,
+            access_token=access_token
+        )
+    # Debug enables logs
+    self.debug = debug
+    # Placeholders for callbacks.
+    self.on_ticks = None
+    self.on_open = None
+    self.on_close = None
+    self.on_error = None
+    self.on_connect = None
+    self.on_message = None
+    self.on_reconnect = None
+    self.on_noreconnect = None
+    # Text message updates
+    self.on_order_update = None
+    # List of current subscribed tokens
+    self.subscribed_tokens = {}
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteTicker.close">
+    <p>def <span class="ident">close</span>(</p><p>self, code=None, reason=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Close the WebSocket connection.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteTicker.close', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteTicker.close" class="source">
+    <pre><code>def close(self, code=None, reason=None):
+    """Close the WebSocket connection."""
+    if self.ws:
+        self.ws.sendClose(code, reason)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteTicker.connect">
+    <p>def <span class="ident">connect</span>(</p><p>self, threaded=False, disable_ssl_verification=False, proxy=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Connect to websocket.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteTicker.connect', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteTicker.connect" class="source">
+    <pre><code>def connect(self, threaded=False, disable_ssl_verification=False, proxy=None):
+    """Connect to websocket."""
+    # Custom headers
+    headers = {
+        "X-Kite-Version": "3",  # For version 3
+    }
+    # Init WebSocket client factory
+    self._create_connection(self.socket_url,
+                            useragent=self._user_agent(),
+                            proxy=proxy, headers=headers)
+    # Set SSL context
+    context_factory = None
+    if self.factory.isSecure and not disable_ssl_verification:
+        context_factory = ssl.ClientContextFactory()
+    # Establish WebSocket connection to a server
+    connectWS(self.factory, contextFactory=context_factory, timeout=self.connect_timeout)
+    if self.debug:
+        twisted_log.startLogging(sys.stdout)
+    # Run in seperate thread of blocking
+    opts = {}
+    if threaded:
+        # Signals are not allowed in non main thread by twisted so supress it.
+        opts["installSignalHandlers"] = False
+        self.websocket_thread = threading.Thread(target=reactor.run, kwargs=opts)
+        self.websocket_thread.daemon = True
+        self.websocket_thread.start()
+    else:
+        reactor.run(**opts)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteTicker.is_connected">
+    <p>def <span class="ident">is_connected</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Check if WebSocket connection is established.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteTicker.is_connected', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteTicker.is_connected" class="source">
+    <pre><code>def is_connected(self):
+    """Check if WebSocket connection is established."""
+    if self.ws and self.ws.state == self.ws.STATE_OPEN:
+        return True
+    else:
+        return False
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteTicker.resubscribe">
+    <p>def <span class="ident">resubscribe</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Resubscribe to all current subscribed tokens.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteTicker.resubscribe', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteTicker.resubscribe" class="source">
+    <pre><code>def resubscribe(self):
+    """Resubscribe to all current subscribed tokens."""
+    modes = {}
+    for token in self.subscribed_tokens:
+        m = self.subscribed_tokens[token]
+        if not modes.get(m):
+            modes[m] = []
+        modes[m].append(token)
+    for mode in modes:
+        if self.debug:
+            log.debug("Resubscribe and set mode: {} - {}".format(mode, modes[mode]))
+        self.subscribe(modes[mode])
+        self.set_mode(mode, modes[mode])
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteTicker.set_mode">
+    <p>def <span class="ident">set_mode</span>(</p><p>self, mode, instrument_tokens)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Set streaming mode for the given list of tokens.</p>
+<ul>
+<li><code>mode</code> is the mode to set. It can be one of the following class constants:
+    MODE_LTP, MODE_QUOTE, or MODE_FULL.</li>
+<li><code>instrument_tokens</code> is list of instrument tokens on which the mode should be applied</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteTicker.set_mode', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteTicker.set_mode" class="source">
+    <pre><code>def set_mode(self, mode, instrument_tokens):
+    """
+    Set streaming mode for the given list of tokens.
+    - `mode` is the mode to set. It can be one of the following class constants:
+        MODE_LTP, MODE_QUOTE, or MODE_FULL.
+    - `instrument_tokens` is list of instrument tokens on which the mode should be applied
+    """
+    try:
+        self.ws.sendMessage(
+            six.b(json.dumps({"a": self._message_setmode, "v": [mode, instrument_tokens]}))
+        )
+        # Update modes
+        for token in instrument_tokens:
+            self.subscribed_tokens[token] = mode
+        return True
+    except Exception as e:
+        self.close(reason="Error while setting mode: {}".format(str(e)))
+        raise
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteTicker.stop_retry">
+    <p>def <span class="ident">stop_retry</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Stop auto retry when it is in progress.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteTicker.stop_retry', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteTicker.stop_retry" class="source">
+    <pre><code>def stop_retry(self):
+    """Stop auto retry when it is in progress."""
+    if self.factory:
+        self.factory.stopTrying()
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteTicker.subscribe">
+    <p>def <span class="ident">subscribe</span>(</p><p>self, instrument_tokens)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Subscribe to a list of instrument_tokens.</p>
+<ul>
+<li><code>instrument_tokens</code> is list of instrument instrument_tokens to subscribe</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteTicker.subscribe', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteTicker.subscribe" class="source">
+    <pre><code>def subscribe(self, instrument_tokens):
+    """
+    Subscribe to a list of instrument_tokens.
+    - `instrument_tokens` is list of instrument instrument_tokens to subscribe
+    """
+    try:
+        self.ws.sendMessage(
+            six.b(json.dumps({"a": self._message_subscribe, "v": instrument_tokens}))
+        )
+        for token in instrument_tokens:
+            self.subscribed_tokens[token] = self.MODE_QUOTE
+        return True
+    except Exception as e:
+        self.close(reason="Error while subscribe: {}".format(str(e)))
+        raise
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="kiteconnect.KiteTicker.unsubscribe">
+    <p>def <span class="ident">unsubscribe</span>(</p><p>self, instrument_tokens)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Unsubscribe the given list of instrument_tokens.</p>
+<ul>
+<li><code>instrument_tokens</code> is list of instrument_tokens to unsubscribe.</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-kiteconnect.KiteTicker.unsubscribe', this);">Show source &equiv;</a></p>
+  <div id="source-kiteconnect.KiteTicker.unsubscribe" class="source">
+    <pre><code>def unsubscribe(self, instrument_tokens):
+    """
+    Unsubscribe the given list of instrument_tokens.
+    - `instrument_tokens` is list of instrument_tokens to unsubscribe.
+    """
+    try:
+        self.ws.sendMessage(
+            six.b(json.dumps({"a": self._message_unsubscribe, "v": instrument_tokens}))
+        )
+        for token in instrument_tokens:
+            try:
+                del(self.subscribed_tokens[token])
+            except KeyError:
+                pass
+        return True
+    except Exception as e:
+        self.close(reason="Error while unsubscribe: {}".format(str(e)))
+        raise
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
+
+    <h2 class="section-title" id="header-submodules">Sub-modules</h2>
+      <div class="item">
+      <p class="name"><a href="exceptions.m.html">kiteconnect.exceptions</a></p>
+      
+  
+    <div class="desc"><p>exceptions.py</p>
+<p>Exceptions raised by the Kite Connect client.</p>
+<p>:copyright: (c) 2017 by Zerodha Technology.
+:license: see LICENSE for details.</p></div>
+
+      </div>
+  </section>
+
+    </article>
+  <div class="clear"> </div>
+  <footer id="footer">
+    <p>
+      Documentation generated by
+      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
+    </p>
+
+    <p>pdoc is in the public domain with the
+      <a href="http://unlicense.org">UNLICENSE</a></p>
+
+    <p>Design by <a href="http://nadh.in">Kailash Nadh</a></p>
+  </footer>
+</div>
+</body>
+</html>

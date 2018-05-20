@@ -1,0 +1,41 @@
+{
+  "status": "success",
+  "data": [
+    {
+      "folio": "385080203",
+      "fund": "DSP BlackRock Money Manager Fund",
+      "tradingsymbol": "INF740K01QQ3",
+      "average_price": 2146.131,
+      "last_price": 2277.0708,
+      "pnl": 61.018,
+      "quantity": 0.466
+    },
+    {
+      "folio": "1052046771",
+      "fund": "HDFC TaxSaver - Regular Plan",
+      "tradingsymbol": "INF179K01BB8",
+      "average_price": 345.849,
+      "last_price": 559.081,
+      "pnl": 61963.074,
+      "quantity": 290.59
+    },
+    {
+      "folio": "91022348426",
+      "fund": "Axis Long Term Equity Fund",
+      "tradingsymbol": "INF846K01131",
+      "average_price": 28.779,
+      "last_price": 41.3876,
+      "pnl": 44467.717,
+      "quantity": 3526.834
+    },
+    {
+      "folio": "488155267386",
+      "fund": "Reliance Money Manager Fund",
+      "tradingsymbol": "INF204K01EY0",
+      "average_price": 1002.948,
+      "last_price": 1007.5645,
+      "pnl": 2.304,
+      "quantity": 0.499
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+tradingsymbol,amc,name,purchase_allowed,redemption_allowed,minimum_purchase_amount,purchase_amount_multiplier,minimum_additional_purchase_amount,minimum_redemption_quantity,redemption_quantity_multiplier,dividend_type,scheme_type,plan,settlement_type,last_price,last_price_date
+INF209K01157,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Advantage Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,equity,regular,T3,106.8,2017-11-23
+INF209K01165,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Advantage Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,equity,regular,T3,436.72,2017-11-23
+INF209K01VG0,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Advantage Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,equity,direct,T3,134.2,2017-11-23
+INF209K01VH8,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Advantage Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,equity,direct,T3,453.46,2017-11-23
+INF209K01BS7,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Balanced 95 Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,equity,regular,T3,153.26,2017-11-23
+INF209K01BT5,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Balanced 95 Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,equity,regular,T3,758.0,2017-11-23
+INF209K01ZC0,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Balanced 95 Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,equity,direct,T3,796.56,2017-11-23
+INF209KA1LH3,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Balanced 95 Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,equity,direct,T3,219.49,2017-11-23
+INF084M01AB8,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Balanced Advantage Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,balanced,regular,T3,50.46,2017-11-23
+INF084M01AC6,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Balanced Advantage Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,balanced,regular,T3,22.07,2017-11-23
+INF084M01DJ5,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Balanced Advantage Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,balanced,direct,T3,52.43,2017-11-23
+INF084M01DK3,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Balanced Advantage Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,balanced,direct,T3,23.0,2017-11-23
+INF209K010W9,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Banking And Financial Services Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,equity,regular,T3,19.62,2017-11-23
+INF209K011W7,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Banking And Financial Services Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,equity,regular,T3,27.94,2017-11-23
+INF209K013W3,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Banking And Financial Services Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,equity,direct,T3,24.55,2017-11-23
+INF209K014W1,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Banking And Financial Services Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,equity,direct,T3,28.99,2017-11-23
+INF209K01BE7,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Banking and PSU Debt Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,debt,regular,T1,9.9875,2017-11-23
+INF209K01BF4,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Banking and PSU Debt Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,debt,regular,T1,49.8034,2017-11-23
+INF209K01YJ8,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Banking and PSU Debt Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,debt,direct,T1,12.7089,2017-11-23
+INF209K01YK6,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Banking and PSU Debt Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,debt,direct,T1,10.4884,2017-11-23
+INF209K01YL4,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Banking and PSU Debt Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,debt,direct,T1,51.1321,2017-11-23
+INF209K01LQ0,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Cash Manager,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,debt,regular,T1,408.9951,2017-11-23
+INF209K01XU7,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Cash Manager - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,debt,direct,T1,425.8148,2017-11-23
+INF209K01RU9,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Cash Plus,1,1,5000.0,1.0,1000.0,0.001,0.001,growth,liquid,regular,T1,271.5949,2017-11-23
+INF209K01VA3,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Cash Plus - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,liquid,direct,T1,272.5712,2017-11-23
+INF209K01VD7,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Cash Plus - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,liquid,direct,T1,147.9867,2017-11-23
+INF209K01199,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Commodity Equities Fund - Global Agri Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,equity,regular,T6,16.4009,2017-11-23
+INF209K01207,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Commodity Equities Fund - Global Agri Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,equity,regular,T6,23.1229,2017-11-23
+INF209K01AH2,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Constant Maturity 10 Year Gilt Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,debt,regular,T1,50.6235,2017-11-23
+INF209K01AI0,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Constant Maturity 10 Year Gilt Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,debt,regular,T1,12.0695,2017-11-23
+INF209K01XS1,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Constant Maturity 10 Year Gilt Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,debt,direct,T1,50.998,2017-11-23
+INF209KA1K47,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Corporate Bond Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,debt,regular,T1,12.6521,2017-11-23
+INF209KA1K54,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Corporate Bond Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,debt,regular,T1,11.4171,2017-11-23
+INF209KA1K88,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Corporate Bond Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,debt,direct,T1,12.9524,2017-11-23
+INF209KA1K96,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Corporate Bond Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,debt,direct,T1,11.708,2017-11-23
+INF209K01397,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Dividend Yield Plus,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,equity,regular,T3,17.25,2017-11-23
+INF209K01405,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Dividend Yield Plus,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,equity,regular,T3,178.4,2017-11-23
+INF209K01Q55,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Dividend Yield Plus - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,equity,direct,T3,26.66,2017-11-23
+INF209K01WA1,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Dividend Yield Plus - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,equity,direct,T3,185.33,2017-11-23
+INF209K01793,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Dynamic Bond Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,debt,regular,T1,30.0556,2017-11-23
+INF209K01801,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Dynamic Bond Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,debt,regular,T1,10.9249,2017-11-23
+INF209K01819,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Dynamic Bond Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,debt,regular,T1,10.1744,2017-11-23
+INF209KA1TV7,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Dynamic Bond Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,equity,regular,T1,12.1802,2017-11-23
+INF209K01N82,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Dynamic Bond Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,debt,direct,T1,30.8721,2017-11-23
+INF209K01R62,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Dynamic Bond Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,debt,direct,T1,11.1149,2017-11-23
+INF209K01R88,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Dynamic Bond Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,debt,direct,T1,10.4108,2017-11-23
+INF209KA1TX3,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Dynamic Bond Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,debt,direct,T1,12.4196,2017-11-23
+INF209K01256,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Enhanced Arbitrage Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,equity,regular,T3,10.8783,2017-11-23
+INF209K01264,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Enhanced Arbitrage Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,equity,regular,T3,17.5067,2017-11-23
+INF209K01P80,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Enhanced Arbitrage Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,equity,direct,T3,11.0934,2017-11-23
+INF209K01VP1,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Enhanced Arbitrage Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,equity,direct,T3,17.9567,2017-11-23
+INF209K01AJ8,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Equity Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,equity,regular,T3,710.7,2017-11-23
+INF209K01AQ3,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Equity Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,equity,regular,T3,104.58,2017-11-23
+INF209K01XX1,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Equity Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,equity,direct,T3,742.17,2017-11-23
+INF209KA1TS3,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Equity Savings Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,equity,regular,T3,13.1,2017-11-23
+INF209KA1TT1,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Equity Savings Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,equity,regular,T3,11.64,2017-11-23
+INF209KA1TP9,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Equity Savings Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,equity,direct,T3,13.54,2017-11-23
+INF209KA1TQ7,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Equity Savings Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,equity,direct,T3,12.27,2017-11-23
+INF084M01101,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Financial Planning FoF Aggressive Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,fof,regular,T4,21.9919,2017-11-23
+INF084M01119,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Financial Planning FoF Aggressive Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,fof,regular,T4,20.13,2017-11-23
+INF084M01044,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Financial Planning FoF Conservative Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,fof,regular,T4,17.3032,2017-11-23
+INF084M01051,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Financial Planning FoF Conservative Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,fof,regular,T4,15.744,2017-11-23
+INF084M01077,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Financial Planning FoF Prudent Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,fof,regular,T4,19.0899,2017-11-23
+INF084M01085,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Financial Planning FoF Prudent Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,fof,regular,T4,17.1217,2017-11-23
+INF209K01MG9,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Floating Rate Fund - Long Term Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,debt,regular,T1,208.1037,2017-11-23
+INF209K01UX7,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Floating Rate Fund - Long Term Plan - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,debt,direct,T1,210.3858,2017-11-23
+INF209K01RV7,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Floating Rate Fund - Short Term Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,liquid,regular,T1,225.569,2017-11-23
+INF209K01UU3,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Floating Rate Fund - Short Term Plan - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,liquid,direct,T1,226.363,2017-11-23
+INF209K01BO6,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Frontline Equity Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,equity,regular,T3,27.34,2017-11-23
+INF209K01BR9,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Frontline Equity Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,equity,regular,T3,217.34,2017-11-23
+INF209K01YX9,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Frontline Equity Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,equity,direct,T3,50.73,2017-11-23
+INF209K01YY7,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Frontline Equity Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,equity,direct,T3,227.39,2017-11-23
+INF209K01AC3,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Gilt Plus - PF Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,debt,regular,T1,48.6101,2017-11-23
+INF209K01AD1,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Gilt Plus - PF Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,debt,regular,T1,48.6101,2017-11-23
+INF209K01AF6,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Gilt Plus - PF Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,debt,regular,T1,10.1758,2017-11-23
+INF209K01XP7,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Gilt Plus - PF Plan - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,debt,direct,T1,49.8019,2017-11-23
+INF209K01XQ5,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Gilt Plus - PF Plan - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,debt,direct,T1,49.8019,2017-11-23
+INF209KA1LC4,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Gilt Plus - PF Plan - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,debt,direct,T1,10.3855,2017-11-23
+INF209K01PF4,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Gold Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,fof,regular,T3,9.5415,2017-11-23
+INF209K01PG2,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Gold Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,fof,regular,T3,9.5402,2017-11-23
+INF209K01YT7,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Gold Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,fof,direct,T3,9.6571,2017-11-23
+INF209K01YU5,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Gold Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,fof,direct,T3,9.6609,2017-11-23
+INF209K01R13,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Income Plus - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,debt,direct,T1,13.3298,2017-11-23
+INF209K01WY1,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Income Plus - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,debt,direct,T1,78.7456,2017-11-23
+INF209KA1WL2,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Income Plus - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,debt,direct,T1,11.621,2017-11-23
+INF209K01579,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Income Plus - Regular Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,debt,regular,T1,76.0586,2017-11-23
+INF209K01587,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Income Plus - Regular Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,debt,regular,T1,12.7941,2017-11-23
+INF209K01LA4,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Index Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,equity,regular,T3,13.3014,2017-11-23
+INF209K01LB2,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Index Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,equity,regular,T3,101.4926,2017-11-23
+INF209K01VX5,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Index Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,equity,direct,T3,13.4709,2017-11-23
+INF209K01VY3,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life Index Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,equity,direct,T3,101.6988,2017-11-23
+INF209K01439,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life India GenNext Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,equity,regular,T3,25.71,2017-11-23
+INF209K01447,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life India GenNext Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,equity,regular,T3,78.3,2017-11-23
+INF209K01Q63,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life India GenNext Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,equity,direct,T3,29.23,2017-11-23
+INF209K01WC7,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life India GenNext Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,equity,direct,T3,82.08,2017-11-23
+INF209K01280,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life India Opportunities Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,equity,regular,T3,30.52,2017-11-23
+INF209K01298,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life India Opportunities Fund,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,equity,regular,T3,146.95,2017-11-23
+INF209K01P98,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life India Opportunities Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,payout,equity,direct,T3,42.01,2017-11-23
+INF209K01VR7,BirlaSunLifeMutualFund_MF,Aditya Birla Sun Life India Opportunities Fund - Direct Plan,1,1,1000.0,1.0,1000.0,0.001,0.001,growth,equity,direct,T3,151.59,2017-11-23

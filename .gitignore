@@ -174,4 +174,10 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# Vscode
+.vscode
+
+# coverage
+cov_html
+
 # End of https://www.gitignore.io/api/osx,linux,macos,python,windows

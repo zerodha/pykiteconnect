@@ -1,0 +1,78 @@
+environment:
+
+  matrix:
+    # Python 2.7
+    - PYTHON: "C:\\Python27"
+    # Conda 2.7
+    - PYTHON_VERSION: 2.7
+      MINICONDA: "C:\\Miniconda"
+    # Python 3.4
+    - PYTHON: "C:\\Python34"
+    # Conda 3.4
+    - PYTHON_VERSION: 3.4
+      MINICONDA: "C:\\Miniconda34"
+    # Python 3.5
+    - PYTHON: "C:\\Python35"
+    # Conda 3.5
+    - PYTHON_VERSION: 3.5
+      MINICONDA: "C:\\Miniconda35"
+    # Python 3.6
+    - PYTHON: "C:\\Python36"
+    # Conda 3.6
+    - PYTHON_VERSION: 3.6
+      MINICONDA: "C:\\Miniconda36"
+    # Python 2.7 64-bit
+    - PYTHON: "C:\\Python27-x64"
+    # Conda 2.7 64-bit
+    - PYTHON_VERSION: 2.7
+      MINICONDA: "C:\\Miniconda-x64"
+    # Python 3.4 64-bit
+    - PYTHON: "C:\\Python34-x64"
+    # Conda 3.4 64-bit
+    - PYTHON_VERSION: 3.4
+      MINICONDA: "C:\\Miniconda34-x64"
+    # Python 3.5 64-bit
+    - PYTHON: "C:\\Python35-x64"
+    # Conda 3.5 64-bit
+    - PYTHON_VERSION: 3.5
+      MINICONDA: "C:\\Miniconda35-x64"
+    # Python 3.6 64-bit
+    - PYTHON: "C:\\Python36-x64"
+    # Conda 3.6 64-bit
+    - PYTHON_VERSION: 3.6
+      MINICONDA: "C:\\Miniconda36-x64"
+
+install:
+  - ps: |
+      # install dependencies
+      if($env:MINICONDA -eq $null)
+      {
+        Write-Host "Setting python path"
+        $env:Path="$env:PYTHON;$env:PYTHON\Scripts;$env:Path"
+        [Environment]::SetEnvironmentVariable("Path", "$env:PYTHON;$env:PYTHON\Scripts;$env:Path", [EnvironmentVariableTarget]::Machine)
+        Get-Item Env:Path
+        python -m pip install --upgrade pip
+        python -m pip install --upgrade wheel
+        python -m pip install --upgrade setuptools
+      }
+      else
+      {
+        Write-Host "Setting miniconda path"
+        $env:Path="$env:MINICONDA;$env:MINICONDA\Scripts;$env:Path"
+        [Environment]::SetEnvironmentVariable("Path", "$env:MINICONDA;$env:MINICONDA\Scripts;$env:Path", [EnvironmentVariableTarget]::Machine)
+        Get-Item Env:Path
+        conda config --set always_yes yes --set changeps1 no
+        conda update -q conda
+        conda info -a
+        conda install -q wheel
+        python -m pip install "pyopenssl>=17.5.0" "requests>=2.18.4" "six>=1.11.0" "enum34>=1.1.6" "python-dateutil>=2.6.1" "autobahn[twisted]>=17.10.1"
+        python -m pip install --ignore-installed --upgrade setuptools
+      }
+      python -m pip install --upgrade pip
+      python setup.py install
+      python -m pip install -r dev_requirements.txt
+
+build: off
+
+test_script:
+  - python setup.py test

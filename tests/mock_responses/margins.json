@@ -1,0 +1,47 @@
+{
+	"status": "success",
+	"data": {
+		"equity": {
+			"enabled": true,
+			"net": 15481.524,
+			"available": {
+				"adhoc_margin": 0,
+				"cash": 9929.024,
+				"collateral": 5554.5,
+				"intraday_payin": 0
+			},
+			"utilised": {
+				"debits": 2,
+				"exposure": 0,
+				"m2m_realised": -2,
+				"m2m_unrealised": 0,
+				"option_premium": 0,
+				"payout": 0,
+				"span": 0,
+				"holding_sales": 0,
+				"turnover": 0
+			}
+		},
+		"commodity": {
+			"enabled": true,
+			"net": 29675.93,
+			"available": {
+				"adhoc_margin": 0,
+				"cash": 29249.93,
+				"collateral": 0,
+				"intraday_payin": 0
+			},
+			"utilised": {
+				"debits": -426,
+				"exposure": 0,
+				"m2m_realised": 426,
+				"m2m_unrealised": 0,
+				"option_premium": 0,
+				"payout": 0,
+				"span": 0,
+				"holding_sales": 0,
+				"turnover": 0
+			}
+		}
+	}
+}
