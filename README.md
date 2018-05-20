@@ -17,7 +17,7 @@ Kite Connect is a set of REST-like APIs that expose many capabilities required t
 ## Installing the client
 You can install the pre release via pip
 ```
-pip install kiteconnect --upgrade --pre
+pip install --upgrade kiteconnect
 ```
 
 Its recommended to update `setuptools` to latest if you are facing any issue while installing
