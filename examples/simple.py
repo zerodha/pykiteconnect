@@ -16,12 +16,15 @@ kite.set_access_token(data["access_token"])
 
 # Place an order
 try:
-    order_id = kite.place_order(tradingsymbol="INFY",
-                                exchange=kite.EXCHANGE_NSE,
-                                transaction_type=kite.TRANSACTION_TYPE_BUY,
-                                quantity=1,
-                                order_type=kite.ORDER_TYPE_MARKET,
-                                product=kite.PRODUCT_NRML)
+    order_id = kite.place_order(
+        variety=kite.VARIETY_REGULAR,
+        exchange=kite.EXCHANGE_NSE,
+        tradingsymbol="INFY",
+        transaction_type=kite.TRANSACTION_TYPE_BUY,
+        quantity=1,
+        product=kite.PRODUCT_NRML,
+        order_type=kite.ORDER_TYPE_MARKET
+    )
 
     logging.info("Order placed. ID is: {}".format(order_id))
 except Exception as e:
