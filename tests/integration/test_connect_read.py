@@ -94,9 +94,13 @@ def test_order_history(kiteconnect):
     mock_resp = utils.get_json_response("order.info")["data"]
     utils.assert_responses(order, mock_resp)
 
-    # check order info statuses order. OPEN, COMPLETE, REJECTED should be the at the end
-    # and "PUT ORDER REQ RECEIVED" in front.
-    assert "RECEIVED" in order[0]["status"].upper()
+
+    # check order info statuses order. if its not REJECTED order
+    for o in order:
+        if "REJECTED" not in o["status"]:
+            assert "RECEIVED" in o["status"].upper()
+            break
+
     assert order[-1]["status"] in ["OPEN", "COMPLETE", "REJECTED"]
 
 
