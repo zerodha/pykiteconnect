@@ -707,6 +707,10 @@ class KiteTicker(object):
         if self.on_order_update and data.get("type") == "order" and data.get("data"):
             self.on_order_update(self, data["data"])
 
+        # Custom error with websocket error code 0
+        if data.get("type") == "error":
+            self._on_error(self, 0, data.get("data"))
+
     def _parse_binary(self, bin):
         """Parse binary data to a (list of) ticks structure."""
         packets = self._split_packets(bin)  # split data to individual ticks packet
