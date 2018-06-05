@@ -674,15 +674,15 @@ class KiteTicker(object):
             self._parse_text_message(payload)
 
     def _on_open(self, ws):
-        if self.on_open:
-            return self.on_open(self)
-
         # Resubscribe if its reconnect
         if not self._is_first_connect:
             self.resubscribe()
 
         # Set first connect to false once its connected first time
         self._is_first_connect = False
+
+        if self.on_open:
+            return self.on_open(self)
 
     def _on_reconnect(self, attempts_count):
         if self.on_reconnect:

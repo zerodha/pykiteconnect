@@ -170,10 +170,14 @@ class KiteConnect(object):
         self.root = root or self._default_root_uri
         self.timeout = timeout or self._default_timeout
 
-        pool = pool or {}
-        self.reqsession = requests.Session()
-        reqadapter = requests.adapters.HTTPAdapter(**pool)
-        self.reqsession.mount("https://", reqadapter)
+        # Create requests session only if pool exists. Reuse session
+        # for every request. Otherwise create session for each request
+        if pool:
+            self.reqsession = requests.Session()
+            reqadapter = requests.adapters.HTTPAdapter(**pool)
+            self.reqsession.mount("https://", reqadapter)
+        else:
+            self.reqsession = requests
 
         # disable requests SSL warning
         requests.packages.urllib3.disable_warnings()
