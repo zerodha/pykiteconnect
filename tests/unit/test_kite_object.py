@@ -2,6 +2,7 @@
 import pytest
 from mock import patch
 import responses
+import requests
 
 from kiteconnect import KiteConnect
 import kiteconnect.exceptions as ex
@@ -22,6 +23,19 @@ class TestKiteConnectObject:
 
     def test_login_url(self, kiteconnect):
         assert kiteconnect.login_url() == "https://kite.trade/connect/login?api_key=<API-KEY>&v=3"
+
+    def test_request_without_pooling(self, kiteconnect):
+        assert isinstance(kiteconnect.reqsession, requests.Session) is False
+        assert kiteconnect.reqsession.request is not None
+
+    def test_request_pooling(self, kiteconnect_with_pooling):
+        assert isinstance(kiteconnect_with_pooling.reqsession, requests.Session) is True
+        assert kiteconnect_with_pooling.reqsession.request is not None
+        http_adapter = kiteconnect_with_pooling.reqsession.adapters['https://']
+        assert http_adapter._pool_maxsize == 10
+        assert http_adapter._pool_connections == 20
+        assert http_adapter._pool_block is False
+        assert http_adapter.max_retries.total == 2
 
     @responses.activate
     def test_set_session_expiry_hook_meth(self, kiteconnect):
