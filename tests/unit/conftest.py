@@ -18,6 +18,22 @@ def kiteconnect():
 
 
 @pytest.fixture()
+def kiteconnect_with_pooling():
+    """Init kite connect object with pooling."""
+    kiteconnect = KiteConnect(
+        api_key="<API-KEY>",
+        access_token="<ACCESS-TOKEN>",
+        pool={
+            "pool_connections": 20,
+            "pool_maxsize": 10,
+            "max_retries": 2,
+            "pool_block": False
+        }
+    )
+    return kiteconnect
+
+
+@pytest.fixture()
 def kiteticker():
     """Init Kite ticker object."""
     kws = KiteTicker("<API-KEY>", "<PUB-TOKEN>", "<USER-ID>", debug=True, reconnect=False)
