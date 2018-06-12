@@ -759,7 +759,7 @@ class KiteTicker(object):
                 if len(packet) == 32:
                     try:
                         timestamp = datetime.fromtimestamp(self._unpack_int(packet, 28, 32))
-                    except TypeError:
+                    except Exception:
                         timestamp = None
 
                     d["timestamp"] = timestamp
@@ -796,12 +796,12 @@ class KiteTicker(object):
                 if len(packet) == 184:
                     try:
                         last_trade_time = datetime.fromtimestamp(self._unpack_int(packet, 44, 48))
-                    except TypeError:
+                    except Exception:
                         last_trade_time = None
 
                     try:
                         timestamp = datetime.fromtimestamp(self._unpack_int(packet, 60, 64))
-                    except TypeError:
+                    except Exception:
                         timestamp = None
 
                     d["last_trade_time"] = last_trade_time
