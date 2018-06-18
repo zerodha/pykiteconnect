@@ -49,11 +49,22 @@ class install(_install):
 
 
 class FakeBdist(Command):
+    """Fake bdist wheel class for ignoring bdist_wheel build
+    """
 
-    user_options = []
+    user_options = [(
+        "dist-dir=",
+        "d",
+        "directory to put final built distributions in [default: dist]"
+    ), (
+        "python-tag=",
+        None,
+        "Python tag (cp32|cp33|cpNN) for abi3 wheel tag (default:false)"
+    )]
 
     def initialize_options(self):
-        pass
+        self.dist_dir = None
+        self.python_tag = None
 
     def finalize_options(self):
         pass
