@@ -18,9 +18,9 @@ with open(os.path.join(current_dir, "kiteconnect", "__version__.py"), "r", "utf-
 # Public URL to download windows wheel
 public_wheels_path = "https://raw.githubusercontent.com/zerodhatech/python-wheels/master/{wheel_name}"
 # Twisted package wheel name
-twisted_wheel_name = "Twisted-18.7.0-cp{version}-cp{version}m-{platform}.whl"
+twisted_wheel_name = "Twisted-19.2.0-cp{version}-cp{version}m-{platform}.whl"
 # Available python versions for Twisted package
-twisted_py_versions = ["34", "35", "36", "37"]
+twisted_py_versions = ["35", "36", "37"]
 
 
 # Install package using pip
