@@ -34,7 +34,13 @@ responses_path = {
 
     "market.quote": "quote.json",
     "market.quote.ohlc": "ohlc.json",
-    "market.quote.ltp": "ltp.json"
+    "market.quote.ltp": "ltp.json",
+
+    "gtt": "gtt_get_orders.json",
+    "gtt.place": "gtt_place_order.json",
+    "gtt.info": "gtt_get_order.json",
+    "gtt.modify": "gtt_modify_order.json",
+    "gtt.cancel": "gtt_delete_order.json"
 }
 
 
