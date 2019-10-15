@@ -285,7 +285,7 @@ def test_place_gtt(kiteconnect):
         body=utils.get_response("gtt.place"),
         content_type="application/json"
     )
-    gtts = kiteconnect.place_gtt_order(
+    gtts = kiteconnect.place_gtt(
         trigger_type=kiteconnect.GTT_SINGLE,
         tradingsymbol="INFY",
         exchange="NSE",
@@ -309,7 +309,7 @@ def test_modify_gtt(kiteconnect):
         body=utils.get_response("gtt.modify"),
         content_type="application/json"
     )
-    gtts = kiteconnect.modify_gtt_order(
+    gtts = kiteconnect.modify_gtt(
         trigger_id=123,
         trigger_type=kiteconnect.GTT_SINGLE,
         tradingsymbol="INFY",
@@ -334,5 +334,5 @@ def test_delete_gtt(kiteconnect):
         body=utils.get_response("gtt.delete"),
         content_type="application/json"
     )
-    gtts = kiteconnect.delete_gtt_order(123)
+    gtts = kiteconnect.delete_gtt(123)
     assert gtts["trigger_id"] == 123

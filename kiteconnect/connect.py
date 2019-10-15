@@ -693,7 +693,7 @@ class KiteConnect(object):
 
         return condition, gtt_orders
 
-    def place_gtt_order(
+    def place_gtt(
         self, trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders
     ):
         """
@@ -716,7 +716,7 @@ class KiteConnect(object):
             "orders": json.dumps(gtt_orders),
             "type": trigger_type})
 
-    def modify_gtt_order(
+    def modify_gtt(
         self, trigger_id, trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders
     ):
         """
@@ -740,7 +740,7 @@ class KiteConnect(object):
             "orders": json.dumps(gtt_orders),
             "type": trigger_type})
 
-    def delete_gtt_order(self, gtt_id):
+    def delete_gtt(self, gtt_id):
         """Delete a GTT order."""
         return self._delete("gtt.delete", {"gtt_id": gtt_id})
 
