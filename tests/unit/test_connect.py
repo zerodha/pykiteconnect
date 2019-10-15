@@ -330,9 +330,9 @@ def test_delete_gtt(kiteconnect):
     """Test delete gtt order."""
     responses.add(
         responses.DELETE,
-        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["gtt.cancel"].format(gtt_id=123)),
-        body=utils.get_response("gtt.cancel"),
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["gtt.delete"].format(gtt_id=123)),
+        body=utils.get_response("gtt.delete"),
         content_type="application/json"
     )
-    gtts = kiteconnect.cancel_gtt_order(123)
+    gtts = kiteconnect.delete_gtt_order(123)
     assert gtts["trigger_id"] == 123

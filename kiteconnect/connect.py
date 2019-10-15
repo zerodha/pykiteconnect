@@ -137,7 +137,7 @@ class KiteConnect(object):
         "gtt.place": "/gtt/triggers",
         "gtt.info": "/gtt/triggers/{gtt_id}",
         "gtt.modify": "/gtt/triggers/{gtt_id}",
-        "gtt.cancel": "/gtt/triggers/{gtt_id}"
+        "gtt.delete": "/gtt/triggers/{gtt_id}"
     }
 
     def __init__(self,
@@ -656,10 +656,17 @@ class KiteConnect(object):
         """Fetch details of a GTT"""
         return self._get("gtt.info", {"gtt_id": gtt_id})
 
-    def place_gtt_order(
-        self, trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders
-    ):
+    def _get_gtt_payload(self, trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders):
+        """Get GTT payload"""
+        # Validations.
         assert trigger_type in [self.GTT_OCO, self.GTT_SINGLE]
+        if type(trigger_values) != list:
+            raise ex.InputException("invalid type for `trigger_values`")
+        if trigger_type == self.GTT_SINGLE and len(trigger_values) != 1:
+            raise ex.InputException("invalid `trigger_values` for single leg order type")
+        elif trigger_type == self.GTT_OCO and len(trigger_values) != 2:
+            raise ex.InputException("invalid `trigger_values` for two-leg order type")
+
         condition = {
             "exchange": exchange,
             "tradingsymbol": tradingsymbol,
@@ -683,6 +690,26 @@ class KiteConnect(object):
                 "product": self.PRODUCT_CNC,
                 "price": float(o["price"]),
             })
+
+        return condition, gtt_orders
+
+    def place_gtt_order(
+        self, trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders
+    ):
+        """
+        Place GTT order
+
+        - `trigger_type` The type of GTT order(single/two-leg).
+        - `tradingsymbol` Trading symbol of the instrument.
+        - `exchange` Name of the exchange.
+        - `trigger_values` Trigger values (json array).
+        - `last_price` Last price of the instrument at the time of order placement.
+        - `orders` JSON order array containing following fields
+            - `transaction_type` BUY or SELL
+            - `quantity` Quantity to transact
+            - `price` The min or max price to execute the order at (for LIMIT orders)
+        """
+        condition, gtt_orders = self._get_gtt_payload(trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders)
 
         return self._post("gtt.place", {
             "condition": json.dumps(condition),
@@ -692,30 +719,20 @@ class KiteConnect(object):
     def modify_gtt_order(
         self, trigger_id, trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders
     ):
-        assert trigger_type in [self.GTT_OCO, self.GTT_SINGLE]
-        condition = {
-            "exchange": exchange,
-            "tradingsymbol": tradingsymbol,
-            "trigger_values": trigger_values,
-            "last_price": last_price,
-        }
+        """
+        Modify GTT order
 
-        gtt_orders = []
-        for o in orders:
-            # Assert required keys inside gtt order.
-            for req in ["transaction_type", "quantity", "price"]:
-                if req not in o:
-                    raise ex.InputException("`{req}` missing inside orders".format(req=req))
-
-            gtt_orders.append({
-                "exchange": exchange,
-                "tradingsymbol": tradingsymbol,
-                "transaction_type": o["transaction_type"],
-                "quantity": int(o["quantity"]),
-                "order_type": self.ORDER_TYPE_LIMIT,
-                "product": self.PRODUCT_CNC,
-                "price": float(o["price"]),
-            })
+        - `trigger_type` The type of GTT order(single/two-leg).
+        - `tradingsymbol` Trading symbol of the instrument.
+        - `exchange` Name of the exchange.
+        - `trigger_values` Trigger values (json array).
+        - `last_price` Last price of the instrument at the time of order placement.
+        - `orders` JSON order array containing following fields
+            - `transaction_type` BUY or SELL
+            - `quantity` Quantity to transact
+            - `price` The min or max price to execute the order at (for LIMIT orders)
+        """
+        condition, gtt_orders = self._get_gtt_payload(trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders)
 
         return self._put("gtt.modify", {
             "gtt_id": trigger_id,
@@ -723,9 +740,9 @@ class KiteConnect(object):
             "orders": json.dumps(gtt_orders),
             "type": trigger_type})
 
-    def cancel_gtt_order(self, gtt_id):
-        """Cancel a GTT order."""
-        return self._delete("gtt.cancel", {"gtt_id": gtt_id})
+    def delete_gtt_order(self, gtt_id):
+        """Delete a GTT order."""
+        return self._delete("gtt.delete", {"gtt_id": gtt_id})
 
     def _parse_instruments(self, data):
         # decode to string for Python 3
