@@ -593,7 +593,7 @@ class KiteConnect(object):
     #     """
     #     return self._get("market.margins", {"segment": segment})
 
-    def historical_data(self, instrument_token, from_date, to_date, interval, continuous=False):
+    def historical_data(self, instrument_token, from_date, to_date, interval, continuous=False, oi=False):
         """
         Retrieve historical data (candles) for an instrument.
 
@@ -606,6 +606,7 @@ class KiteConnect(object):
         - `to_date` is the To date (datetime object or string in format of yyyy-mm-dd HH:MM:SS).
         - `interval` is the candle interval (minute, day, 5 minute etc.).
         - `continuous` is a boolean flag to get continuous data for futures and options instruments.
+        - `oi` is a boolean flag to get open interest.
         """
         date_string_format = "%Y-%m-%d %H:%M:%S"
         from_date_string = from_date.strftime(date_string_format) if type(from_date) == datetime.datetime else from_date
@@ -616,7 +617,8 @@ class KiteConnect(object):
             "from": from_date_string,
             "to": to_date_string,
             "interval": interval,
-            "continuous": 1 if continuous else 0
+            "continuous": 1 if continuous else 0,
+            "oi": 1 if oi else 0
         })
 
         return self._format_historical(data)
