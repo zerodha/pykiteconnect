@@ -135,9 +135,9 @@ class KiteConnect(object):
         # GTT endpoints
         "gtt": "/gtt/triggers",
         "gtt.place": "/gtt/triggers",
-        "gtt.info": "/gtt/triggers/{gtt_id}",
-        "gtt.modify": "/gtt/triggers/{gtt_id}",
-        "gtt.delete": "/gtt/triggers/{gtt_id}"
+        "gtt.info": "/gtt/triggers/{trigger_id}",
+        "gtt.modify": "/gtt/triggers/{trigger_id}",
+        "gtt.delete": "/gtt/triggers/{trigger_id}"
     }
 
     def __init__(self,
@@ -654,9 +654,9 @@ class KiteConnect(object):
         """Fetch list of gtt existing in an account"""
         return self._get("gtt")
 
-    def get_gtt(self, gtt_id):
+    def get_gtt(self, trigger_id):
         """Fetch details of a GTT"""
-        return self._get("gtt.info", {"gtt_id": gtt_id})
+        return self._get("gtt.info", {"trigger_id": trigger_id})
 
     def _get_gtt_payload(self, trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders):
         """Get GTT payload"""
@@ -737,14 +737,14 @@ class KiteConnect(object):
         condition, gtt_orders = self._get_gtt_payload(trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders)
 
         return self._put("gtt.modify", {
-            "gtt_id": trigger_id,
+            "trigger_id": trigger_id,
             "condition": json.dumps(condition),
             "orders": json.dumps(gtt_orders),
             "type": trigger_type})
 
-    def delete_gtt(self, gtt_id):
+    def delete_gtt(self, trigger_id):
         """Delete a GTT order."""
-        return self._delete("gtt.delete", {"gtt_id": gtt_id})
+        return self._delete("gtt.delete", {"trigger_id": trigger_id})
 
     def _parse_instruments(self, data):
         # decode to string for Python 3

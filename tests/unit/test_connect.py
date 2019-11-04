@@ -267,7 +267,7 @@ def test_get_gtt(kiteconnect):
     """Test single gtt fetch."""
     responses.add(
         responses.GET,
-        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["gtt.info"].format(gtt_id=123)),
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["gtt.info"].format(trigger_id=123)),
         body=utils.get_response("gtt.info"),
         content_type="application/json"
     )
@@ -305,7 +305,7 @@ def test_modify_gtt(kiteconnect):
     """Test modify gtt order."""
     responses.add(
         responses.PUT,
-        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["gtt.modify"].format(gtt_id=123)),
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["gtt.modify"].format(trigger_id=123)),
         body=utils.get_response("gtt.modify"),
         content_type="application/json"
     )
@@ -330,7 +330,7 @@ def test_delete_gtt(kiteconnect):
     """Test delete gtt order."""
     responses.add(
         responses.DELETE,
-        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["gtt.delete"].format(gtt_id=123)),
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["gtt.delete"].format(trigger_id=123)),
         body=utils.get_response("gtt.delete"),
         content_type="application/json"
     )
