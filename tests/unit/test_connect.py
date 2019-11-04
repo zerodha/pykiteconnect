@@ -294,6 +294,8 @@ def test_place_gtt(kiteconnect):
         orders=[{
             "transaction_type": kiteconnect.TRANSACTION_TYPE_BUY,
             "quantity": 1,
+            "order_type": kiteconnect.ORDER_TYPE_LIMIT,
+            "product": kiteconnect.PRODUCT_CNC,
             "price": 1,
         }]
     )
@@ -319,6 +321,8 @@ def test_modify_gtt(kiteconnect):
         orders=[{
             "transaction_type": kiteconnect.TRANSACTION_TYPE_BUY,
             "quantity": 1,
+            "order_type": kiteconnect.ORDER_TYPE_LIMIT,
+            "product": kiteconnect.PRODUCT_CNC,
             "price": 1,
         }]
     )

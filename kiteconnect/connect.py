@@ -660,14 +660,12 @@ class KiteConnect(object):
 
     def _get_gtt_payload(self, trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders):
         """Get GTT payload"""
-        # Validations.
-        assert trigger_type in [self.GTT_OCO, self.GTT_SINGLE]
         if type(trigger_values) != list:
             raise ex.InputException("invalid type for `trigger_values`")
         if trigger_type == self.GTT_SINGLE and len(trigger_values) != 1:
             raise ex.InputException("invalid `trigger_values` for single leg order type")
         elif trigger_type == self.GTT_OCO and len(trigger_values) != 2:
-            raise ex.InputException("invalid `trigger_values` for two-leg order type")
+            raise ex.InputException("invalid `trigger_values` for OCO order type")
 
         condition = {
             "exchange": exchange,
@@ -679,17 +677,16 @@ class KiteConnect(object):
         gtt_orders = []
         for o in orders:
             # Assert required keys inside gtt order.
-            for req in ["transaction_type", "quantity", "price"]:
+            for req in ["transaction_type", "quantity", "order_type", "product", "price"]:
                 if req not in o:
                     raise ex.InputException("`{req}` missing inside orders".format(req=req))
-
             gtt_orders.append({
                 "exchange": exchange,
                 "tradingsymbol": tradingsymbol,
                 "transaction_type": o["transaction_type"],
                 "quantity": int(o["quantity"]),
-                "order_type": self.ORDER_TYPE_LIMIT,
-                "product": self.PRODUCT_CNC,
+                "order_type": o["order_type"],
+                "product": o["product"],
                 "price": float(o["price"]),
             })
 
@@ -711,6 +708,8 @@ class KiteConnect(object):
             - `quantity` Quantity to transact
             - `price` The min or max price to execute the order at (for LIMIT orders)
         """
+        # Validations.
+        assert trigger_type in [self.GTT_OCO, self.GTT_SINGLE]
         condition, gtt_orders = self._get_gtt_payload(trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders)
 
         return self._post("gtt.place", {
