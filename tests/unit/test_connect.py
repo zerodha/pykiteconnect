@@ -286,7 +286,7 @@ def test_place_gtt(kiteconnect):
         content_type="application/json"
     )
     gtts = kiteconnect.place_gtt(
-        trigger_type=kiteconnect.GTT_SINGLE,
+        trigger_type=kiteconnect.GTT_TYPE_SINGLE,
         tradingsymbol="INFY",
         exchange="NSE",
         trigger_values=[1],
@@ -313,7 +313,7 @@ def test_modify_gtt(kiteconnect):
     )
     gtts = kiteconnect.modify_gtt(
         trigger_id=123,
-        trigger_type=kiteconnect.GTT_SINGLE,
+        trigger_type=kiteconnect.GTT_TYPE_SINGLE,
         tradingsymbol="INFY",
         exchange="NSE",
         trigger_values=[1],

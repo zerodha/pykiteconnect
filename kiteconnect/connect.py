@@ -82,8 +82,17 @@ class KiteConnect(object):
     STATUS_CANCELLED = "CANCELLED"
 
     # GTT order type
-    GTT_OCO = "two-leg"
-    GTT_SINGLE = "single"
+    GTT_TYPE_OCO = "two-leg"
+    GTT_TYPE_SINGLE = "single"
+
+    # GTT order status
+    GTT_STATUS_ACTIVE = "active"
+    GTT_STATUS_TRIGGERED = "triggered"
+    GTT_STATUS_DISABLED = "disabled"
+    GTT_STATUS_EXPIRED = "expired"
+    GTT_STATUS_CANCELLED = "cancelled"
+    GTT_STATUS_REJECTED = "rejected"
+    GTT_STATUS_DELETED = "deleted"
 
     # URIs to various calls
     _routes = {
@@ -662,9 +671,9 @@ class KiteConnect(object):
         """Get GTT payload"""
         if type(trigger_values) != list:
             raise ex.InputException("invalid type for `trigger_values`")
-        if trigger_type == self.GTT_SINGLE and len(trigger_values) != 1:
+        if trigger_type == self.GTT_TYPE_SINGLE and len(trigger_values) != 1:
             raise ex.InputException("invalid `trigger_values` for single leg order type")
-        elif trigger_type == self.GTT_OCO and len(trigger_values) != 2:
+        elif trigger_type == self.GTT_TYPE_OCO and len(trigger_values) != 2:
             raise ex.InputException("invalid `trigger_values` for OCO order type")
 
         condition = {
@@ -709,7 +718,7 @@ class KiteConnect(object):
             - `price` The min or max price to execute the order at (for LIMIT orders)
         """
         # Validations.
-        assert trigger_type in [self.GTT_OCO, self.GTT_SINGLE]
+        assert trigger_type in [self.GTT_TYPE_OCO, self.GTT_TYPE_SINGLE]
         condition, gtt_orders = self._get_gtt_payload(trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders)
 
         return self._post("gtt.place", {
