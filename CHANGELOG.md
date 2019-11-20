@@ -127,4 +127,5 @@
 - 2017-04-25	Added auto reconnect feature and other bug fixes (v3.5)
 - 2017-08-01	Fix BO and CO order modify issue (v3.5.1)
 - 2017-08-15	Add mutual fund API calls (v3.6.0)
-- 2017-09-14	Addd flag to fetch continous chart and other bug fixes (v3.6.1)
+- 2017-09-14	Add flag to fetch continous chart and other bug fixes (v3.6.1)
+- 2019-11-20    Add GTT Api
