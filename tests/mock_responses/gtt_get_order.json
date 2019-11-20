@@ -1,0 +1,72 @@
+{
+    "status": "success",
+    "data": {
+        "id": 123,
+        "user_id": "PH2965",
+        "parent_trigger": null,
+        "type": "two-leg",
+        "created_at": "2019-09-09 17:13:26",
+        "updated_at": "2019-09-09 17:13:26",
+        "expires_at": "2020-09-09 17:13:26",
+        "status": "active",
+        "condition": {
+            "exchange": "NSE",
+            "last_price": 278,
+            "tradingsymbol": "SBIN",
+            "trigger_values": [
+                264.1,
+                291.9
+            ],
+            "instrument_token": 779521
+        },
+        "orders": [
+            {
+                "account_id": "",
+                "parent_order_id": "",
+                "exchange": "NSE",
+                "tradingsymbol": "SBIN",
+                "validity": "",
+                "product": "CNC",
+                "order_type": "LIMIT",
+                "transaction_type": "SELL",
+                "quantity": 1,
+                "disclosed_quantity": 0,
+                "price": 264.1,
+                "trigger_price": 0,
+                "ltp_atp": "",
+                "squareoff_abs_tick": "",
+                "stoploss_abs_tick": "",
+                "squareoff": 0,
+                "stoploss": 0,
+                "trailing_stoploss": 0,
+                "meta": "",
+                "guid": "",
+                "result": null
+            },
+            {
+                "account_id": "",
+                "parent_order_id": "",
+                "exchange": "NSE",
+                "tradingsymbol": "SBIN",
+                "validity": "",
+                "product": "CNC",
+                "order_type": "LIMIT",
+                "transaction_type": "SELL",
+                "quantity": 1,
+                "disclosed_quantity": 0,
+                "price": 291.9,
+                "trigger_price": 0,
+                "ltp_atp": "",
+                "squareoff_abs_tick": "",
+                "stoploss_abs_tick": "",
+                "squareoff": 0,
+                "stoploss": 0,
+                "trailing_stoploss": 0,
+                "meta": "",
+                "guid": "",
+                "result": null
+            }
+        ],
+        "meta": {}
+    }
+} 

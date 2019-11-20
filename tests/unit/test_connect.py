@@ -247,3 +247,96 @@ def test_mf_instruments(kiteconnect):
     )
     trades = kiteconnect.mf_instruments()
     assert type(trades) == list
+
+
+@responses.activate
+def test_get_gtts(kiteconnect):
+    """Test all gtts fetch."""
+    responses.add(
+        responses.GET,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["gtt"]),
+        body=utils.get_response("gtt"),
+        content_type="application/json"
+    )
+    gtts = kiteconnect.get_gtts()
+    assert type(gtts) == list
+
+
+@responses.activate
+def test_get_gtt(kiteconnect):
+    """Test single gtt fetch."""
+    responses.add(
+        responses.GET,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["gtt.info"].format(trigger_id=123)),
+        body=utils.get_response("gtt.info"),
+        content_type="application/json"
+    )
+    gtts = kiteconnect.get_gtt(123)
+    print(gtts)
+    assert gtts["id"] == 123
+
+
+@responses.activate
+def test_place_gtt(kiteconnect):
+    """Test place gtt order."""
+    responses.add(
+        responses.POST,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["gtt.place"]),
+        body=utils.get_response("gtt.place"),
+        content_type="application/json"
+    )
+    gtts = kiteconnect.place_gtt(
+        trigger_type=kiteconnect.GTT_TYPE_SINGLE,
+        tradingsymbol="INFY",
+        exchange="NSE",
+        trigger_values=[1],
+        last_price=800,
+        orders=[{
+            "transaction_type": kiteconnect.TRANSACTION_TYPE_BUY,
+            "quantity": 1,
+            "order_type": kiteconnect.ORDER_TYPE_LIMIT,
+            "product": kiteconnect.PRODUCT_CNC,
+            "price": 1,
+        }]
+    )
+    assert gtts["trigger_id"] == 123
+
+
+@responses.activate
+def test_modify_gtt(kiteconnect):
+    """Test modify gtt order."""
+    responses.add(
+        responses.PUT,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["gtt.modify"].format(trigger_id=123)),
+        body=utils.get_response("gtt.modify"),
+        content_type="application/json"
+    )
+    gtts = kiteconnect.modify_gtt(
+        trigger_id=123,
+        trigger_type=kiteconnect.GTT_TYPE_SINGLE,
+        tradingsymbol="INFY",
+        exchange="NSE",
+        trigger_values=[1],
+        last_price=800,
+        orders=[{
+            "transaction_type": kiteconnect.TRANSACTION_TYPE_BUY,
+            "quantity": 1,
+            "order_type": kiteconnect.ORDER_TYPE_LIMIT,
+            "product": kiteconnect.PRODUCT_CNC,
+            "price": 1,
+        }]
+    )
+    assert gtts["trigger_id"] == 123
+
+
+@responses.activate
+def test_delete_gtt(kiteconnect):
+    """Test delete gtt order."""
+    responses.add(
+        responses.DELETE,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["gtt.delete"].format(trigger_id=123)),
+        body=utils.get_response("gtt.delete"),
+        content_type="application/json"
+    )
+    gtts = kiteconnect.delete_gtt(123)
+    assert gtts["trigger_id"] == 123

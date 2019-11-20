@@ -81,6 +81,19 @@ class KiteConnect(object):
     STATUS_REJECTED = "REJECTED"
     STATUS_CANCELLED = "CANCELLED"
 
+    # GTT order type
+    GTT_TYPE_OCO = "two-leg"
+    GTT_TYPE_SINGLE = "single"
+
+    # GTT order status
+    GTT_STATUS_ACTIVE = "active"
+    GTT_STATUS_TRIGGERED = "triggered"
+    GTT_STATUS_DISABLED = "disabled"
+    GTT_STATUS_EXPIRED = "expired"
+    GTT_STATUS_CANCELLED = "cancelled"
+    GTT_STATUS_REJECTED = "rejected"
+    GTT_STATUS_DELETED = "deleted"
+
     # URIs to various calls
     _routes = {
         "api.token": "/session/token",
@@ -127,6 +140,13 @@ class KiteConnect(object):
         "market.quote": "/quote",
         "market.quote.ohlc": "/quote/ohlc",
         "market.quote.ltp": "/quote/ltp",
+
+        # GTT endpoints
+        "gtt": "/gtt/triggers",
+        "gtt.place": "/gtt/triggers",
+        "gtt.info": "/gtt/triggers/{trigger_id}",
+        "gtt.modify": "/gtt/triggers/{trigger_id}",
+        "gtt.delete": "/gtt/triggers/{trigger_id}"
     }
 
     def __init__(self,
@@ -582,7 +602,7 @@ class KiteConnect(object):
     #     """
     #     return self._get("market.margins", {"segment": segment})
 
-    def historical_data(self, instrument_token, from_date, to_date, interval, continuous=False):
+    def historical_data(self, instrument_token, from_date, to_date, interval, continuous=False, oi=False):
         """
         Retrieve historical data (candles) for an instrument.
 
@@ -595,6 +615,7 @@ class KiteConnect(object):
         - `to_date` is the To date (datetime object or string in format of yyyy-mm-dd HH:MM:SS).
         - `interval` is the candle interval (minute, day, 5 minute etc.).
         - `continuous` is a boolean flag to get continuous data for futures and options instruments.
+        - `oi` is a boolean flag to get open interest.
         """
         date_string_format = "%Y-%m-%d %H:%M:%S"
         from_date_string = from_date.strftime(date_string_format) if type(from_date) == datetime.datetime else from_date
@@ -605,7 +626,8 @@ class KiteConnect(object):
             "from": from_date_string,
             "to": to_date_string,
             "interval": interval,
-            "continuous": 1 if continuous else 0
+            "continuous": 1 if continuous else 0,
+            "oi": 1 if oi else 0
         })
 
         return self._format_historical(data)
@@ -636,6 +658,101 @@ class KiteConnect(object):
             "i": ins,
             "transaction_type": transaction_type.lower()
         })
+
+    def get_gtts(self):
+        """Fetch list of gtt existing in an account"""
+        return self._get("gtt")
+
+    def get_gtt(self, trigger_id):
+        """Fetch details of a GTT"""
+        return self._get("gtt.info", {"trigger_id": trigger_id})
+
+    def _get_gtt_payload(self, trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders):
+        """Get GTT payload"""
+        if type(trigger_values) != list:
+            raise ex.InputException("invalid type for `trigger_values`")
+        if trigger_type == self.GTT_TYPE_SINGLE and len(trigger_values) != 1:
+            raise ex.InputException("invalid `trigger_values` for single leg order type")
+        elif trigger_type == self.GTT_TYPE_OCO and len(trigger_values) != 2:
+            raise ex.InputException("invalid `trigger_values` for OCO order type")
+
+        condition = {
+            "exchange": exchange,
+            "tradingsymbol": tradingsymbol,
+            "trigger_values": trigger_values,
+            "last_price": last_price,
+        }
+
+        gtt_orders = []
+        for o in orders:
+            # Assert required keys inside gtt order.
+            for req in ["transaction_type", "quantity", "order_type", "product", "price"]:
+                if req not in o:
+                    raise ex.InputException("`{req}` missing inside orders".format(req=req))
+            gtt_orders.append({
+                "exchange": exchange,
+                "tradingsymbol": tradingsymbol,
+                "transaction_type": o["transaction_type"],
+                "quantity": int(o["quantity"]),
+                "order_type": o["order_type"],
+                "product": o["product"],
+                "price": float(o["price"]),
+            })
+
+        return condition, gtt_orders
+
+    def place_gtt(
+        self, trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders
+    ):
+        """
+        Place GTT order
+
+        - `trigger_type` The type of GTT order(single/two-leg).
+        - `tradingsymbol` Trading symbol of the instrument.
+        - `exchange` Name of the exchange.
+        - `trigger_values` Trigger values (json array).
+        - `last_price` Last price of the instrument at the time of order placement.
+        - `orders` JSON order array containing following fields
+            - `transaction_type` BUY or SELL
+            - `quantity` Quantity to transact
+            - `price` The min or max price to execute the order at (for LIMIT orders)
+        """
+        # Validations.
+        assert trigger_type in [self.GTT_TYPE_OCO, self.GTT_TYPE_SINGLE]
+        condition, gtt_orders = self._get_gtt_payload(trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders)
+
+        return self._post("gtt.place", {
+            "condition": json.dumps(condition),
+            "orders": json.dumps(gtt_orders),
+            "type": trigger_type})
+
+    def modify_gtt(
+        self, trigger_id, trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders
+    ):
+        """
+        Modify GTT order
+
+        - `trigger_type` The type of GTT order(single/two-leg).
+        - `tradingsymbol` Trading symbol of the instrument.
+        - `exchange` Name of the exchange.
+        - `trigger_values` Trigger values (json array).
+        - `last_price` Last price of the instrument at the time of order placement.
+        - `orders` JSON order array containing following fields
+            - `transaction_type` BUY or SELL
+            - `quantity` Quantity to transact
+            - `price` The min or max price to execute the order at (for LIMIT orders)
+        """
+        condition, gtt_orders = self._get_gtt_payload(trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders)
+
+        return self._put("gtt.modify", {
+            "trigger_id": trigger_id,
+            "condition": json.dumps(condition),
+            "orders": json.dumps(gtt_orders),
+            "type": trigger_type})
+
+    def delete_gtt(self, trigger_id):
+        """Delete a GTT order."""
+        return self._delete("gtt.delete", {"trigger_id": trigger_id})
 
     def _parse_instruments(self, data):
         # decode to string for Python 3
