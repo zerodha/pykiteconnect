@@ -448,8 +448,6 @@ class KiteTicker(object):
         # Debug enables logs
         self.debug = debug
 
-        self.last_seen_unclean_closure = False
-
         # Placeholders for callbacks.
         self.on_ticks = None
         self.on_open = None
@@ -659,11 +657,6 @@ class KiteTicker(object):
         """Call `on_error` callback when connection throws an error."""
         log.error("Connection error: {} - {}".format(code, str(reason)))
 
-        # XXX: Unclean closure(code: 1006) will not close the underlying tcp connection.
-        # This can lead to resubscribing same tokens again.
-        if code == 1006:
-            self.last_seen_unclean_closure = True
-
         if self.on_error:
             self.on_error(self, code, reason)
 
@@ -683,11 +676,7 @@ class KiteTicker(object):
     def _on_open(self, ws):
         # Resubscribe if its reconnect
         if not self._is_first_connect:
-            # Bypass resubscription if there was an unclean closure before.
-            if self.last_seen_unclean_closure:
-                self.last_seen_unclean_closure = False
-            else:
-                self.resubscribe()
+            self.resubscribe()
 
         # Set first connect to false once its connected first time
         self._is_first_connect = False
