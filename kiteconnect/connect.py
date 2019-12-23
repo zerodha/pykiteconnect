@@ -630,19 +630,22 @@ class KiteConnect(object):
             "oi": 1 if oi else 0
         })
 
-        return self._format_historical(data)
+        return self._format_historical(data, oi)
 
-    def _format_historical(self, data):
+    def _format_historical(self, data, oi):
         records = []
         for d in data["candles"]:
-            records.append({
+            record = {
                 "date": dateutil.parser.parse(d[0]),
                 "open": d[1],
                 "high": d[2],
                 "low": d[3],
                 "close": d[4],
-                "volume": d[5]
-            })
+                "volume": d[5],
+            }
+            if len(d) == 7 and oi:
+                record["oi"] = d[6]
+            records.append(record)
 
         return records
 
