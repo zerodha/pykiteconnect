@@ -555,7 +555,7 @@ class KiteConnect(object):
         """
         Retrieve quote for list of instruments.
 
-        - `instruments` is a list of instruments, Instrument are in the format of `tradingsymbol:exchange`. For example NSE:INFY
+        - `instruments` is a list of instruments, Instrument are in the format of `exchange:tradingsymbol`. For example NSE:INFY
         """
         ins = list(instruments)
 
@@ -570,7 +570,7 @@ class KiteConnect(object):
         """
         Retrieve OHLC and market depth for list of instruments.
 
-        - `instruments` is a list of instruments, Instrument are in the format of `tradingsymbol:exchange`. For example NSE:INFY
+        - `instruments` is a list of instruments, Instrument are in the format of `exchange:tradingsymbol`. For example NSE:INFY
         """
         ins = list(instruments)
 
@@ -584,7 +584,7 @@ class KiteConnect(object):
         """
         Retrieve last price for list of instruments.
 
-        - `instruments` is a list of instruments, Instrument are in the format of `tradingsymbol:exchange`. For example NSE:INFY
+        - `instruments` is a list of instruments, Instrument are in the format of `exchange:tradingsymbol`. For example NSE:INFY
         """
         ins = list(instruments)
 
