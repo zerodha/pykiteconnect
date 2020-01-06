@@ -25,3 +25,11 @@ script:
 # Collect coverage
 after_success:
   - codecov
+
+deploy:
+  provider: pypi
+  user: "__token__"
+  password:
+    secure: "m906DRZKSV0kFHl3B2+uDlkuzBcIYwo1mzMdve1lLT1dxt4mFD+nFSokShsK1X/oPCzxe2ZsxFm9SEOd8hTOjHeDHOIgkF+M1UZG+i92rrHWQuzh/23yPNb7nSZht77Pr4nwLMh287ScIQ67Ms/iq9em+kbVrhia5K6WcDdUNEicISfxCbdY0pW0RxlpN91hYZhY7YAB32X41+/VgTe1oRVNpx9l+Cfppt5NIw7nqcaBbCtF5bSYA7eMaRKecy4ip1hTrMEevubo3WTRpjh5UMAdCqsEX8b32uIdt7jckEv2/CSebmcck8Zqn9Lmzw9PXePjUr1jDsr0T2T0LCt8qHeu3aH7nNo9hOFFurOxeRPZtFi57ca8bR7F9MefQa/Zg+JY9kYWUKDoXdOOfcYMML+1J4BtpuirX/+mKzv8cE+qJpsRbwhmGRneab85EAe6GBTfAeuJSwu6Vrngnm1uozuHw5BdDmVDHeox2+KWTVx91bJiWxUb23CG53l0qxVIvNt7lxpx8dc/qYpBFraWt47omR7/TOg/5B+G2ckRuaZUIhUEx4ypCmZ+x6sUDIDnEALrYlUUZJBkzZ86cyt0+kL/DzDgDoJjxKJ6eW+ief7iCzTTt76CfuWGMZlFBFS/Wkbv3AM/SibMqKNZFY+ZW0CiaA1IqXNXz/zv9SUSx8w="
+  on:
+    tags: true
