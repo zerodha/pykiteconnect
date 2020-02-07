@@ -45,7 +45,7 @@ class install(_install):
             # Install from Pypi for other platforms
             pip_install("Twisted>=17.9.0")
 
-        _install.do_egg_install(self)
+        _install.run(self)
 
 
 class FakeBdist(Command):
