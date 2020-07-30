@@ -342,7 +342,7 @@ class KiteTicker(object):
     -----------------
 
     Auto reconnection is enabled by default and it can be disabled by passing `reconnect` param while initialising `KiteTicker`.
-    On a side note, reconnection mechanism cannot happen if event loop is terminated using `stop` method inide `on_close` callback.
+    On a side note, reconnection mechanism cannot happen if event loop is terminated using `stop` method inside `on_close` callback.
 
     Auto reonnection mechanism is based on [Exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff) algorithm in which
     next retry interval will be increased exponentially. `reconnect_max_delay` and `reconnect_max_tries` params can be used to tewak
