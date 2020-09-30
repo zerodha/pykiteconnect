@@ -147,6 +147,9 @@ class KiteConnect(object):
         "gtt.info": "/gtt/triggers/{trigger_id}",
         "gtt.modify": "/gtt/triggers/{trigger_id}",
         "gtt.delete": "/gtt/triggers/{trigger_id}"
+        
+        # Margin computation endpoints
+        "order.margins": "/margins/orders"
     }
 
     def __init__(self,
@@ -405,6 +408,14 @@ class KiteConnect(object):
         - `order_id` is the ID of the order to retrieve order history.
         """
         return self._format_response(self._get("order.info", {"order_id": order_id}))
+    
+    def order_margins(self,order_param):
+        """ 
+        Calculate margins for requested order list considering the existing positions and open orders
+        
+        - `order_param` is list of orders to retrive margins detail
+        """
+        return self._post("order.margins", json_field=order_param)
 
     def trades(self):
         """
@@ -814,22 +825,28 @@ class KiteConnect(object):
 
     def _get(self, route, params=None):
         """Alias for sending a GET request."""
-        return self._request(route, "GET", params)
+        return self._request(route, "GET", parameters=params)
 
-    def _post(self, route, params=None):
-        """Alias for sending a POST request."""
-        return self._request(route, "POST", params)
+    def _post(self, route, params=None, json_field=None):
+        """
+        Alias for sending a POST request.
+        - `json_field`- Accept content-type application/json body
+        """
+        return self._request(route, "POST", parameters=params, json_field=json_field)
 
     def _put(self, route, params=None):
         """Alias for sending a PUT request."""
-        return self._request(route, "PUT", params)
+        return self._request(route, "PUT", parameters=params)
 
     def _delete(self, route, params=None):
         """Alias for sending a DELETE request."""
-        return self._request(route, "DELETE", params)
+        return self._request(route, "DELETE", parameters=params)
 
-    def _request(self, route, method, parameters=None):
-        """Make an HTTP request."""
+    def _request(self, route, method, parameters=None, json_field=None):
+        """
+        Make an HTTP request.
+        - `json_field`- Accept content-type application/json body
+        """
         params = parameters.copy() if parameters else {}
 
         # Form a restful URL
@@ -853,6 +870,7 @@ class KiteConnect(object):
         try:
             r = self.reqsession.request(method,
                                         url,
+                                        json=json_field,
                                         data=params if method in ["POST", "PUT"] else None,
                                         params=params if method in ["GET", "DELETE"] else None,
                                         headers=headers,
