@@ -760,7 +760,7 @@ class KiteConnect(object):
 
         - `params` is list of orders to retrive margins detail
         """
-        return self._post("order.margins", params=params, is_json=true)
+        return self._post("order.margins", params=params, is_json=True)
 
     def _parse_instruments(self, data):
         # decode to string for Python 3
