@@ -380,7 +380,7 @@ class KiteConnect(object):
 
     def exit_order(self, variety, order_id, parent_order_id=None):
         """Exit a BO/CO order."""
-        self.cancel_order(variety, order_id, parent_order_id=parent_order_id)
+        return self.cancel_order(variety, order_id, parent_order_id=parent_order_id)
 
     def _format_response(self, data):
         """Parse and format responses."""
