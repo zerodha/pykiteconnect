@@ -1,44 +1,44 @@
 environment:
 
   matrix:
-    # Python 2.7
-    - PYTHON: "C:\\Python27"
-    # Conda 2.7
-    - PYTHON_VERSION: 2.7
-      MINICONDA: "C:\\Miniconda"
-    # Python 3.5
-    - PYTHON: "C:\\Python35"
-    # Conda 3.5
-    - PYTHON_VERSION: 3.5
-      MINICONDA: "C:\\Miniconda35"
-    # Python 3.6
-    - PYTHON: "C:\\Python36"
-    # Conda 3.6
-    - PYTHON_VERSION: 3.6
-      MINICONDA: "C:\\Miniconda36"
+    # # Python 2.7
+    # - PYTHON: "C:\\Python27"
+    # # Conda 2.7
+    # - PYTHON_VERSION: 2.7
+    #   MINICONDA: "C:\\Miniconda"
+    # # Python 3.5
+    # - PYTHON: "C:\\Python35"
+    # # Conda 3.5
+    # - PYTHON_VERSION: 3.5
+    #   MINICONDA: "C:\\Miniconda35"
+    # # Python 3.6
+    # - PYTHON: "C:\\Python36"
+    # # Conda 3.6
+    # - PYTHON_VERSION: 3.6
+    #   MINICONDA: "C:\\Miniconda36"
     # Python 3.7
     - PYTHON: "C:\\Python37"
     # Conda 3.7
     - PYTHON_VERSION: 3.7
       MINICONDA: "C:\\Miniconda37"
-    # Python 2.7 64-bit
-    - PYTHON: "C:\\Python27-x64"
-    # Conda 2.7 64-bit
-    - PYTHON_VERSION: 2.7
-      MINICONDA: "C:\\Miniconda-x64"
-    # Python 3.5 64-bit
-    - PYTHON: "C:\\Python35-x64"
-    # Conda 3.5 64-bit
-    - PYTHON_VERSION: 3.5
-      MINICONDA: "C:\\Miniconda35-x64"
-    # Python 3.6 64-bit
-    - PYTHON: "C:\\Python36-x64"
-    # Conda 3.6 64-bit
-    - PYTHON_VERSION: 3.6
-      MINICONDA: "C:\\Miniconda36-x64"
-    # Python 3.7 64-bit
-    - PYTHON: "C:\\Python37-x64"
-    # Conda 3.7 64-bit
+    # # Python 2.7 64-bit
+    # - PYTHON: "C:\\Python27-x64"
+    # # Conda 2.7 64-bit
+    # - PYTHON_VERSION: 2.7
+    #   MINICONDA: "C:\\Miniconda-x64"
+    # # Python 3.5 64-bit
+    # - PYTHON: "C:\\Python35-x64"
+    # # Conda 3.5 64-bit
+    # - PYTHON_VERSION: 3.5
+    #   MINICONDA: "C:\\Miniconda35-x64"
+    # # Python 3.6 64-bit
+    # - PYTHON: "C:\\Python36-x64"
+    # # Conda 3.6 64-bit
+    # - PYTHON_VERSION: 3.6
+    #   MINICONDA: "C:\\Miniconda36-x64"
+    # # Python 3.7 64-bit
+    # - PYTHON: "C:\\Python37-x64"
+    # # Conda 3.7 64-bit
     - PYTHON_VERSION: 3.7
       MINICONDA: "C:\\Miniconda37-x64"
 
