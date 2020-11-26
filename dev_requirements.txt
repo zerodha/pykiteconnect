@@ -1,6 +1,5 @@
-pytest==4.6.5
-responses==0.10.5
-codecov==2.0.15
-pytest-cov==2.6.1
-flake8==3.6.0
-mock==2.0.0
+pytest>=4.6.11
+responses>=0.12.1
+pytest-cov>=2.10.1
+flake8>=3.8.4
+mock>=3.0.5

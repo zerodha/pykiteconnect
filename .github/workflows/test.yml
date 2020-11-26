@@ -1,0 +1,55 @@
+name: Lint/Test
+on: [push]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      max-parallel: 3
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, pypy2, pypy3]
+        exclude:
+          - os: windows-latest
+            python-version: pypy3
+          - os: windows-latest
+            python-version: pypy2
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install --upgrade setuptools
+          pip install --upgrade wheel
+          pip install -r dev_requirements.txt
+          pip install -e .
+
+      - name: Lint with flake8
+        run: |
+          # stop the build if there are Python syntax errors or undefined names
+          flake8 . --count --show-source --statistics
+
+      - name: Test with pytest
+        run: |
+          py.test --cov=./
+
+      # Build and publish if its a new tag and use latest Python version to push dists
+      - name: Build
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags') && matrix.os == 'ubuntu-latest' && matrix.python-version == '3.8'
+        run: |
+          python setup.py sdist bdist_wheel
+
+      - name: Publish package to TestPyPI
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags') && matrix.os == 'ubuntu-latest' && matrix.python-version == '3.8'
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          verbose: true
+          user: __token__
+          password: ${{ secrets.PYPI_TOKEN }}
