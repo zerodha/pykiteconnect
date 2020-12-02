@@ -146,7 +146,10 @@ class KiteConnect(object):
         "gtt.place": "/gtt/triggers",
         "gtt.info": "/gtt/triggers/{trigger_id}",
         "gtt.modify": "/gtt/triggers/{trigger_id}",
-        "gtt.delete": "/gtt/triggers/{trigger_id}"
+        "gtt.delete": "/gtt/triggers/{trigger_id}",
+
+        # Margin computation endpoints
+        "order.margins": "/margins/orders"
     }
 
     def __init__(self,
@@ -246,7 +249,7 @@ class KiteConnect(object):
         h = hashlib.sha256(self.api_key.encode("utf-8") + request_token.encode("utf-8") + api_secret.encode("utf-8"))
         checksum = h.hexdigest()
 
-        resp = self._post("api.token", {
+        resp = self._post("api.token", params={
             "api_key": self.api_key,
             "request_token": request_token,
             "checksum": checksum
@@ -267,7 +270,7 @@ class KiteConnect(object):
         - `access_token` to invalidate. Default is the active `access_token`.
         """
         access_token = access_token or self.access_token
-        return self._delete("api.token.invalidate", {
+        return self._delete("api.token.invalidate", params={
             "api_key": self.api_key,
             "access_token": access_token
         })
@@ -282,7 +285,7 @@ class KiteConnect(object):
         h = hashlib.sha256(self.api_key.encode("utf-8") + refresh_token.encode("utf-8") + api_secret.encode("utf-8"))
         checksum = h.hexdigest()
 
-        resp = self._post("api.token.renew", {
+        resp = self._post("api.token.renew", params={
             "api_key": self.api_key,
             "refresh_token": refresh_token,
             "checksum": checksum
@@ -299,7 +302,7 @@ class KiteConnect(object):
 
         - `refresh_token` is the token which is used to renew access token.
         """
-        return self._delete("api.token.invalidate", {
+        return self._delete("api.token.invalidate", params={
             "api_key": self.api_key,
             "refresh_token": refresh_token
         })
@@ -310,7 +313,7 @@ class KiteConnect(object):
         - `segment` is the trading segment (eg: equity or commodity)
         """
         if segment:
-            return self._get("user.margins.segment", {"segment": segment})
+            return self._get("user.margins.segment", url_args={"segment": segment})
         else:
             return self._get("user.margins")
 
@@ -343,7 +346,9 @@ class KiteConnect(object):
             if params[k] is None:
                 del(params[k])
 
-        return self._post("order.place", params)["order_id"]
+        return self._post("order.place",
+            url_args={"variety": variety},
+            params=params)["order_id"]
 
     def modify_order(self,
                      variety,
@@ -363,19 +368,19 @@ class KiteConnect(object):
             if params[k] is None:
                 del(params[k])
 
-        return self._put("order.modify", params)["order_id"]
+        return self._put("order.modify",
+            url_args={"variety": variety, "order_id": order_id},
+            params=params)["order_id"]
 
     def cancel_order(self, variety, order_id, parent_order_id=None):
         """Cancel an order."""
-        return self._delete("order.cancel", {
-            "order_id": order_id,
-            "variety": variety,
-            "parent_order_id": parent_order_id
-        })["order_id"]
+        return self._delete("order.cancel",
+            url_args={"variety": variety, "order_id": order_id},
+            params={"parent_order_id": parent_order_id})["order_id"]
 
     def exit_order(self, variety, order_id, parent_order_id=None):
         """Exit a BO/CO order."""
-        self.cancel_order(variety, order_id, parent_order_id=parent_order_id)
+        return self.cancel_order(variety, order_id, parent_order_id=parent_order_id)
 
     def _format_response(self, data):
         """Parse and format responses."""
@@ -404,7 +409,7 @@ class KiteConnect(object):
 
         - `order_id` is the ID of the order to retrieve order history.
         """
-        return self._format_response(self._get("order.info", {"order_id": order_id}))
+        return self._format_response(self._get("order.info", url_args={"order_id": order_id}))
 
     def trades(self):
         """
@@ -425,7 +430,7 @@ class KiteConnect(object):
         - `order_id` is the ID of the order (optional) whose trades are to be retrieved.
             If no `order_id` is specified, all trades for the day are returned.
         """
-        return self._format_response(self._get("order.trades", {"order_id": order_id}))
+        return self._format_response(self._get("order.trades", url_args={"order_id": order_id}))
 
     def positions(self):
         """Retrieve the list of positions."""
@@ -457,7 +462,7 @@ class KiteConnect(object):
     def mf_orders(self, order_id=None):
         """Get all mutual fund orders or individual order info."""
         if order_id:
-            return self._format_response(self._get("mf.order.info", {"order_id": order_id}))
+            return self._format_response(self._get("mf.order.info", url_args={"order_id": order_id}))
         else:
             return self._format_response(self._get("mf.orders"))
 
@@ -468,7 +473,7 @@ class KiteConnect(object):
                        amount=None,
                        tag=None):
         """Place a mutual fund order."""
-        return self._post("mf.order.place", {
+        return self._post("mf.order.place", params={
             "tradingsymbol": tradingsymbol,
             "transaction_type": transaction_type,
             "quantity": quantity,
@@ -478,12 +483,12 @@ class KiteConnect(object):
 
     def cancel_mf_order(self, order_id):
         """Cancel a mutual fund order."""
-        return self._delete("mf.order.cancel", {"order_id": order_id})
+        return self._delete("mf.order.cancel", url_args={"order_id": order_id})
 
     def mf_sips(self, sip_id=None):
         """Get list of all mutual fund SIP's or individual SIP info."""
         if sip_id:
-            return self._format_response(self._get("mf.sip.info", {"sip_id": sip_id}))
+            return self._format_response(self._get("mf.sip.info", url_args={"sip_id": sip_id}))
         else:
             return self._format_response(self._get("mf.sips"))
 
@@ -496,7 +501,7 @@ class KiteConnect(object):
                      instalment_day=None,
                      tag=None):
         """Place a mutual fund SIP."""
-        return self._post("mf.sip.place", {
+        return self._post("mf.sip.place", params={
             "tradingsymbol": tradingsymbol,
             "amount": amount,
             "initial_amount": initial_amount,
@@ -514,18 +519,19 @@ class KiteConnect(object):
                       frequency=None,
                       instalment_day=None):
         """Modify a mutual fund SIP."""
-        return self._put("mf.sip.modify", {
-            "sip_id": sip_id,
-            "amount": amount,
-            "status": status,
-            "instalments": instalments,
-            "frequency": frequency,
-            "instalment_day": instalment_day
-        })
+        return self._put("mf.sip.modify",
+            url_args={"sip_id": sip_id},
+            params={
+                "amount": amount,
+                "status": status,
+                "instalments": instalments,
+                "frequency": frequency,
+                "instalment_day": instalment_day
+            })
 
     def cancel_mf_sip(self, sip_id):
         """Cancel a mutual fund SIP."""
-        return self._delete("mf.sip.cancel", {"sip_id": sip_id})
+        return self._delete("mf.sip.cancel", url_args={"sip_id": sip_id})
 
     def mf_holdings(self):
         """Get list of mutual fund holdings."""
@@ -545,9 +551,7 @@ class KiteConnect(object):
         - `exchange` is specific exchange to fetch (Optional)
         """
         if exchange:
-            params = {"exchange": exchange}
-
-            return self._parse_instruments(self._get("market.instruments", params))
+            return self._parse_instruments(self._get("market.instruments", url_args={"exchange": exchange}))
         else:
             return self._parse_instruments(self._get("market.instruments.all"))
 
@@ -563,7 +567,7 @@ class KiteConnect(object):
         if len(instruments) > 0 and type(instruments[0]) == list:
             ins = instruments[0]
 
-        data = self._get("market.quote", {"i": ins})
+        data = self._get("market.quote", params={"i": ins})
         return {key: self._format_response(data[key]) for key in data}
 
     def ohlc(self, *instruments):
@@ -578,7 +582,7 @@ class KiteConnect(object):
         if len(instruments) > 0 and type(instruments[0]) == list:
             ins = instruments[0]
 
-        return self._get("market.quote.ohlc", {"i": ins})
+        return self._get("market.quote.ohlc", params={"i": ins})
 
     def ltp(self, *instruments):
         """
@@ -592,15 +596,7 @@ class KiteConnect(object):
         if len(instruments) > 0 and type(instruments[0]) == list:
             ins = instruments[0]
 
-        return self._get("market.quote.ltp", {"i": ins})
-
-    # def instruments_margins(self, segment):
-    #     """
-    #     Retrive margins provided for individual segments.
-
-    #     `segment` is segment name to retrive.
-    #     """
-    #     return self._get("market.margins", {"segment": segment})
+        return self._get("market.quote.ltp", params={"i": ins})
 
     def historical_data(self, instrument_token, from_date, to_date, interval, continuous=False, oi=False):
         """
@@ -621,18 +617,19 @@ class KiteConnect(object):
         from_date_string = from_date.strftime(date_string_format) if type(from_date) == datetime.datetime else from_date
         to_date_string = to_date.strftime(date_string_format) if type(to_date) == datetime.datetime else to_date
 
-        data = self._get("market.historical", {
-            "instrument_token": instrument_token,
-            "from": from_date_string,
-            "to": to_date_string,
-            "interval": interval,
-            "continuous": 1 if continuous else 0,
-            "oi": 1 if oi else 0
-        })
+        data = self._get("market.historical",
+            url_args={"instrument_token": instrument_token, "interval": interval},
+            params={
+                "from": from_date_string,
+                "to": to_date_string,
+                "interval": interval,
+                "continuous": 1 if continuous else 0,
+                "oi": 1 if oi else 0
+            })
 
-        return self._format_historical(data, oi)
+        return self._format_historical(data)
 
-    def _format_historical(self, data, oi):
+    def _format_historical(self, data):
         records = []
         for d in data["candles"]:
             record = {
@@ -643,7 +640,7 @@ class KiteConnect(object):
                 "close": d[4],
                 "volume": d[5],
             }
-            if len(d) == 7 and oi:
+            if len(d) == 7:
                 record["oi"] = d[6]
             records.append(record)
 
@@ -657,10 +654,9 @@ class KiteConnect(object):
         if len(instruments) > 0 and type(instruments[0]) == list:
             ins = instruments[0]
 
-        return self._get("market.trigger_range", {
-            "i": ins,
-            "transaction_type": transaction_type.lower()
-        })
+        return self._get("market.trigger_range",
+            url_args={"transaction_type": transaction_type.lower()},
+            params={"i": ins})
 
     def get_gtts(self):
         """Fetch list of gtt existing in an account"""
@@ -668,7 +664,7 @@ class KiteConnect(object):
 
     def get_gtt(self, trigger_id):
         """Fetch details of a GTT"""
-        return self._get("gtt.info", {"trigger_id": trigger_id})
+        return self._get("gtt.info", url_args={"trigger_id": trigger_id})
 
     def _get_gtt_payload(self, trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders):
         """Get GTT payload"""
@@ -724,7 +720,7 @@ class KiteConnect(object):
         assert trigger_type in [self.GTT_TYPE_OCO, self.GTT_TYPE_SINGLE]
         condition, gtt_orders = self._get_gtt_payload(trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders)
 
-        return self._post("gtt.place", {
+        return self._post("gtt.place", params={
             "condition": json.dumps(condition),
             "orders": json.dumps(gtt_orders),
             "type": trigger_type})
@@ -747,15 +743,24 @@ class KiteConnect(object):
         """
         condition, gtt_orders = self._get_gtt_payload(trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders)
 
-        return self._put("gtt.modify", {
-            "trigger_id": trigger_id,
-            "condition": json.dumps(condition),
-            "orders": json.dumps(gtt_orders),
-            "type": trigger_type})
+        return self._put("gtt.modify",
+            url_args={"trigger_id": trigger_id},
+            params={
+                "condition": json.dumps(condition),
+                "orders": json.dumps(gtt_orders),
+                "type": trigger_type})
 
     def delete_gtt(self, trigger_id):
         """Delete a GTT order."""
-        return self._delete("gtt.delete", {"trigger_id": trigger_id})
+        return self._delete("gtt.delete", url_args={"trigger_id": trigger_id})
+
+    def order_margins(self, params):
+        """
+        Calculate margins for requested order list considering the existing positions and open orders
+
+        - `params` is list of orders to retrive margins detail
+        """
+        return self._post("order.margins", params=params, is_json=True)
 
     def _parse_instruments(self, data):
         # decode to string for Python 3
@@ -812,28 +817,30 @@ class KiteConnect(object):
     def _user_agent(self):
         return (__title__ + "-python/").capitalize() + __version__
 
-    def _get(self, route, params=None):
+    def _get(self, route, url_args=None, params=None, is_json=False):
         """Alias for sending a GET request."""
-        return self._request(route, "GET", params)
+        return self._request(route, "GET", url_args=url_args, params=params, is_json=is_json)
 
-    def _post(self, route, params=None):
+    def _post(self, route, url_args=None, params=None, is_json=False):
         """Alias for sending a POST request."""
-        return self._request(route, "POST", params)
+        return self._request(route, "POST", url_args=url_args, params=params, is_json=is_json)
 
-    def _put(self, route, params=None):
+    def _put(self, route, url_args=None, params=None, is_json=False):
         """Alias for sending a PUT request."""
-        return self._request(route, "PUT", params)
+        return self._request(route, "PUT", url_args=url_args, params=params, is_json=is_json)
 
-    def _delete(self, route, params=None):
+    def _delete(self, route, url_args=None, params=None, is_json=False):
         """Alias for sending a DELETE request."""
-        return self._request(route, "DELETE", params)
+        return self._request(route, "DELETE", url_args=url_args, params=params, is_json=is_json)
 
-    def _request(self, route, method, parameters=None):
+    def _request(self, route, method, url_args=None, params=None, is_json=False):
         """Make an HTTP request."""
-        params = parameters.copy() if parameters else {}
-
         # Form a restful URL
-        uri = self._routes[route].format(**params)
+        if url_args:
+            uri = self._routes[route].format(**url_args)
+        else:
+            uri = self._routes[route]
+
         url = urljoin(self.root, uri)
 
         # Custom headers
@@ -853,7 +860,8 @@ class KiteConnect(object):
         try:
             r = self.reqsession.request(method,
                                         url,
-                                        data=params if method in ["POST", "PUT"] else None,
+                                        json=params if (method in ["POST", "PUT"] and is_json) else None,
+                                        data=params if (method in ["POST", "PUT"] and not is_json) else None,
                                         params=params if method in ["GET", "DELETE"] else None,
                                         headers=headers,
                                         verify=not self.disable_ssl,
