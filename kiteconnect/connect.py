@@ -347,8 +347,8 @@ class KiteConnect(object):
                 del(params[k])
 
         return self._post("order.place",
-            url_args={"variety": variety},
-            params=params)["order_id"]
+                          url_args={"variety": variety},
+                          params=params)["order_id"]
 
     def modify_order(self,
                      variety,
@@ -369,14 +369,14 @@ class KiteConnect(object):
                 del(params[k])
 
         return self._put("order.modify",
-            url_args={"variety": variety, "order_id": order_id},
-            params=params)["order_id"]
+                         url_args={"variety": variety, "order_id": order_id},
+                         params=params)["order_id"]
 
     def cancel_order(self, variety, order_id, parent_order_id=None):
         """Cancel an order."""
         return self._delete("order.cancel",
-            url_args={"variety": variety, "order_id": order_id},
-            params={"parent_order_id": parent_order_id})["order_id"]
+                            url_args={"variety": variety, "order_id": order_id},
+                            params={"parent_order_id": parent_order_id})["order_id"]
 
     def exit_order(self, variety, order_id, parent_order_id=None):
         """Exit a BO/CO order."""
@@ -520,14 +520,14 @@ class KiteConnect(object):
                       instalment_day=None):
         """Modify a mutual fund SIP."""
         return self._put("mf.sip.modify",
-            url_args={"sip_id": sip_id},
-            params={
-                "amount": amount,
-                "status": status,
-                "instalments": instalments,
-                "frequency": frequency,
-                "instalment_day": instalment_day
-            })
+                         url_args={"sip_id": sip_id},
+                         params={
+                             "amount": amount,
+                             "status": status,
+                             "instalments": instalments,
+                             "frequency": frequency,
+                             "instalment_day": instalment_day
+                         })
 
     def cancel_mf_sip(self, sip_id):
         """Cancel a mutual fund SIP."""
@@ -618,14 +618,14 @@ class KiteConnect(object):
         to_date_string = to_date.strftime(date_string_format) if type(to_date) == datetime.datetime else to_date
 
         data = self._get("market.historical",
-            url_args={"instrument_token": instrument_token, "interval": interval},
-            params={
-                "from": from_date_string,
-                "to": to_date_string,
-                "interval": interval,
-                "continuous": 1 if continuous else 0,
-                "oi": 1 if oi else 0
-            })
+                         url_args={"instrument_token": instrument_token, "interval": interval},
+                         params={
+                             "from": from_date_string,
+                             "to": to_date_string,
+                             "interval": interval,
+                             "continuous": 1 if continuous else 0,
+                             "oi": 1 if oi else 0
+                         })
 
         return self._format_historical(data)
 
@@ -655,8 +655,8 @@ class KiteConnect(object):
             ins = instruments[0]
 
         return self._get("market.trigger_range",
-            url_args={"transaction_type": transaction_type.lower()},
-            params={"i": ins})
+                         url_args={"transaction_type": transaction_type.lower()},
+                         params={"i": ins})
 
     def get_gtts(self):
         """Fetch list of gtt existing in an account"""
@@ -744,11 +744,11 @@ class KiteConnect(object):
         condition, gtt_orders = self._get_gtt_payload(trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders)
 
         return self._put("gtt.modify",
-            url_args={"trigger_id": trigger_id},
-            params={
-                "condition": json.dumps(condition),
-                "orders": json.dumps(gtt_orders),
-                "type": trigger_type})
+                         url_args={"trigger_id": trigger_id},
+                         params={
+                             "condition": json.dumps(condition),
+                             "orders": json.dumps(gtt_orders),
+                             "type": trigger_type})
 
     def delete_gtt(self, trigger_id):
         """Delete a GTT order."""
