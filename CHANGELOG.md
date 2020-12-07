@@ -129,3 +129,4 @@
 - 2017-08-15	Add mutual fund API calls (v3.6.0)
 - 2017-09-14	Add flag to fetch continous chart and other bug fixes (v3.6.1)
 - 2019-11-20    Add GTT Api
+- 2020-12-03    Add Order Margin API
