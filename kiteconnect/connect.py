@@ -449,7 +449,7 @@ class KiteConnect(object):
                          old_product,
                          new_product):
         """Modify an open position's product type."""
-        return self._put("portfolio.positions.convert", {
+        return self._put("portfolio.positions.convert", params={
             "exchange": exchange,
             "tradingsymbol": tradingsymbol,
             "transaction_type": transaction_type,
