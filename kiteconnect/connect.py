@@ -65,8 +65,8 @@ class KiteConnect(object):
     VALIDITY_IOC = "IOC"
 
     # Position Type
-    POSITION_TYPE_DAY       = 'day'
-    POSITION_TYPE_OVERNIGHT = 'overnight'
+    POSITION_TYPE_DAY       = "day"
+    POSITION_TYPE_OVERNIGHT = "overnight"
 
     # Exchanges
     EXCHANGE_NSE = "NSE"
