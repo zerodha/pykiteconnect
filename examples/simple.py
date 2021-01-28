@@ -22,7 +22,7 @@ try:
         tradingsymbol="INFY",
         transaction_type=kite.TRANSACTION_TYPE_BUY,
         quantity=1,
-        product=kite.PRODUCT_NRML,
+        product=kite.PRODUCT_CNC,
         order_type=kite.ORDER_TYPE_MARKET
     )
 
