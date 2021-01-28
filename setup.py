@@ -48,7 +48,7 @@ setup(
         "pyOpenSSL>=17.5.0",
         "enum34>=1.1.6",
         "python-dateutil>=2.6.1",
-        "autobahn[twisted]>=17.10.1"
+        "autobahn[twisted]==19.11.2"
     ],
     tests_require=["pytest", "responses", "pytest-cov", "mock", "flake8"],
     test_suite="tests",
