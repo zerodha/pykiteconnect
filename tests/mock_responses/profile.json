@@ -1,6 +1,7 @@
 {
 	"status": "success",
 	"data": {
+		"user_id": "AB1234",
 		"user_type": "investor",
 		"email": "xxxyyy@gmail.com",
 		"user_name": "AxAx Bxx",
@@ -26,6 +27,9 @@
 			"MARKET",
 			"SL",
 			"SL-M"
-		]
+		],
+		"meta": {
+			"demat_consent": "physical"
+		}
 	}
 }
