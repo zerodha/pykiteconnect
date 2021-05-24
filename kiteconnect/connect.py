@@ -421,9 +421,6 @@ class KiteConnect(object):
 
         An order can be executed in tranches based on market conditions.
         These trades are individually recorded under an order.
-
-        - `order_id` is the ID of the order (optional) whose trades are to be retrieved.
-        If no `order_id` is specified, all trades for the day are returned.
         """
         return self._format_response(self._get("trades"))
 
@@ -431,8 +428,7 @@ class KiteConnect(object):
         """
         Retrieve the list of trades executed for a particular order.
 
-        - `order_id` is the ID of the order (optional) whose trades are to be retrieved.
-            If no `order_id` is specified, all trades for the day are returned.
+        - `order_id` is the ID of the order to retrieve trade history.
         """
         return self._format_response(self._get("order.trades", url_args={"order_id": order_id}))
 
