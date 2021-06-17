@@ -831,9 +831,9 @@ class KiteConnect(object):
     def _user_agent(self):
         return (__title__ + "-python/").capitalize() + __version__
 
-    def _get(self, route, url_args=None, params=None, is_json=False, query_param=None):
+    def _get(self, route, url_args=None, params=None, is_json=False):
         """Alias for sending a GET request."""
-        return self._request(route, "GET", url_args=url_args, params=params, is_json=is_json, query_param=query_param)
+        return self._request(route, "GET", url_args=url_args, params=params, is_json=is_json)
 
     def _post(self, route, url_args=None, params=None, is_json=False, query_param=None):
         """Alias for sending a POST request."""
@@ -843,9 +843,9 @@ class KiteConnect(object):
         """Alias for sending a PUT request."""
         return self._request(route, "PUT", url_args=url_args, params=params, is_json=is_json, query_param=query_param)
 
-    def _delete(self, route, url_args=None, params=None, is_json=False, query_param=None):
+    def _delete(self, route, url_args=None, params=None, is_json=False):
         """Alias for sending a DELETE request."""
-        return self._request(route, "DELETE", url_args=url_args, params=params, is_json=is_json, query_param=query_param)
+        return self._request(route, "DELETE", url_args=url_args, params=params, is_json=is_json)
 
     def _request(self, route, method, url_args=None, params=None, is_json=False, query_param=None):
         """Make an HTTP request."""
