@@ -774,7 +774,7 @@ class KiteConnect(object):
         return self._post("order.margins.basket",
                           params=params,
                           is_json=True,
-                          query_param={'consider_positions': consider_positions, 'mode': mode})
+                          query_params={'consider_positions': consider_positions, 'mode': mode})
 
     def _parse_instruments(self, data):
         # decode to string for Python 3
@@ -835,19 +835,19 @@ class KiteConnect(object):
         """Alias for sending a GET request."""
         return self._request(route, "GET", url_args=url_args, params=params, is_json=is_json)
 
-    def _post(self, route, url_args=None, params=None, is_json=False, query_param=None):
+    def _post(self, route, url_args=None, params=None, is_json=False, query_params=None):
         """Alias for sending a POST request."""
-        return self._request(route, "POST", url_args=url_args, params=params, is_json=is_json, query_param=query_param)
+        return self._request(route, "POST", url_args=url_args, params=params, is_json=is_json, query_params=query_params)
 
-    def _put(self, route, url_args=None, params=None, is_json=False, query_param=None):
+    def _put(self, route, url_args=None, params=None, is_json=False, query_params=None):
         """Alias for sending a PUT request."""
-        return self._request(route, "PUT", url_args=url_args, params=params, is_json=is_json, query_param=query_param)
+        return self._request(route, "PUT", url_args=url_args, params=params, is_json=is_json, query_params=query_params)
 
     def _delete(self, route, url_args=None, params=None, is_json=False):
         """Alias for sending a DELETE request."""
         return self._request(route, "DELETE", url_args=url_args, params=params, is_json=is_json)
 
-    def _request(self, route, method, url_args=None, params=None, is_json=False, query_param=None):
+    def _request(self, route, method, url_args=None, params=None, is_json=False, query_params=None):
         """Make an HTTP request."""
         # Form a restful URL
         if url_args:
@@ -871,12 +871,16 @@ class KiteConnect(object):
         if self.debug:
             log.debug("Request: {method} {url} {params} {headers}".format(method=method, url=url, params=params, headers=headers))
 
+        # prepare url query params
+        if method in ["GET", "DELETE"]:
+            query_params = params
+
         try:
             r = self.reqsession.request(method,
                                         url,
                                         json=params if (method in ["POST", "PUT"] and is_json) else None,
                                         data=params if (method in ["POST", "PUT"] and not is_json) else None,
-                                        params=params if method in ["GET", "DELETE"] else query_param,
+                                        params=query_params,
                                         headers=headers,
                                         verify=not self.disable_ssl,
                                         allow_redirects=True,
