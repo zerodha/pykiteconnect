@@ -153,7 +153,8 @@ class KiteConnect(object):
         "gtt.delete": "/gtt/triggers/{trigger_id}",
 
         # Margin computation endpoints
-        "order.margins": "/margins/orders"
+        "order.margins": "/margins/orders",
+        "order.margins.basket": "/margins/basket"
     }
 
     def __init__(self,
@@ -766,6 +767,19 @@ class KiteConnect(object):
         """
         return self._post("order.margins", params=params, is_json=True)
 
+    def basket_order_margins(self, params, consider_positions=True, mode=None):
+        """
+        Calculate total margins required for basket of orders including margin benefits
+
+        - `params` is list of orders to fetch basket margin
+        - `consider_positions` is a boolean to consider users positions
+        - `mode` is margin response mode type. compact - Compact mode will only give the total margins
+        """
+        return self._post("order.margins.basket",
+                          params=params,
+                          is_json=True,
+                          query_param={'consider_positions': consider_positions, 'mode': mode})
+
     def _parse_instruments(self, data):
         # decode to string for Python 3
         d = data
@@ -821,23 +835,23 @@ class KiteConnect(object):
     def _user_agent(self):
         return (__title__ + "-python/").capitalize() + __version__
 
-    def _get(self, route, url_args=None, params=None, is_json=False):
+    def _get(self, route, url_args=None, params=None, is_json=False, query_param=None):
         """Alias for sending a GET request."""
-        return self._request(route, "GET", url_args=url_args, params=params, is_json=is_json)
+        return self._request(route, "GET", url_args=url_args, params=params, is_json=is_json, query_param=query_param)
 
-    def _post(self, route, url_args=None, params=None, is_json=False):
+    def _post(self, route, url_args=None, params=None, is_json=False, query_param=None):
         """Alias for sending a POST request."""
-        return self._request(route, "POST", url_args=url_args, params=params, is_json=is_json)
+        return self._request(route, "POST", url_args=url_args, params=params, is_json=is_json, query_param=query_param)
 
-    def _put(self, route, url_args=None, params=None, is_json=False):
+    def _put(self, route, url_args=None, params=None, is_json=False, query_param=None):
         """Alias for sending a PUT request."""
-        return self._request(route, "PUT", url_args=url_args, params=params, is_json=is_json)
+        return self._request(route, "PUT", url_args=url_args, params=params, is_json=is_json, query_param=query_param)
 
-    def _delete(self, route, url_args=None, params=None, is_json=False):
+    def _delete(self, route, url_args=None, params=None, is_json=False, query_param=None):
         """Alias for sending a DELETE request."""
-        return self._request(route, "DELETE", url_args=url_args, params=params, is_json=is_json)
+        return self._request(route, "DELETE", url_args=url_args, params=params, is_json=is_json, query_param=query_param)
 
-    def _request(self, route, method, url_args=None, params=None, is_json=False):
+    def _request(self, route, method, url_args=None, params=None, is_json=False, query_param=None):
         """Make an HTTP request."""
         # Form a restful URL
         if url_args:
@@ -866,7 +880,7 @@ class KiteConnect(object):
                                         url,
                                         json=params if (method in ["POST", "PUT"] and is_json) else None,
                                         data=params if (method in ["POST", "PUT"] and not is_json) else None,
-                                        params=params if method in ["GET", "DELETE"] else None,
+                                        params=params if method in ["GET", "DELETE"] else query_param,
                                         headers=headers,
                                         verify=not self.disable_ssl,
                                         allow_redirects=True,

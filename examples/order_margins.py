@@ -63,6 +63,33 @@ try:
     margin_detail = kite.order_margins(order_param_multi)
     logging.info("Required margin for order_list: {}".format(margin_detail))
 
+    # Basket orders
+    order_param_basket = [
+    {
+        "exchange": "NFO",
+        "tradingsymbol": "NIFTY21JUN15400PE",
+        "transaction_type": "BUY",
+        "variety": "regular",
+        "product": "MIS",
+        "order_type": "MARKET",
+        "quantity": 75
+    },
+	{
+        "exchange": "NFO",
+        "tradingsymbol": "NIFTY21JUN14450PE",
+        "transaction_type": "SELL",
+        "variety": "regular",
+        "product": "MIS",
+        "order_type": "MARKET",
+        "quantity": 150
+    }]
+
+    margin_amount = kite.basket_order_margins(order_param_basket)
+    logging.info("Required margin for basket order: {}".format(margin_amount))
+    # Compact margin response
+    margin_amount_comt = kite.basket_order_margins(order_param_basket, mode='compact')
+    logging.info("Required margin for basket order in compact form: {}".format(margin_amount_comt))
+
 except Exception as e:
     logging.info("Required order margin: {}".format(e))
 
