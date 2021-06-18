@@ -22,6 +22,8 @@ jobs:
         run: conda info
 
       - uses: actions/checkout@v2
+        with:
+          submodules: true
       - name: Install dependencies
         shell: bash -l {0}
         run: |
