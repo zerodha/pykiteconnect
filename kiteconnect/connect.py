@@ -833,7 +833,7 @@ class KiteConnect(object):
 
     def is_timestamp(self, string):
         """Checks if string is timestamp"""
-        try: 
+        try:
             parse(string)
             return True
         except ValueError:
