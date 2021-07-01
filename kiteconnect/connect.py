@@ -11,7 +11,9 @@ from six import StringIO, PY2
 from six.moves.urllib.parse import urljoin
 import csv
 import json
-import dateutil.parser
+from dateutil.parser import parse
+from dateutil.tz import tzoffset
+from dateutil.utils import default_tzinfo
 import hashlib
 import logging
 import datetime
@@ -263,8 +265,8 @@ class KiteConnect(object):
         if "access_token" in resp:
             self.set_access_token(resp["access_token"])
 
-        if resp["login_time"] and len(resp["login_time"]) == 19:
-            resp["login_time"] = dateutil.parser.parse(resp["login_time"])
+        if resp["login_time"] and self.is_timestamp(resp["login_time"]):
+            resp["login_time"] = self.set_tz(resp["login_time"])
 
         return resp
 
@@ -398,8 +400,8 @@ class KiteConnect(object):
         for item in _list:
             # Convert date time string to datetime object
             for field in ["order_timestamp", "exchange_timestamp", "created", "last_instalment", "fill_timestamp", "timestamp", "last_trade_time"]:
-                if item.get(field) and len(item[field]) == 19:
-                    item[field] = dateutil.parser.parse(item[field])
+                if item.get(field) and self.is_timestamp(item[field]):
+                    item[field] = self.set_tz(item[field])
 
         return _list[0] if type(data) == dict else _list
 
@@ -634,7 +636,7 @@ class KiteConnect(object):
         records = []
         for d in data["candles"]:
             record = {
-                "date": dateutil.parser.parse(d[0]),
+                "date": self.set_tz(d[0]),
                 "open": d[1],
                 "high": d[2],
                 "low": d[3],
@@ -755,13 +757,14 @@ class KiteConnect(object):
         """Delete a GTT order."""
         return self._delete("gtt.delete", url_args={"trigger_id": trigger_id})
 
-    def order_margins(self, params):
+    def order_margins(self, params, mode=None):
         """
         Calculate margins for requested order list considering the existing positions and open orders
 
         - `params` is list of orders to retrive margins detail
+        - `mode` is margin response mode type. compact - Compact mode will only give the total margins
         """
-        return self._post("order.margins", params=params, is_json=True)
+        return self._post("order.margins", params=params, is_json=True, query_params={'mode': mode})
 
     def basket_order_margins(self, params, consider_positions=True, mode=None):
         """
@@ -794,8 +797,8 @@ class KiteConnect(object):
             row["lot_size"] = int(row["lot_size"])
 
             # Parse date
-            if len(row["expiry"]) == 10:
-                row["expiry"] = dateutil.parser.parse(row["expiry"]).date()
+            if self.is_timestamp(row["expiry"]):
+                row["expiry"] = self.set_tz(row["expiry"]).date()
 
             records.append(row)
 
@@ -821,12 +824,26 @@ class KiteConnect(object):
             row["last_price"] = float(row["last_price"])
 
             # Parse date
-            if len(row["last_price_date"]) == 10:
-                row["last_price_date"] = dateutil.parser.parse(row["last_price_date"]).date()
+            if self.is_timestamp(row["last_price_date"]):
+                row["last_price_date"] = self.set_tz(row["last_price_date"]).date()
 
             records.append(row)
 
         return records
+
+    def is_timestamp(self, string):
+        """Checks if string is timestamp"""
+        try: 
+            parse(string)
+            return True
+        except ValueError:
+            return False
+
+    def set_tz(self, string):
+        """Set default timezone to IST for naive time object"""
+        # Default timezone for all datetime object
+        default_tz = tzoffset("Asia/Kolkata", 19800)
+        return default_tzinfo(parse(string), default_tz)
 
     def _user_agent(self):
         return (__title__ + "-python/").capitalize() + __version__

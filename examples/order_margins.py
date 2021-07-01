@@ -62,6 +62,9 @@ try:
 
     margin_detail = kite.order_margins(order_param_multi)
     logging.info("Required margin for order_list: {}".format(margin_detail))
+    # Compact margin response
+    margin_detail_compt = kite.basket_order_margins(order_param_multi, mode='compact')
+    logging.info("Required margin for order_list in compact form: {}".format(margin_detail_compt))
 
     # Basket orders
     order_param_basket = [
