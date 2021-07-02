@@ -925,8 +925,13 @@ class KiteConnect(object):
                     self.session_expiry_hook()
 
                 # native Kite errors
-                exp = getattr(ex, data.get("error_type"), ex.GeneralException)
-                raise exp(data["message"], code=r.status_code)
+                # mf error response don't have error_type field
+                if data.get("error_type"):
+                    exp = getattr(ex, data.get("error_type"), ex.GeneralException)
+                    raise exp(data["message"], code=r.status_code)
+                else:
+                    # Throw general exception for such undefined error type
+                    raise ex.GeneralException(data["message"], code=r.status_code)
 
             return data["data"]
         elif "csv" in r.headers["content-type"]:
