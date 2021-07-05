@@ -11,7 +11,7 @@ from six import StringIO, PY2
 from six.moves.urllib.parse import urljoin
 import csv
 import json
-from dateutil.parser import parse
+from dateutil.parser import parse as datetimeparse
 from dateutil.tz import tzoffset
 from dateutil.utils import default_tzinfo
 import hashlib
@@ -266,7 +266,7 @@ class KiteConnect(object):
             self.set_access_token(resp["access_token"])
 
         if resp["login_time"] and self.is_timestamp(resp["login_time"]):
-            resp["login_time"] = self.set_tz(resp["login_time"])
+            resp["login_time"] = self.parseDateTime(resp["login_time"])
 
         return resp
 
@@ -401,7 +401,7 @@ class KiteConnect(object):
             # Convert date time string to datetime object
             for field in ["order_timestamp", "exchange_timestamp", "created", "last_instalment", "fill_timestamp", "timestamp", "last_trade_time"]:
                 if item.get(field) and self.is_timestamp(item[field]):
-                    item[field] = self.set_tz(item[field])
+                    item[field] = self.parseDateTime(item[field])
 
         return _list[0] if type(data) == dict else _list
 
@@ -636,7 +636,7 @@ class KiteConnect(object):
         records = []
         for d in data["candles"]:
             record = {
-                "date": self.set_tz(d[0]),
+                "date": self.parseDateTime(d[0]),
                 "open": d[1],
                 "high": d[2],
                 "low": d[3],
@@ -798,7 +798,7 @@ class KiteConnect(object):
 
             # Parse date
             if self.is_timestamp(row["expiry"]):
-                row["expiry"] = self.set_tz(row["expiry"]).date()
+                row["expiry"] = self.parseDateTime(row["expiry"]).date()
 
             records.append(row)
 
@@ -825,7 +825,7 @@ class KiteConnect(object):
 
             # Parse date
             if self.is_timestamp(row["last_price_date"]):
-                row["last_price_date"] = self.set_tz(row["last_price_date"]).date()
+                row["last_price_date"] = self.parseDateTime(row["last_price_date"]).date()
 
             records.append(row)
 
@@ -834,16 +834,16 @@ class KiteConnect(object):
     def is_timestamp(self, string):
         """Checks if string is timestamp"""
         try:
-            parse(string)
+            datetimeparse(string)
             return True
         except ValueError:
             return False
 
-    def set_tz(self, string):
+    def parseDateTime(self, string):
         """Set default timezone to IST for naive time object"""
         # Default timezone for all datetime object
         default_tz = tzoffset("Asia/Kolkata", 19800)
-        return default_tzinfo(parse(string), default_tz)
+        return default_tzinfo(datetimeparse(string), default_tz)
 
     def _user_agent(self):
         return (__title__ + "-python/").capitalize() + __version__
