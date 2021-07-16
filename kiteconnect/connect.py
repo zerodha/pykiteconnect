@@ -256,17 +256,14 @@ class KiteConnect(object):
         h = hashlib.sha256(self.api_key.encode("utf-8") + request_token.encode("utf-8") + api_secret.encode("utf-8"))
         checksum = h.hexdigest()
 
-        resp = self._post("api.token", params={
+        resp = self._format_response(self._post("api.token", params={
             "api_key": self.api_key,
             "request_token": request_token,
             "checksum": checksum
-        })
+        }))
 
         if "access_token" in resp:
             self.set_access_token(resp["access_token"])
-
-        if resp["login_time"] and self.is_timestamp(resp["login_time"]):
-            resp["login_time"] = self.parseDateTime(resp["login_time"])
 
         return resp
 
@@ -399,7 +396,8 @@ class KiteConnect(object):
 
         for item in _list:
             # Convert date time string to datetime object
-            for field in ["order_timestamp", "exchange_timestamp", "created", "last_instalment", "fill_timestamp", "timestamp", "last_trade_time"]:
+            for field in ["order_timestamp", "exchange_timestamp", "created", "last_instalment", "fill_timestamp",
+                          "timestamp", "last_trade_time", "login_time", "expiry", "last_price_date"]:
                 if item.get(field) and self.is_timestamp(item[field]):
                     item[field] = self.parseDateTime(item[field])
 
@@ -786,23 +784,9 @@ class KiteConnect(object):
         if not PY2 and type(d) == bytes:
             d = data.decode("utf-8").strip()
 
-        records = []
         reader = csv.DictReader(StringIO(d))
 
-        for row in reader:
-            row["instrument_token"] = int(row["instrument_token"])
-            row["last_price"] = float(row["last_price"])
-            row["strike"] = float(row["strike"])
-            row["tick_size"] = float(row["tick_size"])
-            row["lot_size"] = int(row["lot_size"])
-
-            # Parse date
-            if self.is_timestamp(row["expiry"]):
-                row["expiry"] = self.parseDateTime(row["expiry"]).date()
-
-            records.append(row)
-
-        return records
+        return self._format_response(list(reader))
 
     def _parse_mf_instruments(self, data):
         # decode to string for Python 3
@@ -810,26 +794,9 @@ class KiteConnect(object):
         if not PY2 and type(d) == bytes:
             d = data.decode("utf-8").strip()
 
-        records = []
         reader = csv.DictReader(StringIO(d))
 
-        for row in reader:
-            row["minimum_purchase_amount"] = float(row["minimum_purchase_amount"])
-            row["purchase_amount_multiplier"] = float(row["purchase_amount_multiplier"])
-            row["minimum_additional_purchase_amount"] = float(row["minimum_additional_purchase_amount"])
-            row["minimum_redemption_quantity"] = float(row["minimum_redemption_quantity"])
-            row["redemption_quantity_multiplier"] = float(row["redemption_quantity_multiplier"])
-            row["purchase_allowed"] = bool(int(row["purchase_allowed"]))
-            row["redemption_allowed"] = bool(int(row["redemption_allowed"]))
-            row["last_price"] = float(row["last_price"])
-
-            # Parse date
-            if self.is_timestamp(row["last_price_date"]):
-                row["last_price_date"] = self.parseDateTime(row["last_price_date"]).date()
-
-            records.append(row)
-
-        return records
+        return self._format_response(list(reader))
 
     def is_timestamp(self, string):
         """Checks if string is timestamp"""
