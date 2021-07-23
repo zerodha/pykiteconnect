@@ -461,9 +461,6 @@ class KiteTicker(object):
         # Text message updates
         self.on_order_update = None
 
-        # List of current subscribed tokens
-        self.subscribed_tokens = {}
-
     def _create_connection(self, url, **kwargs):
         """Create a WebSocket client connection."""
         self.factory = KiteTickerClientFactory(url, **kwargs)
@@ -570,8 +567,8 @@ class KiteTicker(object):
                 six.b(json.dumps({"a": self._message_subscribe, "v": instrument_tokens}))
             )
 
-            for token in instrument_tokens:
-                self.subscribed_tokens[token] = self.MODE_QUOTE
+            # List of subscribed_tokens
+            self.subscribe_tokens = instrument_tokens
 
             return True
         except Exception as e:
@@ -591,7 +588,7 @@ class KiteTicker(object):
 
             for token in instrument_tokens:
                 try:
-                    del(self.subscribed_tokens[token])
+                    self.subscribe_tokens.remove(token)
                 except KeyError:
                     pass
 
@@ -613,9 +610,9 @@ class KiteTicker(object):
                 six.b(json.dumps({"a": self._message_setmode, "v": [mode, instrument_tokens]}))
             )
 
-            # Update modes
-            for token in instrument_tokens:
-                self.subscribed_tokens[token] = mode
+            # update instrument token and mode
+            self.subscribe_mode = mode
+            self.subscribe_tokens = instrument_tokens
 
             return True
         except Exception as e:
@@ -624,22 +621,10 @@ class KiteTicker(object):
 
     def resubscribe(self):
         """Resubscribe to all current subscribed tokens."""
-        modes = {}
+        log.debug("Resubscribe and set mode: {} - {}".format(self.subscribe_tokens, self.subscribe_mode))
 
-        for token in self.subscribed_tokens:
-            m = self.subscribed_tokens[token]
-
-            if not modes.get(m):
-                modes[m] = []
-
-            modes[m].append(token)
-
-        for mode in modes:
-            if self.debug:
-                log.debug("Resubscribe and set mode: {} - {}".format(mode, modes[mode]))
-
-            self.subscribe(modes[mode])
-            self.set_mode(mode, modes[mode])
+        self.subscribe(self.subscribe_tokens)
+        self.set_mode(self.subscribe_mode, self.subscribe_tokens)
 
     def _on_connect(self, ws, response):
         self.ws = ws
