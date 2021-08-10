@@ -762,7 +762,7 @@ class KiteTicker(object):
                     except Exception:
                         timestamp = None
 
-                    d["timestamp"] = timestamp
+                    d["exchange_timestamp"] = timestamp
 
                 data.append(d)
             # Quote and full mode
