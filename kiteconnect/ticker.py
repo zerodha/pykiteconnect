@@ -774,11 +774,11 @@ class KiteTicker(object):
                     "mode": mode,
                     "instrument_token": instrument_token,
                     "last_price": self._unpack_int(packet, 4, 8) / divisor,
-                    "last_quantity": self._unpack_int(packet, 8, 12),
-                    "average_price": self._unpack_int(packet, 12, 16) / divisor,
-                    "volume": self._unpack_int(packet, 16, 20),
-                    "buy_quantity": self._unpack_int(packet, 20, 24),
-                    "sell_quantity": self._unpack_int(packet, 24, 28),
+                    "last_traded_quantity": self._unpack_int(packet, 8, 12),
+                    "average_traded_price": self._unpack_int(packet, 12, 16) / divisor,
+                    "volume_traded": self._unpack_int(packet, 16, 20),
+                    "total_buy_quantity": self._unpack_int(packet, 20, 24),
+                    "total_sell_quantity": self._unpack_int(packet, 24, 28),
                     "ohlc": {
                         "open": self._unpack_int(packet, 28, 32) / divisor,
                         "high": self._unpack_int(packet, 32, 36) / divisor,
@@ -808,7 +808,7 @@ class KiteTicker(object):
                     d["oi"] = self._unpack_int(packet, 48, 52)
                     d["oi_day_high"] = self._unpack_int(packet, 52, 56)
                     d["oi_day_low"] = self._unpack_int(packet, 56, 60)
-                    d["timestamp"] = timestamp
+                    d["exchange_timestamp"] = timestamp
 
                     # Market depth entries.
                     depth = {
