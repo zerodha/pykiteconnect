@@ -8,7 +8,6 @@
     :license: see LICENSE for details.
 """
 from six import StringIO, PY2
-from six.moves.urllib.parse import urljoin
 import csv
 import json
 import dateutil.parser
@@ -855,7 +854,7 @@ class KiteConnect(object):
         else:
             uri = self._routes[route]
 
-        url = urljoin(self.root, uri)
+        url = self.root + uri
 
         # Custom headers
         headers = {
