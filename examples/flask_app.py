@@ -12,7 +12,7 @@
 #   pip install Flask
 #   pip install kiteconnect
 #
-#   python examples/simple_webapp.py
+#   python examples/flask_app.py
 ###############################################################################
 import os
 import json

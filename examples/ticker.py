@@ -28,9 +28,13 @@ def on_connect(ws, response):  # noqa
     # Set RELIANCE to tick in `full` mode.
     ws.set_mode(ws.MODE_FULL, [738561])
 
+def on_order_update(ws, data):
+    logging.debug("Order update : {}".format(data))
+
 # Assign the callbacks.
 kws.on_ticks = on_ticks
 kws.on_connect = on_connect
+kws.on_order_update = on_order_update
 
 # Infinite loop on the main thread. Nothing after this will run.
 # You have to use the pre-defined callbacks to manage subscriptions.

@@ -18,7 +18,7 @@ from kiteconnect import KiteTicker
 logging.basicConfig(level=logging.DEBUG)
 
 # Initialise.
-kws = KiteTicker("api_key", "public_token")
+kws = KiteTicker("your_api_key", "your_access_token")
 
 # RELIANCE BSE
 tokens = [738561]
@@ -66,7 +66,7 @@ kws.on_connect = on_connect
 kws.on_reconnect = on_reconnect
 kws.on_noreconnect = on_noreconnect
 
-# Infinite loop on the main thread. Nothing after this will run.
+# Infinite loop on the main thread.
 # You have to use the pre-defined callbacks to manage subscriptions.
 kws.connect(threaded=True)
 
