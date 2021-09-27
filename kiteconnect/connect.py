@@ -75,6 +75,7 @@ class KiteConnect(object):
     EXCHANGE_CDS = "CDS"
     EXCHANGE_BFO = "BFO"
     EXCHANGE_MCX = "MCX"
+    EXCHANGE_MCX = "BCD"
 
     # Margins segments
     MARGIN_EQUITY = "equity"
