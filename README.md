@@ -1,4 +1,5 @@
 # The Kite Connect API Python client - v3
+
 [![PyPI](https://img.shields.io/pypi/v/kiteconnect.svg)](https://pypi.python.org/pypi/kiteconnect)
 [![Build Status](https://travis-ci.org/zerodhatech/pykiteconnect.svg?branch=kite3)](https://travis-ci.org/zerodhatech/pykiteconnect)
 [![Windows Build Status](https://ci.appveyor.com/api/projects/status/github/zerodhatech/pykiteconnect?svg=true)](https://ci.appveyor.com/project/rainmattertech/pykiteconnect)
@@ -8,14 +9,17 @@ The official Python client for communicating with the [Kite Connect API](https:/
 
 Kite Connect is a set of REST-like APIs that expose many capabilities required to build a complete investment and trading platform. Execute orders in real time, manage user portfolio, stream live market data (WebSockets), and more, with the simple HTTP API collection.
 
-[Zerodha Technology](https://zerodha.com) (c) 2018. Licensed under the MIT License.
+[Zerodha Technology](https://zerodha.com) (c) 2021. Licensed under the MIT License.
 
 ## Documentation
+
 - [Python client documentation](https://kite.trade/docs/pykiteconnect/v3)
 - [Kite Connect HTTP API documentation](https://kite.trade/docs/connect/v3)
 
 ## Installing the client
+
 You can install the pre release via pip
+
 ```
 pip install --upgrade kiteconnect
 ```
@@ -29,23 +33,31 @@ pip install -U pip setuptools
 Since some of the dependencies uses C extensions it has to compiled before installing the package.
 
 ### Linux, BSD and macOS
+
 - On Linux, and BSDs, you will need a C compiler (such as GCC).
 
 #### Debian/Ubuntu
+
 ```
 apt-get install libffi-dev python-dev python3-dev
 ```
+
 #### Centos/RHEL/Fedora
+
 ```
 yum install libffi-devel python3-devel python-devel
 ```
+
 #### macOS/OSx
+
 ```
 xcode-select --install
 ```
 
 ### Microsoft Windows
+
 Each Python version uses a specific compiler version (e.g. CPython 2.7 uses Visual C++ 9.0, CPython 3.3 uses Visual C++ 10.0, etc). So, you need to install the compiler version that corresponds to your Python version
+
 - Python 2.6, 2.7, 3.0, 3.1, 3.2 - [Microsoft Visual C++ 9.0](https://wiki.python.org/moin/WindowsCompilers#Microsoft_Visual_C.2B-.2B-_9.0_standalone:_Visual_C.2B-.2B-_Compiler_for_Python_2.7_.28x86.2C_x64.29)
 - Python 3.3, 3.4 - [Microsoft Visual C++ 10.0](https://wiki.python.org/moin/WindowsCompilers#Microsoft_Visual_C.2B-.2B-_10.0_standalone:_Windows_SDK_7.1_.28x86.2C_x64.2C_ia64.29)
 - Python 3.5, 3.6 - [Microsoft Visual C++ 14.0](https://wiki.python.org/moin/WindowsCompilers#Microsoft_Visual_C.2B-.2B-_14.0_standalone:_Visual_C.2B-.2B-_Build_Tools_2015_.28x86.2C_x64.2C_ARM.29)
@@ -53,6 +65,7 @@ Each Python version uses a specific compiler version (e.g. CPython 2.7 uses Visu
 For more details check [official Python documentation](https://wiki.python.org/moin/WindowsCompilers).
 
 ## API usage
+
 ```python
 import logging
 from kiteconnect import KiteConnect
@@ -108,6 +121,7 @@ kite.mf_instruments()
 Refer to the [Python client documentation](https://kite.trade/docs/pykiteconnect/v3) for the complete list of supported methods.
 
 ## WebSocket usage
+
 ```python
 import logging
 from kiteconnect import KiteTicker

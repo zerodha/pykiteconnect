@@ -2,7 +2,7 @@
 #
 # The MIT License (MIT)
 #
-# Copyright (c) Zerodha technologies Pvt. Ltd.
+# Copyright (c) Zerodha Technology Pvt. Ltd.
 #
 # This is simple Flask based webapp to generate access token and get basic
 # account info like holdings and order.

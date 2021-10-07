@@ -2,7 +2,7 @@
 #
 # The MIT License (MIT)
 #
-# Copyright (c) Zerodha technologies Pvt. Ltd.
+# Copyright (c) Zerodha Technology Pvt. Ltd.
 #
 # This example shows how to subscribe and get ticks from Kite Connect ticker,
 # For more info read documentation - https://kite.trade/docs/connect/v1/#streaming-websocket

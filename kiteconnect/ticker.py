@@ -4,7 +4,7 @@
 
     Websocket implementation for kite ticker
 
-    :copyright: (c) 2017 by Zerodha Technology.
+    :copyright: (c) 2021 by Zerodha Technology Pvt. Ltd.
     :license: see LICENSE for details.
 """
 import six

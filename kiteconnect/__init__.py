@@ -2,7 +2,7 @@
 """
 Kite Connect API client for Python -- [https://kite.trade](kite.trade).
 
-Zerodha technologies (c) 2018
+Zerodha Technology Pvt. Ltd. (c) 2021
 
 License
 -------

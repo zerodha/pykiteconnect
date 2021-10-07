@@ -4,7 +4,7 @@
 
     API wrapper for Kite Connect REST APIs.
 
-    :copyright: (c) 2018 by Zerodha Technology.
+    :copyright: (c) 2021 by Zerodha Technology.
     :license: see LICENSE for details.
 """
 from six import StringIO, PY2
