@@ -2,7 +2,7 @@
 #
 # The MIT License (MIT)
 #
-# Copyright (c) Zerodha technologies Pvt. Ltd.
+# Copyright (c) Zerodha Technology Pvt. Ltd.
 #
 # This example shows how to run KiteTicker in threaded mode.
 # KiteTicker runs in seprate thread and main thread is blocked to juggle between

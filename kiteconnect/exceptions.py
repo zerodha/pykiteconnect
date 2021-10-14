@@ -4,7 +4,7 @@
 
     Exceptions raised by the Kite Connect client.
 
-    :copyright: (c) 2017 by Zerodha Technology.
+    :copyright: (c) 2021 by Zerodha Technology.
     :license: see LICENSE for details.
 """
 
