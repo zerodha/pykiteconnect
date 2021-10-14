@@ -363,10 +363,13 @@ class KiteTicker(object):
         "cds": 3,
         "bse": 4,
         "bfo": 5,
-        "bsecds": 6,
+        "bcd": 6,
         "mcx": 7,
         "mcxsx": 8,
-        "indices": 9
+        "indices": 9,
+        # bsecds is replaced with it's official segment name bcd
+        # so,bsecds key will be depreciated in next version
+        "bsecds": 6,
     }
 
     # Default connection timeout
@@ -720,7 +723,13 @@ class KiteTicker(object):
             instrument_token = self._unpack_int(packet, 0, 4)
             segment = instrument_token & 0xff  # Retrive segment constant from instrument_token
 
-            divisor = 10000000.0 if segment == self.EXCHANGE_MAP["cds"] else 100.0
+            # Add price divisor based on segment
+            if segment == self.EXCHANGE_MAP["cds"]:
+                divisor = 10000000.0
+            elif segment == self.EXCHANGE_MAP["bcd"]:
+                divisor = 10000.0
+            else:
+                divisor = 100.0
 
             # All indices are not tradable
             tradable = False if segment == self.EXCHANGE_MAP["indices"] else True
