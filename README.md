@@ -91,7 +91,8 @@ try:
                                 quantity=1,
                                 variety=kite.VARIETY_AMO,
                                 order_type=kite.ORDER_TYPE_MARKET,
-                                product=kite.PRODUCT_NRML)
+                                product=kite.PRODUCT_CNC,
+                                validity=kite.VALIDITY_DAY)
 
     logging.info("Order placed. ID is: {}".format(order_id))
 except Exception as e:
