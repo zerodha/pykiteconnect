@@ -16,6 +16,11 @@ Kite Connect is a set of REST-like APIs that expose many capabilities required t
 - [Python client documentation](https://kite.trade/docs/pykiteconnect/v3)
 - [Kite Connect HTTP API documentation](https://kite.trade/docs/connect/v3)
 
+## Breaking changes - v4
+`v4` is a **breaking** major release with internal modification to improve user experience.<br>
+Below are the breaking changes:
+- Change ticker response attributes naming as per [kite connect doc](https://kite.trade/docs/connect/v3/websocket/#quote-packet-structure)
+
 ## Installing the client
 
 You can install the pre release via pip

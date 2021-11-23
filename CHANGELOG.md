@@ -1,3 +1,12 @@
+# Kite v4
+
+### Breaking changes
+- Change ticker response attributes naming as per [kite connect doc](https://kite.trade/docs/connect/v3/websocket/#quote-packet-structure)
+
+### Fixes
+- Add bcd price divisor for ticker
+- Python client doc update
+- Update bsecds to bcd to be consistency with segment naming
 
 # Kite v3 (2018-01-18)
 
