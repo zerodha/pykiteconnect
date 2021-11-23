@@ -1,4 +1,4 @@
-# The Kite Connect API Python client - v3
+# The Kite Connect API Python client - v4
 
 [![PyPI](https://img.shields.io/pypi/v/kiteconnect.svg)](https://pypi.python.org/pypi/kiteconnect)
 [![Build Status](https://travis-ci.org/zerodhatech/pykiteconnect.svg?branch=kite3)](https://travis-ci.org/zerodhatech/pykiteconnect)
@@ -13,7 +13,7 @@ Kite Connect is a set of REST-like APIs that expose many capabilities required t
 
 ## Documentation
 
-- [Python client documentation](https://kite.trade/docs/pykiteconnect/v3)
+- [Python client documentation](https://kite.trade/docs/pykiteconnect/v4)
 - [Kite Connect HTTP API documentation](https://kite.trade/docs/connect/v3)
 
 ## Installing the client
@@ -119,7 +119,7 @@ kite.cancel_mf_order(order_id="order_id")
 kite.mf_instruments()
 ```
 
-Refer to the [Python client documentation](https://kite.trade/docs/pykiteconnect/v3) for the complete list of supported methods.
+Refer to the [Python client documentation](https://kite.trade/docs/pykiteconnect/v4) for the complete list of supported methods.
 
 ## WebSocket usage
 
@@ -159,27 +159,27 @@ kws.on_close = on_close
 kws.connect()
 ```
 
-# Run unit tests
+## Run unit tests
 
-```
+```sh
 python setup.py test
 ```
 
 or
 
-```
+```sh
 pytest -s tests/unit --cov-report html:cov_html --cov=./
 ```
 
-# Run integration tests
+## Run integration tests
 
-```
+```sh
 pytest -s tests/integration/ --cov-report html:cov_html --cov=./  --api-key api_key --access-token access_token
 ```
 
-# Generate documentation
+## Generate documentation
 
-```
+```sh
 pip install pdoc
 
 pdoc --html --html-dir docs kiteconnect
@@ -187,4 +187,4 @@ pdoc --html --html-dir docs kiteconnect
 
 ## Changelog
 
-[Check CHANGELOG.md](CHANGELOG.md)
+[Check Release notes](https://github.com/zerodha/pykiteconnect/releases)
