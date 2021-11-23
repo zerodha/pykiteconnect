@@ -16,6 +16,11 @@ Kite Connect is a set of REST-like APIs that expose many capabilities required t
 - [Python client documentation](https://kite.trade/docs/pykiteconnect/v4)
 - [Kite Connect HTTP API documentation](https://kite.trade/docs/connect/v3)
 
+## v4 - Breaking changes
+
+* Renamed ticker fields as per [kite connect doc](https://kite.trade/docs/connect/v3/websocket/#quote-packet-structure)
+* Renamed `bsecds` to `bcd` in `ticker.EXCHANGE_MAP`
+
 ## Installing the client
 
 You can install the pre release via pip
@@ -187,4 +192,4 @@ pdoc --html --html-dir docs kiteconnect
 
 ## Changelog
 
-[Check Release notes](https://github.com/zerodha/pykiteconnect/releases)
+[Check release notes](https://github.com/zerodha/pykiteconnect/releases)
