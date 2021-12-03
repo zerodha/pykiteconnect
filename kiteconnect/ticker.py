@@ -271,15 +271,15 @@ class KiteTicker(object):
         [{
             'instrument_token': 53490439,
             'mode': 'full',
-            'volume': 12510,
+            'volume_traded': 12510,
             'last_price': 4084.0,
-            'average_price': 4086.55,
-            'last_quantity': 1,
-            'buy_quantity': 2356
-            'sell_quantity': 2440,
+            'average_traded_price': 4086.55,
+            'last_traded_quantity': 1,
+            'total_buy_quantity': 2356
+            'total_sell_quantity': 2440,
             'change': 0.46740467404674046,
             'last_trade_time': datetime.datetime(2018, 1, 15, 13, 16, 54),
-            'timestamp': datetime.datetime(2018, 1, 15, 13, 16, 56),
+            'exchange_timestamp': datetime.datetime(2018, 1, 15, 13, 16, 56),
             'oi': 21845,
             'oi_day_low': 0,
             'oi_day_high': 0,
