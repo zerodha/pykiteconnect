@@ -685,11 +685,11 @@ class KiteConnect(object):
         }
 
         gtt_orders = []
+        req = ["transaction_type", "quantity", "order_type", "product", "price"]
+        result =  all(elem in orders  for elem in req)
+        if result is False:
+            raise ex.InputException("Some condition is missing inside orders, required conditions are transaction_type, quantity, order_type, product, price" )
         for o in orders:
-            # Assert required keys inside gtt order.
-            for req in ["transaction_type", "quantity", "order_type", "product", "price"]:
-                if req not in o:
-                    raise ex.InputException("`{req}` missing inside orders".format(req=req))
             gtt_orders.append({
                 "exchange": exchange,
                 "tradingsymbol": tradingsymbol,
