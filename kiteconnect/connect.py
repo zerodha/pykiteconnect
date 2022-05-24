@@ -55,6 +55,7 @@ class KiteConnect(object):
     VARIETY_BO = "bo"
     VARIETY_CO = "co"
     VARIETY_AMO = "amo"
+    VARIETY_ICEBERG = "iceberg"
 
     # Transaction type
     TRANSACTION_TYPE_BUY = "BUY"
@@ -63,6 +64,7 @@ class KiteConnect(object):
     # Validity
     VALIDITY_DAY = "DAY"
     VALIDITY_IOC = "IOC"
+    VALIDITY_TTL = "TTL"
 
     # Position Type
     POSITION_TYPE_DAY = "day"
@@ -338,11 +340,14 @@ class KiteConnect(object):
                     order_type,
                     price=None,
                     validity=None,
+                    validity_ttl=None,
                     disclosed_quantity=None,
                     trigger_price=None,
                     squareoff=None,
                     stoploss=None,
                     trailing_stoploss=None,
+                    iceberg_legs=None,
+                    iceberg_quantity=None,
                     tag=None):
         """Place an order."""
         params = locals()

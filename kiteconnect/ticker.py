@@ -103,7 +103,8 @@ class KiteTickerClientProtocol(WebSocketClientProtocol):
     """
     Custom helper and exposed methods.
     """
-    def _loop_ping(self): # noqa
+
+    def _loop_ping(self):  # noqa
         """Start a ping loop where it sends ping message every X seconds."""
         if self.factory.debug:
             log.debug("ping => {}".format(self._ping_message))
