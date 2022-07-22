@@ -892,7 +892,7 @@ class KiteConnect(object):
                                         allow_redirects=True,
                                         timeout=self.timeout,
                                         proxies=self.proxies)
-        # Any requests lib related exceptions are raised here - http://docs.python-requests.org/en/master/_modules/requests/exceptions/
+        # Any requests lib related exceptions are raised here - https://requests.readthedocs.io/en/latest/api/#exceptions
         except Exception as e:
             raise e
 
@@ -902,7 +902,7 @@ class KiteConnect(object):
         # Validate the content type.
         if "json" in r.headers["content-type"]:
             try:
-                data = json.loads(r.content.decode("utf8"))
+                data = r.json()
             except ValueError:
                 raise ex.DataException("Couldn't parse the JSON response received from the server: {content}".format(
                     content=r.content))
