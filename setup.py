@@ -46,7 +46,6 @@ setup(
         "requests>=2.18.4",
         "six>=1.11.0",
         "pyOpenSSL>=17.5.0",
-        "enum34>=1.1.6",
         "python-dateutil>=2.6.1",
         "autobahn[twisted]==19.11.2"
     ],
