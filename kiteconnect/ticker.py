@@ -452,6 +452,9 @@ class KiteTicker(object):
         # Debug enables logs
         self.debug = debug
 
+        # Initialize default value for websocket object
+        self.ws = None
+
         # Placeholders for callbacks.
         self.on_ticks = None
         self.on_open = None
