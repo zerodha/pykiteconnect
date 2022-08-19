@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Kite Connect API client for Python -- [https://kite.trade](kite.trade).
+Kite Connect API client for Python -- [kite.trade](https://kite.trade).
 
 Zerodha Technology Pvt. Ltd. (c) 2021
 
