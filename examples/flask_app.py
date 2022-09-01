@@ -29,7 +29,9 @@ logging.basicConfig(level=logging.DEBUG)
 PORT = 5010
 HOST = "127.0.0.1"
 
-serializer = lambda obj: isinstance(obj, (date, datetime, Decimal)) and str(obj)  # noqa
+
+def serializer(obj): return isinstance(obj, (date, datetime, Decimal)) and str(obj)  # noqa
+
 
 # Kite Connect App settings. Go to https://developers.kite.trade/apps/
 # to create an app if you don't have one.
@@ -108,6 +110,7 @@ def login():
             default=serializer
         )
     )
+
 
 @app.route("/holdings.json")
 def holdings():

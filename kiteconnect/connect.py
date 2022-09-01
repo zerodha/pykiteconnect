@@ -42,7 +42,6 @@ class KiteConnect(object):
     PRODUCT_CNC = "CNC"
     PRODUCT_NRML = "NRML"
     PRODUCT_CO = "CO"
-    PRODUCT_BO = "BO"
 
     # Order types
     ORDER_TYPE_MARKET = "MARKET"
@@ -52,7 +51,6 @@ class KiteConnect(object):
 
     # Varities
     VARIETY_REGULAR = "regular"
-    VARIETY_BO = "bo"
     VARIETY_CO = "co"
     VARIETY_AMO = "amo"
     VARIETY_ICEBERG = "iceberg"
@@ -343,19 +341,16 @@ class KiteConnect(object):
                     validity_ttl=None,
                     disclosed_quantity=None,
                     trigger_price=None,
-                    squareoff=None,
-                    stoploss=None,
-                    trailing_stoploss=None,
                     iceberg_legs=None,
                     iceberg_quantity=None,
                     tag=None):
         """Place an order."""
         params = locals()
-        del(params["self"])
+        del (params["self"])
 
         for k in list(params.keys()):
             if params[k] is None:
-                del(params[k])
+                del (params[k])
 
         return self._post("order.place",
                           url_args={"variety": variety},
@@ -373,11 +368,11 @@ class KiteConnect(object):
                      disclosed_quantity=None):
         """Modify an open order."""
         params = locals()
-        del(params["self"])
+        del (params["self"])
 
         for k in list(params.keys()):
             if params[k] is None:
-                del(params[k])
+                del (params[k])
 
         return self._put("order.modify",
                          url_args={"variety": variety, "order_id": order_id},
@@ -390,7 +385,7 @@ class KiteConnect(object):
                             params={"parent_order_id": parent_order_id})["order_id"]
 
     def exit_order(self, variety, order_id, parent_order_id=None):
-        """Exit a BO/CO order."""
+        """Exit a CO order."""
         return self.cancel_order(variety, order_id, parent_order_id=parent_order_id)
 
     def _format_response(self, data):
