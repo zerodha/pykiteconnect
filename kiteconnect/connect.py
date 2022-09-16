@@ -16,6 +16,7 @@ import hashlib
 import logging
 import datetime
 import requests
+import warnings
 
 from .__version__ import __version__, __title__
 import kiteconnect.exceptions as ex
@@ -42,6 +43,7 @@ class KiteConnect(object):
     PRODUCT_CNC = "CNC"
     PRODUCT_NRML = "NRML"
     PRODUCT_CO = "CO"
+    # BO property to be depreciated
     PRODUCT_BO = "BO"
 
     # Order types
@@ -52,6 +54,7 @@ class KiteConnect(object):
 
     # Varities
     VARIETY_REGULAR = "regular"
+    # BO property to be depreciated
     VARIETY_BO = "bo"
     VARIETY_CO = "co"
     VARIETY_AMO = "amo"
@@ -159,6 +162,8 @@ class KiteConnect(object):
         "order.margins": "/margins/orders",
         "order.margins.basket": "/margins/basket"
     }
+
+    _warnmsg = "All BO properties are deprecated. It will be removed in the next release. Know more here: https://support.zerodha.com/category/trading-and-markets/trading-faqs/articles/why-bo-stopped"
 
     def __init__(self,
                  api_key,
@@ -350,12 +355,16 @@ class KiteConnect(object):
                     iceberg_quantity=None,
                     tag=None):
         """Place an order."""
+        # raise warning for BO deprecated properties
+        if squareoff or stoploss or trailing_stoploss:
+            self._warn(self._warnmsg)
+
         params = locals()
-        del(params["self"])
+        del (params["self"])
 
         for k in list(params.keys()):
             if params[k] is None:
-                del(params[k])
+                del (params[k])
 
         return self._post("order.place",
                           url_args={"variety": variety},
@@ -373,11 +382,11 @@ class KiteConnect(object):
                      disclosed_quantity=None):
         """Modify an open order."""
         params = locals()
-        del(params["self"])
+        del (params["self"])
 
         for k in list(params.keys()):
             if params[k] is None:
-                del(params[k])
+                del (params[k])
 
         return self._put("order.modify",
                          url_args={"variety": variety, "order_id": order_id},
@@ -390,7 +399,7 @@ class KiteConnect(object):
                             params={"parent_order_id": parent_order_id})["order_id"]
 
     def exit_order(self, variety, order_id, parent_order_id=None):
-        """Exit a BO/CO order."""
+        """Exit a CO order."""
         return self.cancel_order(variety, order_id, parent_order_id=parent_order_id)
 
     def _format_response(self, data):
@@ -782,6 +791,11 @@ class KiteConnect(object):
                           is_json=True,
                           query_params={'consider_positions': consider_positions, 'mode': mode})
 
+    def _warn(self, message):
+        """ Add deprecation warning message """
+        warnings.simplefilter('always', DeprecationWarning)
+        warnings.warn(message, DeprecationWarning)
+
     def _parse_instruments(self, data):
         # decode to string for Python 3
         d = data
@@ -924,3 +938,9 @@ class KiteConnect(object):
             raise ex.DataException("Unknown Content-Type ({content_type}) with response: ({content})".format(
                 content_type=r.headers["content-type"],
                 content=r.content))
+
+    def __getattribute__(self, name):
+        """ Show deprecation warning for all BO attributes """
+        if name in ["VARIETY_BO", "PRODUCT_BO"]:
+            self._warn(self._warnmsg)
+        return object.__getattribute__(self, name)
