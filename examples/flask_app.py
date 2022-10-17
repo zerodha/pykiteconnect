@@ -29,7 +29,9 @@ logging.basicConfig(level=logging.DEBUG)
 PORT = 5010
 HOST = "127.0.0.1"
 
-serializer = lambda obj: isinstance(obj, (date, datetime, Decimal)) and str(obj)  # noqa
+
+def serializer(obj): return isinstance(obj, (date, datetime, Decimal)) and str(obj)  # noqa
+
 
 # Kite Connect App settings. Go to https://developers.kite.trade/apps/
 # to create an app if you don't have one.
@@ -40,7 +42,7 @@ kite_api_secret = "kite_api_secret"
 redirect_url = "http://{host}:{port}/login".format(host=HOST, port=PORT)
 
 # Login url
-login_url = "https://kite.trade/connect/login?api_key={api_key}".format(api_key=kite_api_key)
+login_url = "https://kite.zerodha.com/connect/login?api_key={api_key}".format(api_key=kite_api_key)
 
 # Kite connect console url
 console_url = "https://developers.kite.trade/apps/{api_key}".format(api_key=kite_api_key)
@@ -108,6 +110,7 @@ def login():
             default=serializer
         )
     )
+
 
 @app.route("/holdings.json")
 def holdings():
