@@ -16,6 +16,7 @@ import hashlib
 import logging
 import datetime
 import requests
+import warnings
 
 from .__version__ import __version__, __title__
 import kiteconnect.exceptions as ex
@@ -157,6 +158,8 @@ class KiteConnect(object):
         "order.margins": "/margins/orders",
         "order.margins.basket": "/margins/basket"
     }
+
+    _warnmsg = "All BO properties are deprecated. It will be removed in the next release. Know more here: https://support.zerodha.com/category/trading-and-markets/trading-faqs/articles/why-bo-stopped"
 
     def __init__(self,
                  api_key,
@@ -345,6 +348,10 @@ class KiteConnect(object):
                     iceberg_quantity=None,
                     tag=None):
         """Place an order."""
+        # raise warning for BO deprecated properties
+        if squareoff or stoploss or trailing_stoploss:
+            self._warn(self._warnmsg)
+
         params = locals()
         del (params["self"])
 
@@ -777,6 +784,11 @@ class KiteConnect(object):
                           is_json=True,
                           query_params={'consider_positions': consider_positions, 'mode': mode})
 
+    def _warn(self, message):
+        """ Add deprecation warning message """
+        warnings.simplefilter('always', DeprecationWarning)
+        warnings.warn(message, DeprecationWarning)
+
     def _parse_instruments(self, data):
         # decode to string for Python 3
         d = data
@@ -919,3 +931,9 @@ class KiteConnect(object):
             raise ex.DataException("Unknown Content-Type ({content_type}) with response: ({content})".format(
                 content_type=r.headers["content-type"],
                 content=r.content))
+
+    def __getattribute__(self, name):
+        """ Show deprecation warning for all BO attributes """
+        if name in ["VARIETY_BO", "PRODUCT_BO"]:
+            self._warn(self._warnmsg)
+        return object.__getattribute__(self, name)
