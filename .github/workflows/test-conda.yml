@@ -9,7 +9,7 @@ jobs:
       max-parallel: 3
       fail-fast: false
       matrix:
-        os: ["ubuntu-latest", "windows-latest"]
+        os: ["ubuntu-20.04", "windows-latest"]
         python-version: [2.7, 3.5, 3.6, 3.7, 3.8, 3.9, "3.10"]
     steps:
       - uses: conda-incubator/setup-miniconda@v2
