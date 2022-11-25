@@ -22,7 +22,7 @@ def get_fake_delete(self, route, params=None):
 class TestKiteConnectObject:
 
     def test_login_url(self, kiteconnect):
-        assert kiteconnect.login_url() == "https://kite.trade/connect/login?api_key=<API-KEY>&v=3"
+        assert kiteconnect.login_url() == "https://kite.zerodha.com/connect/login?api_key=<API-KEY>&v=3"
 
     def test_request_without_pooling(self, kiteconnect):
         assert isinstance(kiteconnect.reqsession, requests.Session) is False
