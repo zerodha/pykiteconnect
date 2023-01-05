@@ -4,7 +4,7 @@
 
     API wrapper for Kite Connect REST APIs.
 
-    :copyright: (c) 2018 by Zerodha Technology.
+    :copyright: (c) 2021 by Zerodha Technology.
     :license: see LICENSE for details.
 """
 from six import StringIO, PY2
@@ -18,6 +18,7 @@ import hashlib
 import logging
 import datetime
 import requests
+import warnings
 
 from .__version__ import __version__, __title__
 import kiteconnect.exceptions as ex
@@ -35,8 +36,11 @@ class KiteConnect(object):
     # Default root API endpoint. It's possible to
     # override this by passing the `root` parameter during initialisation.
     _default_root_uri = "https://api.kite.trade"
-    _default_login_uri = "https://kite.trade/connect/login"
+    _default_login_uri = "https://kite.zerodha.com/connect/login"
     _default_timeout = 7  # In seconds
+
+    # Kite connect header version
+    kite_header_version = "3"
 
     # Constants
     # Products
@@ -44,6 +48,7 @@ class KiteConnect(object):
     PRODUCT_CNC = "CNC"
     PRODUCT_NRML = "NRML"
     PRODUCT_CO = "CO"
+    # BO property to be depreciated
     PRODUCT_BO = "BO"
 
     # Order types
@@ -54,9 +59,11 @@ class KiteConnect(object):
 
     # Varities
     VARIETY_REGULAR = "regular"
+    # BO property to be depreciated
     VARIETY_BO = "bo"
     VARIETY_CO = "co"
     VARIETY_AMO = "amo"
+    VARIETY_ICEBERG = "iceberg"
 
     # Transaction type
     TRANSACTION_TYPE_BUY = "BUY"
@@ -65,6 +72,7 @@ class KiteConnect(object):
     # Validity
     VALIDITY_DAY = "DAY"
     VALIDITY_IOC = "IOC"
+    VALIDITY_TTL = "TTL"
 
     # Position Type
     POSITION_TYPE_DAY = "day"
@@ -77,6 +85,7 @@ class KiteConnect(object):
     EXCHANGE_CDS = "CDS"
     EXCHANGE_BFO = "BFO"
     EXCHANGE_MCX = "MCX"
+    EXCHANGE_BCD = "BCD"
 
     # Margins segments
     MARGIN_EQUITY = "equity"
@@ -159,6 +168,8 @@ class KiteConnect(object):
         "order.margins.basket": "/margins/basket"
     }
 
+    _warnmsg = "All BO properties are deprecated. It will be removed in the next release. Know more here: https://support.zerodha.com/category/trading-and-markets/trading-faqs/articles/why-bo-stopped"
+
     def __init__(self,
                  api_key,
                  access_token=None,
@@ -200,14 +211,12 @@ class KiteConnect(object):
         self.root = root or self._default_root_uri
         self.timeout = timeout or self._default_timeout
 
-        # Create requests session only if pool exists. Reuse session
-        # for every request. Otherwise create session for each request
+        # Create requests session by default
+        # Same session to be used by pool connections
+        self.reqsession = requests.Session()
         if pool:
-            self.reqsession = requests.Session()
             reqadapter = requests.adapters.HTTPAdapter(**pool)
             self.reqsession.mount("https://", reqadapter)
-        else:
-            self.reqsession = requests
 
         # disable requests SSL warning
         requests.packages.urllib3.disable_warnings()
@@ -238,7 +247,7 @@ class KiteConnect(object):
 
     def login_url(self):
         """Get the remote login url to which a user should be redirected to initiate the login flow."""
-        return "%s?api_key=%s&v=3" % (self._default_login_uri, self.api_key)
+        return "%s?api_key=%s&v=%s" % (self._default_login_uri, self.api_key, self.kite_header_version)
 
     def generate_session(self, request_token, api_secret):
         """
@@ -336,19 +345,26 @@ class KiteConnect(object):
                     order_type,
                     price=None,
                     validity=None,
+                    validity_ttl=None,
                     disclosed_quantity=None,
                     trigger_price=None,
                     squareoff=None,
                     stoploss=None,
                     trailing_stoploss=None,
+                    iceberg_legs=None,
+                    iceberg_quantity=None,
                     tag=None):
         """Place an order."""
+        # raise warning for BO deprecated properties
+        if squareoff or stoploss or trailing_stoploss:
+            self._warn(self._warnmsg)
+
         params = locals()
-        del(params["self"])
+        del (params["self"])
 
         for k in list(params.keys()):
             if params[k] is None:
-                del(params[k])
+                del (params[k])
 
         return self._post("order.place",
                           url_args={"variety": variety},
@@ -366,11 +382,11 @@ class KiteConnect(object):
                      disclosed_quantity=None):
         """Modify an open order."""
         params = locals()
-        del(params["self"])
+        del (params["self"])
 
         for k in list(params.keys()):
             if params[k] is None:
-                del(params[k])
+                del (params[k])
 
         return self._put("order.modify",
                          url_args={"variety": variety, "order_id": order_id},
@@ -383,7 +399,7 @@ class KiteConnect(object):
                             params={"parent_order_id": parent_order_id})["order_id"]
 
     def exit_order(self, variety, order_id, parent_order_id=None):
-        """Exit a BO/CO order."""
+        """Exit a CO order."""
         return self.cancel_order(variety, order_id, parent_order_id=parent_order_id)
 
     def _format_response(self, data):
@@ -777,6 +793,11 @@ class KiteConnect(object):
                           is_json=True,
                           query_params={'consider_positions': consider_positions, 'mode': mode})
 
+    def _warn(self, message):
+        """ Add deprecation warning message """
+        warnings.simplefilter('always', DeprecationWarning)
+        warnings.warn(message, DeprecationWarning)
+
     def _parse_instruments(self, data):
         # decode to string for Python 3
         d = data
@@ -843,7 +864,7 @@ class KiteConnect(object):
 
         # Custom headers
         headers = {
-            "X-Kite-Version": "3",  # For version 3
+            "X-Kite-Version": self.kite_header_version,
             "User-Agent": self._user_agent()
         }
 
@@ -870,7 +891,7 @@ class KiteConnect(object):
                                         allow_redirects=True,
                                         timeout=self.timeout,
                                         proxies=self.proxies)
-        # Any requests lib related exceptions are raised here - http://docs.python-requests.org/en/master/_modules/requests/exceptions/
+        # Any requests lib related exceptions are raised here - https://requests.readthedocs.io/en/latest/api/#exceptions
         except Exception as e:
             raise e
 
@@ -880,7 +901,7 @@ class KiteConnect(object):
         # Validate the content type.
         if "json" in r.headers["content-type"]:
             try:
-                data = json.loads(r.content.decode("utf8"))
+                data = r.json()
             except ValueError:
                 raise ex.DataException("Couldn't parse the JSON response received from the server: {content}".format(
                     content=r.content))
@@ -907,3 +928,9 @@ class KiteConnect(object):
             raise ex.DataException("Unknown Content-Type ({content_type}) with response: ({content})".format(
                 content_type=r.headers["content-type"],
                 content=r.content))
+
+    def __getattribute__(self, name):
+        """ Show deprecation warning for all BO attributes """
+        if name in ["VARIETY_BO", "PRODUCT_BO"]:
+            self._warn(self._warnmsg)
+        return object.__getattribute__(self, name)

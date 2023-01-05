@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Kite Connect API client for Python -- [https://kite.trade](kite.trade).
+Kite Connect API client for Python -- [kite.trade](https://kite.trade).
 
-Zerodha technologies (c) 2018
+Zerodha Technology Pvt. Ltd. (c) 2021
 
 License
 -------
@@ -43,12 +43,14 @@ Getting started
 
     # Place an order
     try:
-        order_id = kite.place_order(tradingsymbol="INFY",
+        order_id = kite.place_order(variety=kite.VARIETY_REGULAR,
+                                    tradingsymbol="INFY",
                                     exchange=kite.EXCHANGE_NSE,
                                     transaction_type=kite.TRANSACTION_TYPE_BUY,
                                     quantity=1,
                                     order_type=kite.ORDER_TYPE_MARKET,
-                                    product=kite.PRODUCT_NRML)
+                                    product=kite.PRODUCT_CNC,
+                                    validity=kite.VALIDITY_DAY)
 
         logging.info("Order placed. ID is: {}".format(order_id))
     except Exception as e:

@@ -8,8 +8,8 @@ jobs:
       max-parallel: 3
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
-        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, pypy2, pypy3]
+        os: [ubuntu-20.04, windows-latest]
+        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, 3.9, "3.10", pypy2, pypy3]
         exclude:
           - os: windows-latest
             python-version: pypy3
@@ -44,12 +44,12 @@ jobs:
 
       # Build and publish if its a new tag and use latest Python version to push dists
       - name: Build
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags') && matrix.os == 'ubuntu-latest' && matrix.python-version == '3.8'
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags') && matrix.os == 'ubuntu-20.04' && matrix.python-version == '3.8'
         run: |
           python setup.py sdist bdist_wheel
 
       - name: Publish package to TestPyPI
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags') && matrix.os == 'ubuntu-latest' && matrix.python-version == '3.8'
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags') && matrix.os == 'ubuntu-20.04' && matrix.python-version == '3.8'
         uses: pypa/gh-action-pypi-publish@master
         with:
           verbose: true

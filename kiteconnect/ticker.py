@@ -4,7 +4,7 @@
 
     Websocket implementation for kite ticker
 
-    :copyright: (c) 2017 by Zerodha Technology.
+    :copyright: (c) 2021 by Zerodha Technology Pvt. Ltd.
     :license: see LICENSE for details.
 """
 import six
@@ -103,7 +103,8 @@ class KiteTickerClientProtocol(WebSocketClientProtocol):
     """
     Custom helper and exposed methods.
     """
-    def _loop_ping(self): # noqa
+
+    def _loop_ping(self):  # noqa
         """Start a ping loop where it sends ping message every X seconds."""
         if self.factory.debug:
             log.debug("ping => {}".format(self._ping_message))
@@ -197,6 +198,8 @@ class KiteTickerClientFactory(WebSocketClientFactory, ReconnectingClientFactory)
         if self.maxRetries is not None and (self.retries > self.maxRetries):
             if self.debug:
                 log.debug("Maximum retries ({}) exhausted.".format(self.maxRetries))
+                # Stop the loop for exceeding max retry attempts
+                self.stop()
 
             if self.on_noreconnect:
                 self.on_noreconnect()
@@ -271,15 +274,15 @@ class KiteTicker(object):
         [{
             'instrument_token': 53490439,
             'mode': 'full',
-            'volume': 12510,
+            'volume_traded': 12510,
             'last_price': 4084.0,
-            'average_price': 4086.55,
-            'last_quantity': 1,
-            'buy_quantity': 2356
-            'sell_quantity': 2440,
+            'average_traded_price': 4086.55,
+            'last_traded_quantity': 1,
+            'total_buy_quantity': 2356
+            'total_sell_quantity': 2440,
             'change': 0.46740467404674046,
             'last_trade_time': datetime.datetime(2018, 1, 15, 13, 16, 54),
-            'timestamp': datetime.datetime(2018, 1, 15, 13, 16, 56),
+            'exchange_timestamp': datetime.datetime(2018, 1, 15, 13, 16, 56),
             'oi': 21845,
             'oi_day_low': 0,
             'oi_day_high': 0,
@@ -363,10 +366,13 @@ class KiteTicker(object):
         "cds": 3,
         "bse": 4,
         "bfo": 5,
-        "bsecds": 6,
+        "bcd": 6,
         "mcx": 7,
         "mcxsx": 8,
-        "indices": 9
+        "indices": 9,
+        # bsecds is replaced with it's official segment name bcd
+        # so,bsecds key will be depreciated in next version
+        "bsecds": 6,
     }
 
     # Default connection timeout
@@ -447,6 +453,9 @@ class KiteTicker(object):
 
         # Debug enables logs
         self.debug = debug
+
+        # Initialize default value for websocket object
+        self.ws = None
 
         # Placeholders for callbacks.
         self.on_ticks = None
@@ -591,7 +600,7 @@ class KiteTicker(object):
 
             for token in instrument_tokens:
                 try:
-                    del(self.subscribed_tokens[token])
+                    del (self.subscribed_tokens[token])
                 except KeyError:
                     pass
 
@@ -720,7 +729,13 @@ class KiteTicker(object):
             instrument_token = self._unpack_int(packet, 0, 4)
             segment = instrument_token & 0xff  # Retrive segment constant from instrument_token
 
-            divisor = 10000000.0 if segment == self.EXCHANGE_MAP["cds"] else 100.0
+            # Add price divisor based on segment
+            if segment == self.EXCHANGE_MAP["cds"]:
+                divisor = 10000000.0
+            elif segment == self.EXCHANGE_MAP["bcd"]:
+                divisor = 10000.0
+            else:
+                divisor = 100.0
 
             # All indices are not tradable
             tradable = False if segment == self.EXCHANGE_MAP["indices"] else True
@@ -752,7 +767,7 @@ class KiteTicker(object):
 
                 # Compute the change price using close price and last price
                 d["change"] = 0
-                if(d["ohlc"]["close"] != 0):
+                if (d["ohlc"]["close"] != 0):
                     d["change"] = (d["last_price"] - d["ohlc"]["close"]) * 100 / d["ohlc"]["close"]
 
                 # Full mode with timestamp
@@ -762,7 +777,7 @@ class KiteTicker(object):
                     except Exception:
                         timestamp = None
 
-                    d["timestamp"] = timestamp
+                    d["exchange_timestamp"] = timestamp
 
                 data.append(d)
             # Quote and full mode
@@ -774,11 +789,11 @@ class KiteTicker(object):
                     "mode": mode,
                     "instrument_token": instrument_token,
                     "last_price": self._unpack_int(packet, 4, 8) / divisor,
-                    "last_quantity": self._unpack_int(packet, 8, 12),
-                    "average_price": self._unpack_int(packet, 12, 16) / divisor,
-                    "volume": self._unpack_int(packet, 16, 20),
-                    "buy_quantity": self._unpack_int(packet, 20, 24),
-                    "sell_quantity": self._unpack_int(packet, 24, 28),
+                    "last_traded_quantity": self._unpack_int(packet, 8, 12),
+                    "average_traded_price": self._unpack_int(packet, 12, 16) / divisor,
+                    "volume_traded": self._unpack_int(packet, 16, 20),
+                    "total_buy_quantity": self._unpack_int(packet, 20, 24),
+                    "total_sell_quantity": self._unpack_int(packet, 24, 28),
                     "ohlc": {
                         "open": self._unpack_int(packet, 28, 32) / divisor,
                         "high": self._unpack_int(packet, 32, 36) / divisor,
@@ -789,7 +804,7 @@ class KiteTicker(object):
 
                 # Compute the change price using close price and last price
                 d["change"] = 0
-                if(d["ohlc"]["close"] != 0):
+                if (d["ohlc"]["close"] != 0):
                     d["change"] = (d["last_price"] - d["ohlc"]["close"]) * 100 / d["ohlc"]["close"]
 
                 # Parse full mode
@@ -808,7 +823,7 @@ class KiteTicker(object):
                     d["oi"] = self._unpack_int(packet, 48, 52)
                     d["oi_day_high"] = self._unpack_int(packet, 52, 56)
                     d["oi_day_low"] = self._unpack_int(packet, 56, 60)
-                    d["timestamp"] = timestamp
+                    d["exchange_timestamp"] = timestamp
 
                     # Market depth entries.
                     depth = {

@@ -94,4 +94,4 @@ try:
     logging.info("Required margin for basket order in compact form: {}".format(margin_amount_comt))
 
 except Exception as e:
-    logging.info("Required order margin: {}".format(e))
+    logging.info("Error fetching order margin: {}".format(e))
