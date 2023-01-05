@@ -34,8 +34,11 @@ class KiteConnect(object):
     # Default root API endpoint. It's possible to
     # override this by passing the `root` parameter during initialisation.
     _default_root_uri = "https://api.kite.trade"
-    _default_login_uri = "https://kite.trade/connect/login"
+    _default_login_uri = "https://kite.zerodha.com/connect/login"
     _default_timeout = 7  # In seconds
+
+    # Kite connect header version
+    kite_header_version = "3"
 
     # Constants
     # Products
@@ -202,14 +205,12 @@ class KiteConnect(object):
         self.root = root or self._default_root_uri
         self.timeout = timeout or self._default_timeout
 
-        # Create requests session only if pool exists. Reuse session
-        # for every request. Otherwise create session for each request
+        # Create requests session by default
+        # Same session to be used by pool connections
+        self.reqsession = requests.Session()
         if pool:
-            self.reqsession = requests.Session()
             reqadapter = requests.adapters.HTTPAdapter(**pool)
             self.reqsession.mount("https://", reqadapter)
-        else:
-            self.reqsession = requests
 
         # disable requests SSL warning
         requests.packages.urllib3.disable_warnings()
@@ -240,7 +241,7 @@ class KiteConnect(object):
 
     def login_url(self):
         """Get the remote login url to which a user should be redirected to initiate the login flow."""
-        return "%s?api_key=%s&v=3" % (self._default_login_uri, self.api_key)
+        return "%s?api_key=%s&v=%s" % (self._default_login_uri, self.api_key, self.kite_header_version)
 
     def generate_session(self, request_token, api_secret):
         """
@@ -872,7 +873,7 @@ class KiteConnect(object):
 
         # Custom headers
         headers = {
-            "X-Kite-Version": "3",  # For version 3
+            "X-Kite-Version": self.kite_header_version,
             "User-Agent": self._user_agent()
         }
 

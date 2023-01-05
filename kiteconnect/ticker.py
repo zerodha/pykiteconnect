@@ -198,6 +198,8 @@ class KiteTickerClientFactory(WebSocketClientFactory, ReconnectingClientFactory)
         if self.maxRetries is not None and (self.retries > self.maxRetries):
             if self.debug:
                 log.debug("Maximum retries ({}) exhausted.".format(self.maxRetries))
+                # Stop the loop for exceeding max retry attempts
+                self.stop()
 
             if self.on_noreconnect:
                 self.on_noreconnect()
@@ -452,6 +454,9 @@ class KiteTicker(object):
         # Debug enables logs
         self.debug = debug
 
+        # Initialize default value for websocket object
+        self.ws = None
+
         # Placeholders for callbacks.
         self.on_ticks = None
         self.on_open = None
@@ -595,7 +600,7 @@ class KiteTicker(object):
 
             for token in instrument_tokens:
                 try:
-                    del(self.subscribed_tokens[token])
+                    del (self.subscribed_tokens[token])
                 except KeyError:
                     pass
 
@@ -762,7 +767,7 @@ class KiteTicker(object):
 
                 # Compute the change price using close price and last price
                 d["change"] = 0
-                if(d["ohlc"]["close"] != 0):
+                if (d["ohlc"]["close"] != 0):
                     d["change"] = (d["last_price"] - d["ohlc"]["close"]) * 100 / d["ohlc"]["close"]
 
                 # Full mode with timestamp
@@ -799,7 +804,7 @@ class KiteTicker(object):
 
                 # Compute the change price using close price and last price
                 d["change"] = 0
-                if(d["ohlc"]["close"] != 0):
+                if (d["ohlc"]["close"] != 0):
                     d["change"] = (d["last_price"] - d["ohlc"]["close"]) * 100 / d["ohlc"]["close"]
 
                 # Parse full mode

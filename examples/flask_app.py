@@ -42,7 +42,7 @@ kite_api_secret = "kite_api_secret"
 redirect_url = "http://{host}:{port}/login".format(host=HOST, port=PORT)
 
 # Login url
-login_url = "https://kite.trade/connect/login?api_key={api_key}".format(api_key=kite_api_key)
+login_url = "https://kite.zerodha.com/connect/login?api_key={api_key}".format(api_key=kite_api_key)
 
 # Kite connect console url
 console_url = "https://developers.kite.trade/apps/{api_key}".format(api_key=kite_api_key)

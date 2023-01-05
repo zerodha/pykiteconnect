@@ -28,7 +28,7 @@ try:
 
     logging.info("Order placed. ID is: {}".format(order_id))
 except Exception as e:
-    logging.info("Order placement failed: {}".format(e.message))
+    logging.info("Order placement failed: {}".format(e))
 
 # Fetch all orders
 kite.orders()
