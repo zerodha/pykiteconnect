@@ -43,6 +43,19 @@ def test_holdings(kiteconnect):
 
 
 @responses.activate
+def test_auction_instruments(kiteconnect):
+    """Test get_auction_instruments."""
+    responses.add(
+        responses.GET,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["portfolio.holdings.auction"]),
+        body=utils.get_response("portfolio.holdings.auction"),
+        content_type="application/json"
+    )
+    auction_inst = kiteconnect.get_auction_instruments()
+    assert type(auction_inst) == list
+
+
+@responses.activate
 def test_margins(kiteconnect):
     """Test margins."""
     responses.add(
