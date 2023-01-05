@@ -46,8 +46,6 @@ class KiteConnect(object):
     PRODUCT_CNC = "CNC"
     PRODUCT_NRML = "NRML"
     PRODUCT_CO = "CO"
-    # BO property to be depreciated
-    PRODUCT_BO = "BO"
 
     # Order types
     ORDER_TYPE_MARKET = "MARKET"
@@ -57,8 +55,6 @@ class KiteConnect(object):
 
     # Varities
     VARIETY_REGULAR = "regular"
-    # BO property to be depreciated
-    VARIETY_BO = "bo"
     VARIETY_CO = "co"
     VARIETY_AMO = "amo"
     VARIETY_ICEBERG = "iceberg"
@@ -165,8 +161,6 @@ class KiteConnect(object):
         "order.margins": "/margins/orders",
         "order.margins.basket": "/margins/basket"
     }
-
-    _warnmsg = "All BO properties are deprecated. It will be removed in the next release. Know more here: https://support.zerodha.com/category/trading-and-markets/trading-faqs/articles/why-bo-stopped"
 
     def __init__(self,
                  api_key,
@@ -349,17 +343,10 @@ class KiteConnect(object):
                     validity_ttl=None,
                     disclosed_quantity=None,
                     trigger_price=None,
-                    squareoff=None,
-                    stoploss=None,
-                    trailing_stoploss=None,
                     iceberg_legs=None,
                     iceberg_quantity=None,
                     tag=None):
         """Place an order."""
-        # raise warning for BO deprecated properties
-        if squareoff or stoploss or trailing_stoploss:
-            self._warn(self._warnmsg)
-
         params = locals()
         del (params["self"])
 
@@ -939,9 +926,3 @@ class KiteConnect(object):
             raise ex.DataException("Unknown Content-Type ({content_type}) with response: ({content})".format(
                 content_type=r.headers["content-type"],
                 content=r.content))
-
-    def __getattribute__(self, name):
-        """ Show deprecation warning for all BO attributes """
-        if name in ["VARIETY_BO", "PRODUCT_BO"]:
-            self._warn(self._warnmsg)
-        return object.__getattribute__(self, name)
