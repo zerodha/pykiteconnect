@@ -59,6 +59,13 @@ def test_holdings(kiteconnect):
     utils.assert_responses(holdings, mock_resp)
 
 
+def test_auction_instruments(kiteconnect):
+    """ Test get_auction_instruments """
+    auction_inst = kiteconnect.get_auction_instruments()
+    mock_resp = utils.get_json_response("portfolio.holdings.auction")["data"]
+    utils.assert_responses(auction_inst, mock_resp)
+
+
 def test_margins(kiteconnect):
     """Test margins."""
     margins = kiteconnect.margins()

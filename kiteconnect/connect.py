@@ -58,6 +58,7 @@ class KiteConnect(object):
     VARIETY_CO = "co"
     VARIETY_AMO = "amo"
     VARIETY_ICEBERG = "iceberg"
+    VARIETY_AUCTION = "auction"
 
     # Transaction type
     TRANSACTION_TYPE_BUY = "BUY"
@@ -123,6 +124,7 @@ class KiteConnect(object):
 
         "portfolio.positions": "/portfolio/positions",
         "portfolio.holdings": "/portfolio/holdings",
+        "portfolio.holdings.auction": "/portfolio/holdings/auctions",
         "portfolio.positions.convert": "/portfolio/positions",
 
         # MF api endpoints
@@ -345,6 +347,7 @@ class KiteConnect(object):
                     trigger_price=None,
                     iceberg_legs=None,
                     iceberg_quantity=None,
+                    auction_number=None,
                     tag=None):
         """Place an order."""
         params = locals()
@@ -443,6 +446,10 @@ class KiteConnect(object):
     def holdings(self):
         """Retrieve the list of equity holdings."""
         return self._get("portfolio.holdings")
+
+    def get_auction_instruments(self):
+        """ Retrieves list of available instruments for a auction session """
+        return self._get("portfolio.holdings.auction")
 
     def convert_position(self,
                          exchange,

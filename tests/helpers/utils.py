@@ -16,6 +16,7 @@ responses_path = {
 
     "portfolio.positions": "positions.json",
     "portfolio.holdings": "holdings.json",
+    "portfolio.holdings.auction": "auctions_list.json",
 
     # MF api endpoints
     "mf.orders": "mf_orders.json",
