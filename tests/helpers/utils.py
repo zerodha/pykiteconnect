@@ -41,7 +41,11 @@ responses_path = {
     "gtt.place": "gtt_place_order.json",
     "gtt.info": "gtt_get_order.json",
     "gtt.modify": "gtt_modify_order.json",
-    "gtt.delete": "gtt_delete_order.json"
+    "gtt.delete": "gtt_delete_order.json",
+
+    # Order margin & charges
+    "order.margins": "order_margins.json",
+    "order.margins.basket": "basket_margins.json"
 }
 
 

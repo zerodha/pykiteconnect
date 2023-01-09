@@ -353,3 +353,67 @@ def test_delete_gtt(kiteconnect):
     )
     gtts = kiteconnect.delete_gtt(123)
     assert gtts["trigger_id"] == 123
+
+
+@responses.activate
+def test_order_margins(kiteconnect):
+    """ Test order margins and charges """
+    responses.add(
+        responses.POST,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["order.margins"]),
+        body=utils.get_response("order.margins"),
+        content_type="application/json"
+    )
+    order_param_single = [{
+        "exchange": "NSE",
+        "tradingsymbol": "INFY",
+        "transaction_type": "BUY",
+        "variety": "regular",
+        "product": "MIS",
+        "order_type": "MARKET",
+        "quantity": 2
+    }]
+
+    margin_detail = kiteconnect.order_margins(order_param_single)
+    # Order margins
+    assert margin_detail[0]['type'] == "equity"
+    assert margin_detail[0]['total'] != 0
+    # Order charges
+    assert margin_detail[0]['charges']['transaction_tax'] != 0
+    assert margin_detail[0]['charges']['gst']['total'] != 0
+
+
+@responses.activate
+def test_basket_order_margins(kiteconnect):
+    """ Test basket order margins and charges """
+    responses.add(
+        responses.POST,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["order.margins.basket"]),
+        body=utils.get_response("order.margins.basket"),
+        content_type="application/json"
+    )
+    order_param_multi = [{
+        "exchange": "NFO",
+        "tradingsymbol": "NIFTY23JANFUT",
+        "transaction_type": "BUY",
+        "variety": "regular",
+        "product": "MIS",
+        "order_type": "MARKET",
+        "quantity": 75
+    },
+        {
+        "exchange": "NFO",
+        "tradingsymbol": "NIFTY23JANFUT",
+        "transaction_type": "BUY",
+        "variety": "regular",
+        "product": "MIS",
+        "order_type": "MARKET",
+        "quantity": 75
+    }]
+
+    margin_detail = kiteconnect.basket_order_margins(order_param_multi)
+    # Order margins
+    assert margin_detail['orders'][0]['exposure'] != 0
+    assert margin_detail['orders'][0]['type'] == "equity"
+    # Order charges
+    assert margin_detail['orders'][0]['total'] != 0
