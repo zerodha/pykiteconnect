@@ -1,0 +1,8 @@
+# Define instrument token and trading symbol
+instrument_token = "13517826"
+trading_symbol = "NFO:BANKNIFTY2342041500PE"
+
+# Fetch LTP data
+ltp_data = kite.ltp(trading_symbol)
+ltp = ltp_data[trading_symbol]['last_price']
+print("LTP:", ltp)
