@@ -1,0 +1,145 @@
+# Add a flag to determine if the buy order was executed within 2 minutes
+buy_order_executed = False
+
+while True:
+    # Check net open positions
+    net_positions = kite.positions()["net"]
+
+    # Calculate net position quantity for BANKNIFTY2341342000CE
+    net_position_qty = 0
+    for position in net_positions:
+        if position["tradingsymbol"] == "BANKNIFTY2341342000CE" and position["product"] == "NRML":
+            net_position_qty = abs(position["quantity"])
+
+    if net_position_qty < 1000:
+        # Place sell order
+        try:
+            sell_order_id = kite.place_order(variety=kite.VARIETY_REGULAR,
+                                             exchange=kite.EXCHANGE_NFO,
+                                             tradingsymbol='BANKNIFTY2341342000CE',
+                                             transaction_type=kite.TRANSACTION_TYPE_SELL,
+                                             quantity=100,
+                                             product=kite.PRODUCT_NRML,
+                                             order_type=kite.ORDER_TYPE_LIMIT,
+                                             price=kite.ltp('NFO:BANKNIFTY2342041000PE')['NFO:BANKNIFTY2342041000PE']['last_price'] + 1,
+                                             validity=kite.VALIDITY_DAY)
+            print("Sell order placed successfully. ID:", sell_order_id)
+        except Exception as e:
+            print("Sell order placement failed:", e)
+            kite.invalidate_access_token(access_token)
+            exit()
+
+        # Wait for the sell order to complete
+        while True:
+            orders = kite.orders()
+            completed_orders = [order for order in orders if order["status"] == "COMPLETE" and order["tradingsymbol"] == "BANKNIFTY2341342000CE" and order["transaction_type"] == "SELL" and order["order_id"]==sell_order_id]
+            if completed_orders:
+                break
+            time.sleep(1)
+
+        # Extract last sell trade price
+        last_sell_trade_price = completed_orders[-1]['average_price']
+
+        # Place buy order
+        try:
+            order_id = kite.place_order(variety=kite.VARIETY_REGULAR,
+                                         exchange=kite.EXCHANGE_NFO,
+                                         tradingsymbol='BANKNIFTY2341342000CE',
+                                         transaction_type=kite.TRANSACTION_TYPE_BUY,
+                                         quantity=100,
+                                         product=kite.PRODUCT_NRML,
+                                         order_type=kite.ORDER_TYPE_LIMIT,
+                                         price=last_sell_trade_price - 1,
+                                         validity=kite.VALIDITY_DAY)
+            print("Buy order placed successfully. ID:", order_id)
+        except Exception as e:
+            print("Buy order placement failed:", e)
+
+        # Check the LTP and wait until it's more than Rs. 5 from the last sell trade price or 2 minutes have passed
+        start_time = time.time()
+        while True:
+            ltp = kite.ltp('NFO:BANKNIFTY2341342000CE')['NFO:BANKNIFTY2341342000CE']['last_price']
+
+            # Calculate net position quantity for BANKNIFTY2341342000CE
+            net_position_qty = 0
+            for position in net_positions:
+                if position["tradingsymbol"] == "BANKNIFTY2341342000CE" and position["product"] == "NRML":
+                    net_position_qty = abs(position["quantity"])
+
+            if ltp >= last_sell_trade_price + 5 or net_position_qty < 100 or time.time() - start_time >= 120:
+                break
+            print("Waiting for LTP to increase by Rs. 5...")
+
+    # Set the flag to False before entering the new loop
+    buy_order_executed = False
+
+    while True:
+        
+        # New loop to execute the sale order and place a buy order based on the conditions
+        while True:
+            
+            # Place the new sell order with LTP + 0.5
+            try:
+                new_sell_order_id = kite.place_order(variety=kite.VARIETY_REGULAR,
+                                                     exchange=kite.EXCHANGE_NFO,
+                                                     tradingsymbol='BANKNIFTY2341342000CE',
+                                                     transaction_type=kite.TRANSACTION_TYPE_SELL,
+                                                     quantity=100,
+                                                     product=kite.PRODUCT_NRML,
+                                                     order_type=kite.ORDER_TYPE_LIMIT,
+                                                     price=kite.ltp('NFO:BANKNIFTY2341342000CE')['NFO:BANKNIFTY2341342000CE']['last_price'] + 0.5,
+                                                     validity=kite.VALIDITY_DAY)
+                print("New sell order placed successfully. ID:", new_sell_order_id)
+            except Exception as e:
+                print("New sell order placement failed:", e)
+                break
+
+            # Wait for the new sell order to complete
+            while True:
+                orders = kite.orders()
+                completed_orders = [order for order in orders if order["status"] == "COMPLETE" and order["tradingsymbol"] == "BANKNIFTY2341342000CE" and order["transaction_type"] == "SELL" and order["order_id"]==new_sell_order_id]
+                if completed_orders:
+                    break
+                time.sleep(1)
+
+            # Extract last sell trade price
+            new_last_sell_trade_price = completed_orders[-1]['average_price']
+
+        # Check if the new buy order is executed within 2 minutes, otherwise break the loop
+        start_time = time.time()
+        while True:
+            try:
+                new_buy_order_id = kite.place_order(variety=kite.VARIETY_REGULAR,
+                                                     exchange=kite.EXCHANGE_NFO,
+                                                     tradingsymbol='BANKNIFTY2341342000CE',
+                                                     transaction_type=kite.TRANSACTION_TYPE_BUY,
+                                                     quantity=100,
+                                                     product=kite.PRODUCT_NRML,
+                                                     order_type=kite.ORDER_TYPE_LIMIT,
+                                                     price=kite.ltp('NFO:BANKNIFTY2341342000CE')['NFO:BANKNIFTY2341342000CE']['last_price'] - 0.5,
+                                                     validity=kite.VALIDITY_DAY)
+                print("New buy order placed successfully. ID:", new_buy_order_id)
+            except Exception as e:
+                print("New buy order placement failed:", e)
+            
+            orders = kite.orders()
+            completed_orders = [order for order in orders if order["status"] == "COMPLETE" and order["tradingsymbol"] == "BANKNIFTY2341342000CE" and order["transaction_type"] == "BUY" and order["order_id"]==new_buy_order_id]
+           
+            if completed_orders or time.time() - start_time >= 120:
+                break
+
+            time.sleep(1)
+
+        # If the new buy order is executed within 2 minutes, set the flag to True
+        if completed_orders:
+            buy_order_executed = True
+            
+        # If the new buy order is not executed within 2 minutes, break the inner loop
+        if not completed_orders:
+            break
+
+    if not buy_order_executed:
+        # Wait for 2 minutes before starting the outer loop again
+        print("Waiting for 2 minutes before starting the next iteration...")
+        
+        time.sleep(120)
