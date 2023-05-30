@@ -28,7 +28,7 @@ try:
         }]
 
     margin_detail = kite.order_margins(order_param_single)
-    logging.info("Required margin for single order: {}".format(order_param_single))    
+    logging.info("Required margin for single order: {}".format(margin_detail))    
     
     # Fetch margin detail for list of orders 
     order_param_multi = [{
