@@ -45,7 +45,8 @@ responses_path = {
 
     # Order margin & charges
     "order.margins": "order_margins.json",
-    "order.margins.basket": "basket_margins.json"
+    "order.margins.basket": "basket_margins.json",
+    "order.contract_note": "virtual_contract_note.json"
 }
 
 

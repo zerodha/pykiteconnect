@@ -417,3 +417,55 @@ def test_basket_order_margins(kiteconnect):
     assert margin_detail['orders'][0]['type'] == "equity"
     # Order charges
     assert margin_detail['orders'][0]['total'] != 0
+
+@responses.activate
+def test_virtual_contract_note(kiteconnect):
+    """ Test virtual contract note charges """
+    responses.add(
+        responses.POST,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["order.contract_note"]),
+        body=utils.get_response("order.contract_note"),
+        content_type="application/json"
+    )
+
+    order_book_params = [{
+        "order_id": "111111111",
+        "exchange": "NSE",
+        "tradingsymbol": "SBIN",
+        "transaction_type": "BUY",
+        "variety": "regular",
+        "product": "CNC",
+        "order_type": "MARKET",
+        "quantity": 1,
+        "average_price": 560
+    },
+	{
+        "order_id": "2222222222",
+        "exchange": "MCX",
+        "tradingsymbol": "GOLDPETAL23JULFUT",
+        "transaction_type": "SELL",
+        "variety": "regular",
+        "product": "NRML",
+        "order_type": "LIMIT",
+        "quantity": 1,
+        "average_price": 5862
+    },
+	{
+        "order_id": "3333333333",
+        "exchange": "NFO",
+        "tradingsymbol": "NIFTY2371317900PE",
+        "transaction_type": "BUY",
+        "variety": "regular",
+        "product": "NRML",
+        "order_type": "LIMIT",
+        "quantity": 100,
+        "average_price": 1.5
+    }]
+
+    order_book_charges = kiteconnect.get_virtual_contract_note(order_book_params)
+    # Order charges
+    assert order_book_charges[0]['charges']['transaction_tax_type'] == "stt"
+    assert order_book_charges[0]['charges']['total'] != 0
+    # CTT tax type
+    assert order_book_charges[1]['charges']['transaction_tax_type'] == "ctt"
+    assert order_book_charges[1]['charges']['total'] != 0
