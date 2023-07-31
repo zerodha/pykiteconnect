@@ -28,7 +28,7 @@ try:
         }]
 
     margin_detail = kite.order_margins(order_param_single)
-    logging.info("Required margin for single order: {}".format(order_param_single))    
+    logging.info("Required margin for single order: {}".format(margin_detail))    
     
     # Fetch margin detail for list of orders 
     order_param_multi = [{
@@ -92,3 +92,46 @@ try:
 
 except Exception as e:
     logging.info("Error fetching order margin: {}".format(e))
+
+
+# Fetch virtual contract note charges
+try:
+    order_book_params = [
+        {
+            "order_id": "111111111",
+            "exchange": "NSE",
+            "tradingsymbol": "SBIN",
+            "transaction_type": "BUY",
+            "variety": "regular",
+            "product": "CNC",
+            "order_type": "MARKET",
+            "quantity": 1,
+            "average_price": 560
+        },
+        {
+            "order_id": "2222222222",
+            "exchange": "MCX",
+            "tradingsymbol": "GOLDPETAL23AUGFUT",
+            "transaction_type": "SELL",
+            "variety": "regular",
+            "product": "NRML",
+            "order_type": "LIMIT",
+            "quantity": 1,
+            "average_price": 5862
+        },
+        {
+            "order_id": "3333333333",
+            "exchange": "NFO",
+            "tradingsymbol": "NIFTY23AUG17900PE",
+            "transaction_type": "BUY",
+            "variety": "regular",
+            "product": "NRML",
+            "order_type": "LIMIT",
+            "quantity": 100,
+            "average_price": 1.5
+        }]
+
+    order_book_charges = kite.get_virtual_contract_note(order_book_params)
+    logging.info("Virtual contract note charges: {}".format(order_book_charges))
+except Exception as e:
+    logging.info("Error fetching virtual contract note charges: {}".format(e))
