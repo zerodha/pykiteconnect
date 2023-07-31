@@ -18,8 +18,14 @@ Kite Connect is a set of REST-like APIs that expose many capabilities required t
 
 ## v4 - Breaking changes
 
-* Renamed ticker fields as per [kite connect doc](https://kite.trade/docs/connect/v3/websocket/#quote-packet-structure)
-* Renamed `bsecds` to `bcd` in `ticker.EXCHANGE_MAP`
+- Renamed ticker fields as per [kite connect doc](https://kite.trade/docs/connect/v3/websocket/#quote-packet-structure)
+- Renamed `bsecds` to `bcd` in `ticker.EXCHANGE_MAP`
+
+## v5 - Breaking changes
+
+- **Drop Support for Python 2.7**: Starting from version v5, support for Python 2.7 has been discontinued. This decision was made due to the [announcement](https://github.com/actions/setup-python/issues/672) by `setup-python`, which stopped supporting Python 2.x since May 2023.
+
+- **For Python 2.x Users**: If you are using Python 2.x, you can continue using the `kiteconnect` library, but please stick to the <= 4.x.x versions of the library. You can find the previous releases on the [PyKiteConnect GitHub Releases](https://github.com/zerodha/pykiteconnect/releases) page.
 
 ## Installing the client
 

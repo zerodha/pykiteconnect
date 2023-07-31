@@ -161,7 +161,8 @@ class KiteConnect(object):
 
         # Margin computation endpoints
         "order.margins": "/margins/orders",
-        "order.margins.basket": "/margins/basket"
+        "order.margins.basket": "/margins/basket",
+        "order.contract_note": "/charges/orders",
     }
 
     def __init__(self,
@@ -785,6 +786,15 @@ class KiteConnect(object):
                           params=params,
                           is_json=True,
                           query_params={'consider_positions': consider_positions, 'mode': mode})
+
+    def get_virtual_contract_note(self, params):
+        """
+        Calculates detailed charges order-wise for the order book
+        - `params` is list of orders to fetch charges detail
+        """
+        return self._post("order.contract_note",
+                          params=params,
+                          is_json=True)
 
     def _warn(self, message):
         """ Add deprecation warning message """
