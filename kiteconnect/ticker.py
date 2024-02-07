@@ -32,7 +32,6 @@ class KiteTickerClientProtocol(WebSocketClientProtocol):
     PING_INTERVAL = 2.5
     KEEPALIVE_INTERVAL = 5
 
-    _ping_message = ""
     _next_ping = None
     _next_pong_check = None
     _last_pong_time = None
@@ -107,14 +106,11 @@ class KiteTickerClientProtocol(WebSocketClientProtocol):
     def _loop_ping(self):  # noqa
         """Start a ping loop where it sends ping message every X seconds."""
         if self.factory.debug:
-            log.debug("ping => {}".format(self._ping_message))
             if self._last_ping_time:
                 log.debug("last ping was {} seconds back.".format(time.time() - self._last_ping_time))
 
         # Set current time as last ping time
         self._last_ping_time = time.time()
-        # Send a ping message to server
-        self.sendPing(self._ping_message)
 
         # Call self after X seconds
         self._next_ping = self.factory.reactor.callLater(self.PING_INTERVAL, self._loop_ping)
