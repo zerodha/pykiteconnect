@@ -493,13 +493,14 @@ class KiteTicker(object):
     def _user_agent(self):
         return (__title__ + "-python/").capitalize() + __version__
 
-    def connect(self, threaded=False, disable_ssl_verification=False, proxy=None):
+    def connect(self, threaded=False, disable_ssl_verification=False, proxy=None, installSignalHandlers=True):
         """
         Establish a websocket connection.
 
         - `threaded` is a boolean indicating if the websocket client has to be run in threaded mode or not
         - `disable_ssl_verification` disables building ssl context
         - `proxy` is a dictionary with keys `host` and `port` which denotes the proxy settings
+        - `installSignalHandlers` is a boolean indicating if signal handlers should be installed or not. Ignored if `threaded` is True
         """
         # Custom headers
         headers = {
@@ -534,6 +535,9 @@ class KiteTicker(object):
                 self.websocket_thread.daemon = True
                 self.websocket_thread.start()
             else:
+                if not installSignalHandlers:
+                    opts["installSignalHandlers"] = False
+
                 reactor.run(**opts)
 
     def is_connected(self):
