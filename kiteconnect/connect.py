@@ -11,7 +11,9 @@ from six import StringIO, PY2
 from six.moves.urllib.parse import urljoin
 import csv
 import json
-import dateutil.parser
+from dateutil.parser import parse as datetimeparse
+from dateutil.tz import tzoffset
+from dateutil.utils import default_tzinfo
 import hashlib
 import logging
 import datetime
@@ -260,17 +262,14 @@ class KiteConnect(object):
         h = hashlib.sha256(self.api_key.encode("utf-8") + request_token.encode("utf-8") + api_secret.encode("utf-8"))
         checksum = h.hexdigest()
 
-        resp = self._post("api.token", params={
+        resp = self._format_response(self._post("api.token", params={
             "api_key": self.api_key,
             "request_token": request_token,
             "checksum": checksum
-        })
+        }))
 
         if "access_token" in resp:
             self.set_access_token(resp["access_token"])
-
-        if resp["login_time"] and len(resp["login_time"]) == 19:
-            resp["login_time"] = dateutil.parser.parse(resp["login_time"])
 
         return resp
 
@@ -404,9 +403,10 @@ class KiteConnect(object):
 
         for item in _list:
             # Convert date time string to datetime object
-            for field in ["order_timestamp", "exchange_timestamp", "created", "last_instalment", "fill_timestamp", "timestamp", "last_trade_time"]:
-                if item.get(field) and len(item[field]) == 19:
-                    item[field] = dateutil.parser.parse(item[field])
+            for field in ["order_timestamp", "exchange_timestamp", "created", "last_instalment", "fill_timestamp",
+                          "timestamp", "last_trade_time", "login_time", "expiry", "last_price_date"]:
+                if item.get(field) and self.is_timestamp(item[field]):
+                    item[field] = self.parseDateTime(item[field])
 
         return _list[0] if type(data) == dict else _list
 
@@ -645,7 +645,7 @@ class KiteConnect(object):
         records = []
         for d in data["candles"]:
             record = {
-                "date": dateutil.parser.parse(d[0]),
+                "date": self.parseDateTime(d[0]),
                 "open": d[1],
                 "high": d[2],
                 "low": d[3],
@@ -766,13 +766,14 @@ class KiteConnect(object):
         """Delete a GTT order."""
         return self._delete("gtt.delete", url_args={"trigger_id": trigger_id})
 
-    def order_margins(self, params):
+    def order_margins(self, params, mode=None):
         """
         Calculate margins for requested order list considering the existing positions and open orders
 
         - `params` is list of orders to retrive margins detail
+        - `mode` is margin response mode type. compact - Compact mode will only give the total margins
         """
-        return self._post("order.margins", params=params, is_json=True)
+        return self._post("order.margins", params=params, is_json=True, query_params={'mode': mode})
 
     def basket_order_margins(self, params, consider_positions=True, mode=None):
         """
@@ -808,23 +809,9 @@ class KiteConnect(object):
         if not PY2 and type(d) == bytes:
             d = data.decode("utf-8").strip()
 
-        records = []
         reader = csv.DictReader(StringIO(d))
 
-        for row in reader:
-            row["instrument_token"] = int(row["instrument_token"])
-            row["last_price"] = float(row["last_price"])
-            row["strike"] = float(row["strike"])
-            row["tick_size"] = float(row["tick_size"])
-            row["lot_size"] = int(row["lot_size"])
-
-            # Parse date
-            if len(row["expiry"]) == 10:
-                row["expiry"] = dateutil.parser.parse(row["expiry"]).date()
-
-            records.append(row)
-
-        return records
+        return self._format_response(list(reader))
 
     def _parse_mf_instruments(self, data):
         # decode to string for Python 3
@@ -832,26 +819,23 @@ class KiteConnect(object):
         if not PY2 and type(d) == bytes:
             d = data.decode("utf-8").strip()
 
-        records = []
         reader = csv.DictReader(StringIO(d))
 
-        for row in reader:
-            row["minimum_purchase_amount"] = float(row["minimum_purchase_amount"])
-            row["purchase_amount_multiplier"] = float(row["purchase_amount_multiplier"])
-            row["minimum_additional_purchase_amount"] = float(row["minimum_additional_purchase_amount"])
-            row["minimum_redemption_quantity"] = float(row["minimum_redemption_quantity"])
-            row["redemption_quantity_multiplier"] = float(row["redemption_quantity_multiplier"])
-            row["purchase_allowed"] = bool(int(row["purchase_allowed"]))
-            row["redemption_allowed"] = bool(int(row["redemption_allowed"]))
-            row["last_price"] = float(row["last_price"])
+        return self._format_response(list(reader))
 
-            # Parse date
-            if len(row["last_price_date"]) == 10:
-                row["last_price_date"] = dateutil.parser.parse(row["last_price_date"]).date()
+    def is_timestamp(self, string):
+        """Checks if string is timestamp"""
+        try:
+            datetimeparse(string)
+            return True
+        except ValueError:
+            return False
 
-            records.append(row)
-
-        return records
+    def parseDateTime(self, string):
+        """Set default timezone to IST for naive time object"""
+        # Default timezone for all datetime object
+        default_tz = tzoffset("Asia/Kolkata", 19800)
+        return default_tzinfo(datetimeparse(string), default_tz)
 
     def _user_agent(self):
         return (__title__ + "-python/").capitalize() + __version__
@@ -933,8 +917,13 @@ class KiteConnect(object):
                     self.session_expiry_hook()
 
                 # native Kite errors
-                exp = getattr(ex, data.get("error_type"), ex.GeneralException)
-                raise exp(data["message"], code=r.status_code)
+                # mf error response don't have error_type field
+                if data.get("error_type"):
+                    exp = getattr(ex, data.get("error_type"), ex.GeneralException)
+                    raise exp(data["message"], code=r.status_code)
+                else:
+                    # Throw general exception for such undefined error type
+                    raise ex.GeneralException(data["message"], code=r.status_code)
 
             return data["data"]
         elif "csv" in r.headers["content-type"]:
