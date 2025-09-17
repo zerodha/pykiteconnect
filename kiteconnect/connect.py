@@ -678,7 +678,7 @@ class KiteConnect(object):
         """Fetch details of a GTT"""
         return self._get("gtt.info", url_args={"trigger_id": trigger_id})
 
-    def _get_gtt_payload(self, trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders):
+    def _get_gtt_payload(self, trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders, tag=None):
         """Get GTT payload"""
         if type(trigger_values) != list:
             raise ex.InputException("invalid type for `trigger_values`")
@@ -700,7 +700,7 @@ class KiteConnect(object):
             for req in ["transaction_type", "quantity", "order_type", "product", "price"]:
                 if req not in o:
                     raise ex.InputException("`{req}` missing inside orders".format(req=req))
-            gtt_orders.append({
+            order_data = {
                 "exchange": exchange,
                 "tradingsymbol": tradingsymbol,
                 "transaction_type": o["transaction_type"],
@@ -708,12 +708,16 @@ class KiteConnect(object):
                 "order_type": o["order_type"],
                 "product": o["product"],
                 "price": float(o["price"]),
-            })
+            }
+            # Add tag to order if provided
+            if tag:
+                order_data["tag"] = tag
+            gtt_orders.append(order_data)
 
         return condition, gtt_orders
 
     def place_gtt(
-        self, trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders
+        self, trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders, tag=None
     ):
         """
         Place GTT order
@@ -727,10 +731,11 @@ class KiteConnect(object):
             - `transaction_type` BUY or SELL
             - `quantity` Quantity to transact
             - `price` The min or max price to execute the order at (for LIMIT orders)
+        - `tag` An optional tag to identify the order.
         """
         # Validations.
         assert trigger_type in [self.GTT_TYPE_OCO, self.GTT_TYPE_SINGLE]
-        condition, gtt_orders = self._get_gtt_payload(trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders)
+        condition, gtt_orders = self._get_gtt_payload(trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders, tag)
 
         return self._post("gtt.place", params={
             "condition": json.dumps(condition),
@@ -738,7 +743,7 @@ class KiteConnect(object):
             "type": trigger_type})
 
     def modify_gtt(
-        self, trigger_id, trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders
+        self, trigger_id, trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders, tag=None
     ):
         """
         Modify GTT order
@@ -752,8 +757,9 @@ class KiteConnect(object):
             - `transaction_type` BUY or SELL
             - `quantity` Quantity to transact
             - `price` The min or max price to execute the order at (for LIMIT orders)
+        - `tag` An optional tag to identify the order.
         """
-        condition, gtt_orders = self._get_gtt_payload(trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders)
+        condition, gtt_orders = self._get_gtt_payload(trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders, tag)
 
         return self._put("gtt.modify",
                          url_args={"trigger_id": trigger_id},
