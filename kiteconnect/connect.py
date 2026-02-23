@@ -349,7 +349,8 @@ class KiteConnect(object):
                     iceberg_legs=None,
                     iceberg_quantity=None,
                     auction_number=None,
-                    tag=None):
+                    tag=None,
+                    market_protection=-1):
         """Place an order."""
         params = locals()
         del (params["self"])
