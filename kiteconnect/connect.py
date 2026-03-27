@@ -349,7 +349,8 @@ class KiteConnect(object):
                     iceberg_legs=None,
                     iceberg_quantity=None,
                     auction_number=None,
-                    tag=None):
+                    tag=None,
+                    market_protection=-1):
         """Place an order."""
         params = locals()
         del (params["self"])
@@ -371,10 +372,14 @@ class KiteConnect(object):
                      order_type=None,
                      trigger_price=None,
                      validity=None,
-                     disclosed_quantity=None):
+                     disclosed_quantity=None,
+                     market_protection=None):
         """Modify an open order."""
         params = locals()
         del (params["self"])
+
+        if order_type == ORDER_TYPE_MARKET:
+            params["market_protection"] = market_protection or -1
 
         for k in list(params.keys()):
             if params[k] is None:
