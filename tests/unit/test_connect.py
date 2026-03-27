@@ -129,6 +129,48 @@ def test_order_history(kiteconnect):
 
 
 @responses.activate
+def test_market_protection(kiteconnect):
+    """Test place order with market protection."""
+    responses.add(
+        responses.POST,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["order.place"].format(variety="regular")),
+        body=utils.get_response("order.place"),
+        content_type="application/json"
+    )
+
+    order_id = kiteconnect.place_order(
+        variety="regular",
+        exchange="NSE",
+        tradingsymbol="INFY",
+        transaction_type="BUY",
+        quantity=1,
+        product="CNC",
+        order_type="MARKET",
+        market_protection=kiteconnect.MARKET_PROTECTION_AUTO,
+    )
+    assert order_id == "151220000000000"
+
+
+@responses.activate
+def test_modify_order_market_protection(kiteconnect):
+    """Test modify order with market protection."""
+    responses.add(
+        responses.PUT,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["order.modify"].format(variety="regular", order_id="151220000000000")),
+        body=utils.get_response("order.modify"),
+        content_type="application/json"
+    )
+
+    order_id = kiteconnect.modify_order(
+        variety="regular",
+        order_id="151220000000000",
+        order_type="MARKET",
+        market_protection=kiteconnect.MARKET_PROTECTION_AUTO,
+    )
+    assert order_id == "151220000000000"
+
+
+@responses.activate
 def test_trades(kiteconnect):
     """Test trades."""
     responses.add(
