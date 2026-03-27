@@ -378,7 +378,7 @@ class KiteConnect(object):
         params = locals()
         del (params["self"])
 
-        if order_type == ORDER_TYPE_MARKET:
+        if order_type == self.ORDER_TYPE_MARKET:
             params["market_protection"] = market_protection or -1
 
         for k in list(params.keys()):
