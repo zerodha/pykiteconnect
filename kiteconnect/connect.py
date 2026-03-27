@@ -53,6 +53,9 @@ class KiteConnect(object):
     ORDER_TYPE_SLM = "SL-M"
     ORDER_TYPE_SL = "SL"
 
+    # Market protection
+    MARKET_PROTECTION_AUTO = -1
+
     # Varities
     VARIETY_REGULAR = "regular"
     VARIETY_CO = "co"
@@ -349,8 +352,12 @@ class KiteConnect(object):
                     iceberg_legs=None,
                     iceberg_quantity=None,
                     auction_number=None,
-                    tag=None):
-        """Place an order."""
+                    tag=None,
+                    market_protection=None):
+        """Place an order.
+
+        - `market_protection` accepts `-1` for automatic market protection applied by the system as per market protection guidelines, or a value greater than `0` up to `100` representing a percentage.
+        """
         params = locals()
         del (params["self"])
 
@@ -371,8 +378,12 @@ class KiteConnect(object):
                      order_type=None,
                      trigger_price=None,
                      validity=None,
-                     disclosed_quantity=None):
-        """Modify an open order."""
+                     disclosed_quantity=None,
+                     market_protection=None):
+        """Modify an open order.
+
+        - `market_protection` accepts `-1` for automatic market protection applied by the system as per market protection guidelines, or a value greater than `0` up to `100` representing a percentage.
+        """
         params = locals()
         del (params["self"])
 
