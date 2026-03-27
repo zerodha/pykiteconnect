@@ -373,13 +373,10 @@ class KiteConnect(object):
                      trigger_price=None,
                      validity=None,
                      disclosed_quantity=None,
-                     market_protection=None):
+                     market_protection=-1):
         """Modify an open order."""
         params = locals()
         del (params["self"])
-
-        if order_type == self.ORDER_TYPE_MARKET:
-            params["market_protection"] = market_protection or -1
 
         for k in list(params.keys()):
             if params[k] is None:
