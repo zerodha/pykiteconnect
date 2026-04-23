@@ -868,6 +868,7 @@ class KiteConnect(object):
             row["strike"] = float(row["strike"])
             row["tick_size"] = float(row["tick_size"])
             row["lot_size"] = int(row["lot_size"])
+            row["freeze_quantity"] = int(row["freeze_quantity"])
 
             # Parse date
             if len(row["expiry"]) == 10:
