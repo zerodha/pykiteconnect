@@ -107,6 +107,22 @@ class KiteConnect(object):
     GTT_STATUS_REJECTED = "rejected"
     GTT_STATUS_DELETED = "deleted"
 
+    # Alert Type Constants
+    ALERT_TYPE_SIMPLE = "simple"
+    ALERT_TYPE_ATO = "ato"
+
+    # Alert Operator Constants
+    ALERT_OPERATOR_LE = "<="
+    ALERT_OPERATOR_GE = ">="
+    ALERT_OPERATOR_LT = "<"
+    ALERT_OPERATOR_GT = ">"
+    ALERT_OPERATOR_EQ = "=="
+
+    # Alert Status Constants
+    ALERT_STATUS_ENABLED = "enabled"
+    ALERT_STATUS_DISABLED = "disabled"
+    ALERT_STATUS_DELETED = "deleted"
+
     # URIs to various calls
     _routes = {
         "api.token": "/session/token",
@@ -166,6 +182,13 @@ class KiteConnect(object):
         "order.margins": "/margins/orders",
         "order.margins.basket": "/margins/basket",
         "order.contract_note": "/charges/orders",
+
+        # Alerts endpoints
+        "alerts": "/alerts",
+        "alert.info": "/alerts/{uuid}",
+        "alert.modify": "/alerts/{uuid}",
+        "alert.delete": "/alerts",
+        "alert.history": "/alerts/{uuid}/history"
     }
 
     def __init__(self,
@@ -994,3 +1017,90 @@ class KiteConnect(object):
             raise ex.DataException("Unknown Content-Type ({content_type}) with response: ({content})".format(
                 content_type=r.headers["content-type"],
                 content=r.content))
+    
+    
+    def get_alerts(self, status=None, page=None, page_size=None):
+        """
+        Retrieve all alerts for a user.
+        
+        - `status`: Filter alerts by status (enabled, disabled, deleted).
+        - `page`: Page number for pagination.
+        - `page_size`: Number of alerts per page.
+        """
+        params = {}
+        if status: params["status"] = status
+        if page: params["page"] = page
+        if page_size: params["page_size"] = page_size
+
+        return self._format_response(self._get("alerts", params=params))
+
+    def get_alert(self, uuid):
+        """
+        Retrieve a specific alert by its UUID.
+        
+        - `uuid`: Unique identifier of the alert.
+        """
+        return self._format_response(self._get("alert.info", url_args={"uuid": uuid}))
+
+    def create_alert(self, name, type, lhs_exchange, lhs_tradingsymbol, 
+                     lhs_attribute, operator, rhs_type, 
+                     rhs_constant=None, rhs_exchange=None, 
+                     rhs_tradingsymbol=None, rhs_attribute=None, 
+                     basket=None):
+        """
+        Create a new alert (Simple or ATO).
+        
+        - `name`: Name of the alert.
+        - `type`: simple or ato.
+        - `lhs_exchange`: Exchange for LHS (NSE, INDICES, etc.).
+        - `lhs_tradingsymbol`: Trading symbol for LHS.
+        - `lhs_attribute`: Attribute to monitor (e.g., LastTradedPrice).
+        - `operator`: Comparison operator (>=, <=, etc.).
+        - `rhs_type`: constant or instrument.
+        - `rhs_constant`: Value to compare against (if rhs_type is constant).
+        - `basket`: JSON string or Dict containing basket config (required for ATO).
+        """
+        params = locals()
+        del (params["self"])
+
+        # Convert basket dict to JSON string if necessary
+        if isinstance(params.get("basket"), dict):
+            params["basket"] = json.dumps(params["basket"])
+
+        # Remove None values
+        for k in list(params.keys()):
+            if params[k] is None:
+                del (params[k])
+
+        return self._format_response(self._post("alerts", params=params))
+
+    def modify_alert(self, uuid, **kwargs):
+        """
+        Modify an existing alert.
+        
+        - `uuid`: The UUID of the alert to modify.
+        - `kwargs`: Alert parameters to update (name, operator, rhs_constant, etc.).
+        """
+        if "basket" in kwargs and isinstance(kwargs["basket"], dict):
+            kwargs["basket"] = json.dumps(kwargs["basket"])
+
+        return self._format_response(self._put("alert.modify", 
+                                              url_args={"uuid": uuid}, 
+                                              params=kwargs))
+
+    def delete_alert(self, uuid):
+        """
+        Delete one or more alerts.
+        
+        - `uuid`: A single UUID string or a list of UUID strings.
+        """
+        params = {"uuid": uuid}
+        return self._delete("alert.delete", params=params)
+
+    def get_alert_history(self, uuid):
+        """
+        Retrieve the trigger history of a specific alert.
+        
+        - `uuid`: Unique identifier of the alert.
+        """
+        return self._format_response(self._get("alert.history", url_args={"uuid": uuid}))
