@@ -152,6 +152,40 @@ def test_market_protection(kiteconnect):
 
 
 @responses.activate
+def test_place_autoslice_order(kiteconnect):
+    """Test place_autoslice_order returns the parent order id and children list."""
+    responses.add(
+        responses.POST,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["order.place"].format(variety="regular")),
+        body=utils.get_response("order.place.autoslice"),
+        content_type="application/json"
+    )
+
+    order_response = kiteconnect.place_autoslice_order(
+        variety="regular",
+        exchange="NSE",
+        tradingsymbol="INFY",
+        transaction_type="BUY",
+        quantity=100000,
+        product="CNC",
+        order_type="MARKET",
+    )
+
+    request_body = responses.calls[0].request.body
+    if not isinstance(request_body, str):
+        request_body = request_body.decode("utf-8")
+
+    assert "autoslice=true" in request_body
+    assert type(order_response) == dict
+    assert order_response["order_id"] == "1914227164488687616"
+    assert any("order_id" in c for c in order_response["children"])
+    assert any(
+        c.get("error", {}).get("error_type") == "MarginException"
+        for c in order_response["children"]
+    )
+
+
+@responses.activate
 def test_modify_order_market_protection(kiteconnect):
     """Test modify order with market protection."""
     responses.add(
