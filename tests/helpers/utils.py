@@ -13,7 +13,9 @@ responses_path = {
     "trades": "trades.json",
     "order.info": "order_info.json",
     "order.place": "order_response.json",
+    "order.place.autoslice": "autoslice_response.json",
     "order.modify": "order_modify.json",
+    "order.cancel": "order_cancel.json",
     "order.trades": "order_trades.json",
 
     "portfolio.positions": "positions.json",

@@ -325,7 +325,8 @@ def test_order_modify_limit_regular(kiteconnect):
 
     to_quantity = 2
     to_price = updated_params["price"] - 1
-    kiteconnect.modify_order(updated_params["variety"], order_id, quantity=to_quantity, price=to_price)
+    returned_order_id = kiteconnect.modify_order(updated_params["variety"], order_id, quantity=to_quantity, price=to_price)
+    assert returned_order_id == order_id
     time.sleep(0.5)
 
     order = kiteconnect.order_history(order_id)
@@ -371,7 +372,8 @@ def test_order_modify_limit_amo(kiteconnect):
 
     to_quantity = 2
     to_price = updated_params["price"] - 1
-    kiteconnect.modify_order(updated_params["variety"], order_id, quantity=to_quantity, price=to_price)
+    returned_order_id = kiteconnect.modify_order(updated_params["variety"], order_id, quantity=to_quantity, price=to_price)
+    assert returned_order_id == order_id
     time.sleep(0.5)
 
     order = kiteconnect.order_history(order_id)

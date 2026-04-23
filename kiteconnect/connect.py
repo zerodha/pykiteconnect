@@ -369,6 +369,46 @@ class KiteConnect(object):
                           url_args={"variety": variety},
                           params=params)["order_id"]
 
+    def place_autoslice_order(self,
+                              variety,
+                              exchange,
+                              tradingsymbol,
+                              transaction_type,
+                              quantity,
+                              product,
+                              order_type,
+                              price=None,
+                              validity=None,
+                              validity_ttl=None,
+                              disclosed_quantity=None,
+                              trigger_price=None,
+                              iceberg_legs=None,
+                              iceberg_quantity=None,
+                              auction_number=None,
+                              tag=None,
+                              market_protection=None):
+        """Place an order with automatic slicing for quantities exceeding freeze limits.
+
+        The order is automatically split into multiple smaller orders internally when the
+        requested quantity exceeds exchange freeze limits.
+
+        - `market_protection` accepts `-1` for automatic market protection applied by the system as per market protection guidelines, or a value greater than `0` up to `100` representing a percentage.
+        - Returns the full response dict containing the parent `order_id` and a `children` list,
+          where each child is either a placed order (`order_id`) or an `error` payload.
+        """
+        params = locals()
+        del (params["self"])
+
+        for k in list(params.keys()):
+            if params[k] is None:
+                del (params[k])
+
+        params["autoslice"] = "true"
+
+        return self._post("order.place",
+                          url_args={"variety": variety},
+                          params=params)
+
     def modify_order(self,
                      variety,
                      order_id,
