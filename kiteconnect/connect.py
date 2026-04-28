@@ -119,6 +119,8 @@ class KiteConnect(object):
         "orders": "/orders",
         "trades": "/trades",
 
+        "alerts": "/alerts",
+
         "order.info": "/orders/{order_id}",
         "order.place": "/orders/{variety}",
         "order.modify": "/orders/{variety}/{order_id}",
@@ -218,6 +220,9 @@ class KiteConnect(object):
 
         # disable requests SSL warning
         requests.packages.urllib3.disable_warnings()
+
+    
+        
 
     def set_session_expiry_hook(self, method):
         """
@@ -465,6 +470,10 @@ class KiteConnect(object):
     def orders(self):
         """Get list of orders."""
         return self._format_response(self._get("orders"))
+
+    def get_existing_alerts(self):
+        """Get list of all existing alerts."""
+        return self._get("alerts")
 
     def order_history(self, order_id):
         """
