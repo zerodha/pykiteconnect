@@ -64,7 +64,7 @@ login_template = """
     <pre>{user_data}</pre>
     <a target="_blank" href="/holdings.json"><h4>Fetch user holdings</h4></a>
     <a target="_blank" href="/orders.json"><h4>Fetch user orders</h4></a>
-    <a target="_blank" href="https://kite.trade/docs/connect/v1/"><h4>Checks Kite Connect docs for other calls.</h4></a>"""
+    <a target="_blank" href="https://kite.trade/docs/connect/v3/"><h4>Checks Kite Connect docs for other calls.</h4></a>"""
 
 
 def get_kite_client():
