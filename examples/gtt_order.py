@@ -25,7 +25,15 @@ try:
         "product": "CNC",
         "price": 470,
     }]
-    single_gtt = kite.place_gtt(trigger_type=kite.GTT_TYPE_SINGLE, tradingsymbol="SBIN", exchange="NSE", trigger_values=[470], last_price=473, orders=order_single)
+    single_gtt = kite.place_gtt(
+        trigger_type=kite.GTT_TYPE_SINGLE, 
+        tradingsymbol="SBIN", 
+        exchange="NSE", 
+        trigger_values=[470], 
+        last_price=473, 
+        orders=order_single,
+        tag="my_strategy_1"  # Optional tag to identify this GTT order
+    )
     logging.info("single leg gtt order trigger_id : {}".format(single_gtt['trigger_id']))
 except Exception as e:
     logging.info("Error placing single leg gtt order: {}".format(e))
@@ -50,7 +58,15 @@ try:
         "product": "CNC",
         "price": 480
     }]
-    gtt_oco = kite.place_gtt(trigger_type=kite.GTT_TYPE_OCO, tradingsymbol="SBIN", exchange="NSE", trigger_values=[470,480], last_price=473, orders=order_oco)
+    gtt_oco = kite.place_gtt(
+        trigger_type=kite.GTT_TYPE_OCO, 
+        tradingsymbol="SBIN", 
+        exchange="NSE", 
+        trigger_values=[470,480], 
+        last_price=473, 
+        orders=order_oco,
+        tag="my_strategy_2"  # Optional tag to identify this GTT order
+    )
     logging.info("GTT OCO trigger_id : {}".format(gtt_oco['trigger_id']))
 except Exception as e:
     logging.info("Error placing gtt oco order: {}".format(e))

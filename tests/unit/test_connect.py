@@ -392,6 +392,33 @@ def test_place_gtt(kiteconnect):
 
 
 @responses.activate
+def test_place_gtt_with_tag(kiteconnect):
+    """Test place gtt order with tag parameter."""
+    responses.add(
+        responses.POST,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["gtt.place"]),
+        body=utils.get_response("gtt.place"),
+        content_type="application/json"
+    )
+    gtts = kiteconnect.place_gtt(
+        trigger_type=kiteconnect.GTT_TYPE_SINGLE,
+        tradingsymbol="INFY",
+        exchange="NSE",
+        trigger_values=[1],
+        last_price=800,
+        orders=[{
+            "transaction_type": kiteconnect.TRANSACTION_TYPE_BUY,
+            "quantity": 1,
+            "order_type": kiteconnect.ORDER_TYPE_LIMIT,
+            "product": kiteconnect.PRODUCT_CNC,
+            "price": 1,
+        }],
+        tag="test_strategy"
+    )
+    assert gtts["trigger_id"] == 123
+
+
+@responses.activate
 def test_modify_gtt(kiteconnect):
     """Test modify gtt order."""
     responses.add(
@@ -414,6 +441,34 @@ def test_modify_gtt(kiteconnect):
             "product": kiteconnect.PRODUCT_CNC,
             "price": 1,
         }]
+    )
+    assert gtts["trigger_id"] == 123
+
+
+@responses.activate
+def test_modify_gtt_with_tag(kiteconnect):
+    """Test modify gtt order with tag parameter."""
+    responses.add(
+        responses.PUT,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["gtt.modify"].format(trigger_id=123)),
+        body=utils.get_response("gtt.modify"),
+        content_type="application/json"
+    )
+    gtts = kiteconnect.modify_gtt(
+        trigger_id=123,
+        trigger_type=kiteconnect.GTT_TYPE_SINGLE,
+        tradingsymbol="INFY",
+        exchange="NSE",
+        trigger_values=[1],
+        last_price=800,
+        orders=[{
+            "transaction_type": kiteconnect.TRANSACTION_TYPE_BUY,
+            "quantity": 1,
+            "order_type": kiteconnect.ORDER_TYPE_LIMIT,
+            "product": kiteconnect.PRODUCT_CNC,
+            "price": 1,
+        }],
+        tag="modified_strategy"
     )
     assert gtts["trigger_id"] == 123
 
