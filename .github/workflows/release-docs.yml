@@ -20,21 +20,22 @@ jobs:
         with:
           ref: refs/tags/${{ github.event.release.tag_name }}
 
-      - name: Set up Python 3.8 for pdoc 0.3.2
+      - name: Set up Python 3.12
         uses: actions/setup-python@v5
         with:
-          python-version: "3.8"
+          python-version: "3.12"
 
       - name: Build docs
         run: |
-          pip install pdoc==0.3.2
+          pip install pdoc==16.0.0
           pip install .
-          pdoc --html --html-dir docs kiteconnect
-          test -s docs/kiteconnect/index.html
+          pdoc -o docs ./kiteconnect
+          test -s docs/index.html
+          test -s docs/kiteconnect.html
 
       - name: Package docs
         run: |
-          tar -C docs -czf "$DOCS_ASSET_NAME" kiteconnect
+          tar -czf "$DOCS_ASSET_NAME" -C docs .
 
       - name: Attach docs to GitHub release
         env:
