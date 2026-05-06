@@ -7,6 +7,9 @@ on:
 permissions:
   contents: write
 
+env:
+  DOCS_ASSET_NAME: pykiteconnect-docs.tar.gz
+
 jobs:
   release-docs:
     runs-on: ubuntu-22.04
@@ -31,7 +34,7 @@ jobs:
 
       - name: Package docs
         run: |
-          tar -C docs -czf pykiteconnect-docs-${{ github.event.release.tag_name }}.tar.gz kiteconnect
+          tar -C docs -czf "$DOCS_ASSET_NAME" kiteconnect
 
       - name: Attach docs to GitHub release
         env:
@@ -39,5 +42,5 @@ jobs:
         run: |
           gh release upload \
             "${{ github.event.release.tag_name }}" \
-            "pykiteconnect-docs-${{ github.event.release.tag_name }}.tar.gz" \
+            "$DOCS_ASSET_NAME" \
             --clobber
