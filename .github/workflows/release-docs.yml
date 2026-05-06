@@ -1,0 +1,43 @@
+name: Release docs
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  release-docs:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout released tag
+        uses: actions/checkout@v4
+        with:
+          ref: refs/tags/${{ github.event.release.tag_name }}
+
+      - name: Set up Python 3.8 for pdoc 0.3.2
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.8"
+
+      - name: Build docs
+        run: |
+          pip install pdoc==0.3.2
+          pip install .
+          pdoc --html --html-dir docs kiteconnect
+          test -s docs/kiteconnect/index.html
+
+      - name: Package docs
+        run: |
+          tar -C docs -czf pykiteconnect-docs-${{ github.event.release.tag_name }}.tar.gz kiteconnect
+
+      - name: Attach docs to GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload \
+            "${{ github.event.release.tag_name }}" \
+            "pykiteconnect-docs-${{ github.event.release.tag_name }}.tar.gz" \
+            --clobber
