@@ -2,6 +2,7 @@
 """Ticker tests"""
 import six
 import json
+import time
 from mock import Mock
 from base64 import b64encode
 from hashlib import sha1
@@ -46,3 +47,29 @@ class TestTicker:
         assert protocol.state == protocol.STATE_OPEN
 
         protocol.sendMessage(six.b(json.dumps({"message": "blah"})))
+
+    def test_kite_protocol_sends_ping(self, protocol, monkeypatch):
+        # Ensure we don't schedule real Twisted delayed calls during unit tests.
+        protocol.factory.reactor = Mock()
+        protocol.factory.reactor.callLater = Mock(return_value=Mock())
+
+        send_ping = Mock()
+        monkeypatch.setattr(protocol, "sendPing", send_ping)
+
+        protocol._loop_ping()
+
+        assert send_ping.call_count == 1
+        protocol.factory.reactor.callLater.assert_called_once()
+
+    def test_kite_protocol_drops_on_pong_timeout(self, protocol):
+        protocol.factory.reactor = Mock()
+        protocol.factory.reactor.callLater = Mock(return_value=Mock())
+
+        protocol._last_pong_time = time.time() - (protocol.PONG_TIMEOUT + 1)
+        protocol.dropConnection = Mock()
+        protocol.sendClose = Mock()
+
+        protocol._loop_pong_check()
+
+        protocol.sendClose.assert_called_once()
+        protocol.dropConnection.assert_called_once()
