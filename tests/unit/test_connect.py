@@ -152,6 +152,37 @@ def test_market_protection(kiteconnect):
 
 
 @responses.activate
+def test_place_order_algo_id(kiteconnect):
+    """Test place order with algo_id."""
+    responses.add(
+        responses.POST,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["order.place"].format(variety="regular")),
+        body=utils.get_response("order.place"),
+        content_type="application/json"
+    )
+
+    order_id = kiteconnect.place_order(
+        variety="regular",
+        exchange="NSE",
+        tradingsymbol="INFY",
+        transaction_type="BUY",
+        quantity=1,
+        product="CNC",
+        order_type="MARKET",
+        algo_id="algo-123",
+        tag="tag-123",
+    )
+
+    request_body = responses.calls[0].request.body
+    if not isinstance(request_body, str):
+        request_body = request_body.decode("utf-8")
+
+    assert "algo_id=algo-123" in request_body
+    assert "tag=tag-123" in request_body
+    assert order_id == "151220000000000"
+
+
+@responses.activate
 def test_place_autoslice_order(kiteconnect):
     """Test place_autoslice_order returns the parent order id and children list."""
     responses.add(

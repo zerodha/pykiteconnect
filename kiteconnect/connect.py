@@ -352,6 +352,7 @@ class KiteConnect(object):
                     iceberg_legs=None,
                     iceberg_quantity=None,
                     auction_number=None,
+                    algo_id=None,
                     tag=None,
                     market_protection=None):
         """Place an order.
@@ -385,6 +386,7 @@ class KiteConnect(object):
                               iceberg_legs=None,
                               iceberg_quantity=None,
                               auction_number=None,
+                              algo_id=None,
                               tag=None,
                               market_protection=None):
         """Place an order with automatic slicing for quantities exceeding freeze limits.
