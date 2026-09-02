@@ -3,13 +3,72 @@
 import six
 import json
 from mock import Mock
+from mock import patch
 from base64 import b64encode
 from hashlib import sha1
 
 from autobahn.websocket.protocol import WebSocketProtocol
+from kiteconnect import KiteTicker
 
 
 class TestTicker:
+
+    @patch("kiteconnect.ticker.reactor")
+    @patch("kiteconnect.ticker.connectWS")
+    @patch("kiteconnect.ticker.ssl.optionsForClientTLS")
+    def test_secure_connection_uses_hostname_aware_tls_context(
+            self, mock_options_for_client_tls, mock_connect_ws, mock_reactor):
+        context = Mock()
+        mock_options_for_client_tls.return_value = context
+        mock_reactor.running = True
+        ticker = KiteTicker(
+            "api-key", "access-token",
+            root="wss://stream.example.test/socket", reconnect=False)
+
+        ticker.connect()
+
+        mock_options_for_client_tls.assert_called_once_with(
+            "stream.example.test")
+        mock_connect_ws.assert_called_once_with(
+            ticker.factory,
+            contextFactory=context,
+            timeout=ticker.connect_timeout)
+
+    @patch("kiteconnect.ticker.reactor")
+    @patch("kiteconnect.ticker.connectWS")
+    @patch("kiteconnect.ticker.ssl.optionsForClientTLS")
+    def test_secure_connection_can_explicitly_disable_tls_verification(
+            self, mock_options_for_client_tls, mock_connect_ws, mock_reactor):
+        mock_reactor.running = True
+        ticker = KiteTicker(
+            "api-key", "access-token",
+            root="wss://stream.example.test/socket", reconnect=False)
+
+        ticker.connect(disable_ssl_verification=True)
+
+        mock_options_for_client_tls.assert_not_called()
+        mock_connect_ws.assert_called_once_with(
+            ticker.factory,
+            contextFactory=None,
+            timeout=ticker.connect_timeout)
+
+    @patch("kiteconnect.ticker.reactor")
+    @patch("kiteconnect.ticker.connectWS")
+    @patch("kiteconnect.ticker.ssl.optionsForClientTLS")
+    def test_plain_websocket_does_not_build_tls_context(
+            self, mock_options_for_client_tls, mock_connect_ws, mock_reactor):
+        mock_reactor.running = True
+        ticker = KiteTicker(
+            "api-key", "access-token",
+            root="ws://stream.example.test/socket", reconnect=False)
+
+        ticker.connect()
+
+        mock_options_for_client_tls.assert_not_called()
+        mock_connect_ws.assert_called_once_with(
+            ticker.factory,
+            contextFactory=None,
+            timeout=ticker.connect_timeout)
 
     def test_autoping(self, protocol):
         protocol.autoPingInterval = 1
