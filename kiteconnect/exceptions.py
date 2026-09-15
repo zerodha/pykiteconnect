@@ -56,6 +56,14 @@ class OrderException(KiteException):
         super(OrderException, self).__init__(message, code)
 
 
+class MarginException(OrderException):
+    """Represents all margin related errors. Default code is 400."""
+
+    def __init__(self, message, code=400):
+        """Initialize the exception."""
+        super(MarginException, self).__init__(message, code)
+
+
 class InputException(KiteException):
     """Represents user input errors such as missing and invalid parameters. Default code is 400."""
 

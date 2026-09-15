@@ -39,6 +39,7 @@ def test_wrong_content_type(kiteconnect):
 @pytest.mark.parametrize("error_type,message", [
     ('PermissionException', 'oops! permission issue'),
     ('OrderException', 'oops! cannot place order'),
+    ('MarginException', 'Insufficient funds.'),
     ('InputException', 'missing or invalid params'),
     ('NetworkException', 'oopsy doopsy network issues damn!'),
     ('CustomException', 'this is an exception i just created')
