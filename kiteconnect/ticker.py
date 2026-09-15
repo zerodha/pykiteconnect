@@ -366,6 +366,7 @@ class KiteTicker(object):
         "mcx": 7,
         "mcxsx": 8,
         "indices": 9,
+        "nco": 12,
         # bsecds is replaced with it's official segment name bcd
         # so,bsecds key will be depreciated in next version
         "bsecds": 6,
@@ -728,7 +729,7 @@ class KiteTicker(object):
             # Add price divisor based on segment
             if segment == self.EXCHANGE_MAP["cds"]:
                 divisor = 10000000.0
-            elif segment == self.EXCHANGE_MAP["bcd"]:
+            elif segment in (self.EXCHANGE_MAP["bcd"], self.EXCHANGE_MAP["nco"]):
                 divisor = 10000.0
             else:
                 divisor = 100.0
