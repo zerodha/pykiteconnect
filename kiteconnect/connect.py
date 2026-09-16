@@ -866,6 +866,9 @@ class KiteConnect(object):
         records = []
         reader = csv.DictReader(StringIO(d))
 
+        # Cache parsed expiry dates for this instrument dump.
+        expiry_cache = {}
+
         for row in reader:
             row["instrument_token"] = int(row["instrument_token"])
             row["last_price"] = float(row["last_price"])
@@ -875,12 +878,17 @@ class KiteConnect(object):
 
             # Parse date
             if len(row["expiry"]) == 10:
-                row["expiry"] = dateutil.parser.parse(row["expiry"]).date()
+                expiry = row["expiry"]
+
+                if expiry not in expiry_cache:
+                    expiry_cache[expiry] = dateutil.parser.parse(expiry).date()
+
+                row["expiry"] = expiry_cache[expiry]
 
             records.append(row)
 
         return records
-
+    
     def _parse_mf_instruments(self, data):
         # decode to string for Python 3
         d = data
@@ -889,6 +897,9 @@ class KiteConnect(object):
 
         records = []
         reader = csv.DictReader(StringIO(d))
+
+        # Cache parsed last price dates for this instrument dump.
+        last_price_date_cache = {}
 
         for row in reader:
             row["minimum_purchase_amount"] = float(row["minimum_purchase_amount"])
@@ -902,7 +913,14 @@ class KiteConnect(object):
 
             # Parse date
             if len(row["last_price_date"]) == 10:
-                row["last_price_date"] = dateutil.parser.parse(row["last_price_date"]).date()
+                last_price_date = row["last_price_date"]
+
+                if last_price_date not in last_price_date_cache:
+                    last_price_date_cache[last_price_date] = dateutil.parser.parse(
+                        last_price_date
+                    ).date()
+
+                row["last_price_date"] = last_price_date_cache[last_price_date]
 
             records.append(row)
 
