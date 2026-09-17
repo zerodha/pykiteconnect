@@ -55,6 +55,8 @@ class KiteTickerClientProtocol(WebSocketClientProtocol):
     # Overide method
     def onOpen(self):  # noqa
         """Called when the initial WebSocket opening handshake was completed."""
+        # init last pong time
+        self._last_pong_time = time.time()
         # send ping
         self._loop_ping()
         # init last pong check after X seconds
@@ -83,10 +85,10 @@ class KiteTickerClientProtocol(WebSocketClientProtocol):
         self._last_ping_time = None
         self._last_pong_time = None
 
-        if self._next_ping:
+        if self._next_ping and self._next_ping.active():
             self._next_ping.cancel()
 
-        if self._next_pong_check:
+        if self._next_pong_check and self._next_pong_check.active():
             self._next_pong_check.cancel()
 
     def onPong(self, response):  # noqa
@@ -109,6 +111,13 @@ class KiteTickerClientProtocol(WebSocketClientProtocol):
             if self._last_ping_time:
                 log.debug("last ping was {} seconds back.".format(time.time() - self._last_ping_time))
 
+        if self.state == self.STATE_OPEN:
+            try:
+                self.sendPing()
+            except Exception as e:
+                if self.factory.debug:
+                    log.debug("Error sending ping: {}".format(e))
+
         # Set current time as last ping time
         self._last_ping_time = time.time()
 
@@ -130,6 +139,7 @@ class KiteTickerClientProtocol(WebSocketClientProtocol):
                         last_pong_diff))
                 # drop existing connection to avoid ghost connection
                 self.dropConnection(abort=True)
+                return
 
         # Call self after X seconds
         self._next_pong_check = self.factory.reactor.callLater(self.PING_INTERVAL, self._loop_pong_check)
