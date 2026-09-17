@@ -46,3 +46,35 @@ class TestTicker:
         assert protocol.state == protocol.STATE_OPEN
 
         protocol.sendMessage(six.b(json.dumps({"message": "blah"})))
+
+    def test_loop_ping_sends_ping(self, protocol):
+        protocol.sendPing = Mock()
+        protocol._loop_ping()
+
+        assert protocol.sendPing.called
+        assert protocol._last_ping_time is not None
+
+    def test_loop_pong_check_drops_on_timeout(self, protocol):
+        import time
+        protocol.dropConnection = Mock()
+        # Simulate last pong received 10 seconds ago (exceeding 2 * PING_INTERVAL = 5.0s)
+        protocol._last_pong_time = time.time() - 10
+        protocol._loop_pong_check()
+
+        assert protocol.dropConnection.called
+
+    def test_loop_pong_check_healthy(self, protocol):
+        import time
+        protocol.dropConnection = Mock()
+        # Simulate recent pong (healthy)
+        protocol._last_pong_time = time.time() - 1
+        protocol._loop_pong_check()
+
+        assert not protocol.dropConnection.called
+
+    def test_onOpen_initializes_ping_and_pong(self, protocol):
+        protocol.sendPing = Mock()
+        protocol.onOpen()
+
+        assert protocol._last_pong_time is not None
+        assert protocol.sendPing.called
