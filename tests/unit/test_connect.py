@@ -238,6 +238,84 @@ def test_modify_order_market_protection(kiteconnect):
 
 
 @responses.activate
+def test_place_order_market_auto_protection(kiteconnect):
+    """Test that MARKET order without explicit market_protection defaults to -1."""
+    responses.add(
+        responses.POST,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["order.place"].format(variety="regular")),
+        body=utils.get_response("order.place"),
+        content_type="application/json"
+    )
+
+    kiteconnect.place_order(
+        variety="regular",
+        exchange="NSE",
+        tradingsymbol="INFY",
+        transaction_type="BUY",
+        quantity=1,
+        product="MIS",
+        order_type="MARKET",
+    )
+
+    request_body = responses.calls[0].request.body
+    if not isinstance(request_body, str):
+        request_body = request_body.decode("utf-8")
+
+    assert "market_protection=-1" in request_body
+
+
+@responses.activate
+def test_place_order_slm_auto_protection(kiteconnect):
+    """Test that SL-M order without explicit market_protection defaults to -1."""
+    responses.add(
+        responses.POST,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["order.place"].format(variety="regular")),
+        body=utils.get_response("order.place"),
+        content_type="application/json"
+    )
+
+    kiteconnect.place_order(
+        variety="regular",
+        exchange="NSE",
+        tradingsymbol="INFY",
+        transaction_type="BUY",
+        quantity=1,
+        product="MIS",
+        order_type="SL-M",
+        trigger_price=100.0,
+    )
+
+    request_body = responses.calls[0].request.body
+    if not isinstance(request_body, str):
+        request_body = request_body.decode("utf-8")
+
+    assert "market_protection=-1" in request_body
+
+
+@responses.activate
+def test_modify_order_market_auto_protection(kiteconnect):
+    """Test that modifying to MARKET order without explicit market_protection defaults to -1."""
+    responses.add(
+        responses.PUT,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["order.modify"].format(variety="regular", order_id="151220000000000")),
+        body=utils.get_response("order.modify"),
+        content_type="application/json"
+    )
+
+    kiteconnect.modify_order(
+        variety="regular",
+        order_id="151220000000000",
+        order_type="MARKET",
+    )
+
+    request_body = responses.calls[0].request.body
+    if not isinstance(request_body, str):
+        request_body = request_body.decode("utf-8")
+
+    assert "market_protection=-1" in request_body
+
+
+@responses.activate
 def test_trades(kiteconnect):
     """Test trades."""
     responses.add(

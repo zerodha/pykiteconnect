@@ -358,8 +358,12 @@ class KiteConnect(object):
         """Place an order.
 
         - `market_protection` accepts `-1` for automatic market protection applied by the system as per market protection guidelines, or a value greater than `0` up to `100` representing a percentage.
+          For MARKET and SL-M orders, defaults to `-1` (auto protection) when not explicitly provided, since the API requires it for these order types.
         - `algo_id` is an optional algo ID to associate with the order.
         """
+        if order_type in [self.ORDER_TYPE_MARKET, self.ORDER_TYPE_SLM] and market_protection is None:
+            market_protection = self.MARKET_PROTECTION_AUTO
+
         params = locals()
         del (params["self"])
 
@@ -396,10 +400,14 @@ class KiteConnect(object):
         requested quantity exceeds exchange freeze limits.
 
         - `market_protection` accepts `-1` for automatic market protection applied by the system as per market protection guidelines, or a value greater than `0` up to `100` representing a percentage.
+          For MARKET and SL-M orders, defaults to `-1` (auto protection) when not explicitly provided, since the API requires it for these order types.
         - `algo_id` is an optional algo ID to associate with the order.
         - Returns the full response dict containing the parent `order_id` and a `children` list,
           where each child is either a placed order (`order_id`) or an `error` payload.
         """
+        if order_type in [self.ORDER_TYPE_MARKET, self.ORDER_TYPE_SLM] and market_protection is None:
+            market_protection = self.MARKET_PROTECTION_AUTO
+
         params = locals()
         del (params["self"])
 
@@ -427,7 +435,11 @@ class KiteConnect(object):
         """Modify an open order.
 
         - `market_protection` accepts `-1` for automatic market protection applied by the system as per market protection guidelines, or a value greater than `0` up to `100` representing a percentage.
+          For MARKET and SL-M orders, defaults to `-1` (auto protection) when not explicitly provided, since the API requires it for these order types.
         """
+        if order_type in [self.ORDER_TYPE_MARKET, self.ORDER_TYPE_SLM] and market_protection is None:
+            market_protection = self.MARKET_PROTECTION_AUTO
+
         params = locals()
         del (params["self"])
 
