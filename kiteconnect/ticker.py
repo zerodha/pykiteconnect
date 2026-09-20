@@ -31,6 +31,15 @@ class KiteTickerClientProtocol(WebSocketClientProtocol):
 
     PING_INTERVAL = 2.5
     KEEPALIVE_INTERVAL = 5
+    # Drop the connection if we haven't seen a pong for this long.
+    # This protects against "ghost" connections where the TCP socket looks established
+    # but the WebSocket stream is no longer live.
+    PONG_TIMEOUT = 2 * KEEPALIVE_INTERVAL
+
+    # Best-effort close code used when we proactively terminate a silent connection.
+    # (If the connection is already dead, the close handshake may not complete and the
+    # observed close code may still end up as 1006.)
+    SILENT_DISCONNECT_CODE = 4000
 
     _next_ping = None
     _next_pong_check = None
@@ -55,6 +64,10 @@ class KiteTickerClientProtocol(WebSocketClientProtocol):
     # Overide method
     def onOpen(self):  # noqa
         """Called when the initial WebSocket opening handshake was completed."""
+        # Initialise pong timestamp to avoid a "no pong time set" edge case where
+        # the watchdog never triggers if a pong is never received.
+        self._last_pong_time = time.time()
+
         # send ping
         self._loop_ping()
         # init last pong check after X seconds
@@ -109,11 +122,26 @@ class KiteTickerClientProtocol(WebSocketClientProtocol):
             if self._last_ping_time:
                 log.debug("last ping was {} seconds back.".format(time.time() - self._last_ping_time))
 
+        # If the connection isn't open, don't attempt to ping.
+        if self.state != self.STATE_OPEN:
+            return
+
+        try:
+            # Sending a ping forces the underlying stack to write to the socket.
+            # If the connection is silently dead, we will stop receiving pongs and
+            # the pong watchdog will drop the connection and trigger reconnect.
+            self.sendPing()
+        except Exception:
+            log.exception("Failed to send ping. Dropping connection to reconnect.")
+            self.dropConnection(abort=True)
+            return
+
         # Set current time as last ping time
         self._last_ping_time = time.time()
 
         # Call self after X seconds
-        self._next_ping = self.factory.reactor.callLater(self.PING_INTERVAL, self._loop_ping)
+        call_later = getattr(self.factory, "reactor", reactor).callLater
+        self._next_ping = call_later(self.PING_INTERVAL, self._loop_ping)
 
     def _loop_pong_check(self):
         """
@@ -124,15 +152,25 @@ class KiteTickerClientProtocol(WebSocketClientProtocol):
         if self._last_pong_time:
             # No pong message since long time, so init reconnect
             last_pong_diff = time.time() - self._last_pong_time
-            if last_pong_diff > (2 * self.PING_INTERVAL):
+            if last_pong_diff > self.PONG_TIMEOUT:
                 if self.factory.debug:
-                    log.debug("Last pong was {} seconds ago. So dropping connection to reconnect.".format(
-                        last_pong_diff))
+                    log.debug(
+                        "Last pong was {} seconds ago (> {}s). Dropping connection to reconnect.".format(
+                            last_pong_diff, self.PONG_TIMEOUT
+                        )
+                    )
+                try:
+                    self.sendClose(self.SILENT_DISCONNECT_CODE, u"silent_disconnect")
+                except Exception:
+                    # Connection may already be dead; force close regardless.
+                    pass
                 # drop existing connection to avoid ghost connection
                 self.dropConnection(abort=True)
+                return
 
         # Call self after X seconds
-        self._next_pong_check = self.factory.reactor.callLater(self.PING_INTERVAL, self._loop_pong_check)
+        call_later = getattr(self.factory, "reactor", reactor).callLater
+        self._next_pong_check = call_later(self.PING_INTERVAL, self._loop_pong_check)
 
 
 class KiteTickerClientFactory(WebSocketClientFactory, ReconnectingClientFactory):
