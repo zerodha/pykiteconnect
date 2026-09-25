@@ -578,3 +578,40 @@ def test_virtual_contract_note(kiteconnect):
     # CTT tax type
     assert order_book_charges[1]['charges']['transaction_tax_type'] == "ctt"
     assert order_book_charges[1]['charges']['total'] != 0
+
+
+@responses.activate
+def test_trades_invalid_timestamp(kiteconnect):
+    """Test trades response formatting when exchange returns invalid order_timestamp like 0000-01-01 (Issue #235)."""
+    mock_trades = {
+        "status": "success",
+        "data": [
+            {
+                "trade_id": "577907",
+                "order_id": "260629150270766",
+                "exchange": "NFO",
+                "tradingsymbol": "NIFTY26JUN24300CE",
+                "instrument_token": 20413442,
+                "product": "NRML",
+                "average_price": 13.35,
+                "quantity": 65,
+                "exchange_order_id": "1300000016949084",
+                "transaction_type": "SELL",
+                "fill_timestamp": "2026-06-29 09:35:36",
+                "order_timestamp": "0000-01-01 09:35:36",
+                "exchange_timestamp": "2026-06-29 09:35:36"
+            }
+        ]
+    }
+    responses.add(
+        responses.GET,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["trades"]),
+        json=mock_trades,
+        content_type="application/json"
+    )
+    trades = kiteconnect.trades()
+    assert type(trades) == list
+    assert len(trades) == 1
+    assert trades[0]["order_timestamp"] is None
+    assert trades[0]["fill_timestamp"].year == 2026
+

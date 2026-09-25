@@ -461,7 +461,10 @@ class KiteConnect(object):
             # Convert date time string to datetime object
             for field in ["order_timestamp", "exchange_timestamp", "created", "last_instalment", "fill_timestamp", "timestamp", "last_trade_time"]:
                 if item.get(field) and len(item[field]) == 19:
-                    item[field] = dateutil.parser.parse(item[field])
+                    try:
+                        item[field] = dateutil.parser.parse(item[field])
+                    except (ValueError, dateutil.parser.ParserError):
+                        item[field] = None
 
         return _list[0] if type(data) == dict else _list
 
