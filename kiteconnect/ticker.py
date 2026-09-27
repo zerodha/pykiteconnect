@@ -515,7 +515,7 @@ class KiteTicker(object):
         # Set SSL context
         context_factory = None
         if self.factory.isSecure and not disable_ssl_verification:
-            context_factory = ssl.ClientContextFactory()
+            context_factory = ssl.optionsForClientTLS(self.factory.host)
 
         # Establish WebSocket connection to a server
         connectWS(self.factory, contextFactory=context_factory, timeout=self.connect_timeout)
