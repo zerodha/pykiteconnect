@@ -8,7 +8,7 @@
     :license: see LICENSE for details.
 """
 from six import StringIO, PY2
-from six.moves.urllib.parse import urljoin
+from six.moves.urllib.parse import urljoin, urlencode, quote
 import csv
 import json
 import dateutil.parser
@@ -243,9 +243,13 @@ class KiteConnect(object):
         """Set the `access_token` received after a successful authentication."""
         self.access_token = access_token
 
-    def login_url(self):
+    def login_url(self, request_params=None):
         """Get the remote login url to which a user should be redirected to initiate the login flow."""
-        return "%s?api_key=%s&v=%s" % (self._default_login_uri, self.api_key, self.kite_header_version)
+        url = "%s?api_key=%s&v=%s" % (self._default_login_uri, self.api_key, self.kite_header_version)
+        if request_params:
+            redirect_params = quote(urlencode(request_params), safe="")
+            url += "&redirect_params=%s" % redirect_params
+        return url
 
     def generate_session(self, request_token, api_secret):
         """
