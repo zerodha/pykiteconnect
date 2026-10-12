@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intraday Trading Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f0f0f;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            border-radius: 8px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-start {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-start:hover {
+            background: #059669;
+        }
+
+        .btn-stop {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-stop:hover {
+            background: #dc2626;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .card h2 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #60a5fa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .stat:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: #9ca3af;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .positive {
+            color: #10b981;
+        }
+
+        .negative {
+            color: #ef4444;
+        }
+
+        .neutral {
+            color: #f59e0b;
+        }
+
+        .market-open {
+            background: #065f46;
+            color: #d1fae5;
+        }
+
+        .market-closed {
+            background: #7c2d12;
+            color: #fed7aa;
+        }
+
+        .section {
+            margin-top: 40px;
+        }
+
+        .section h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #60a5fa;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th {
+            background: #2a2a2a;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #60a5fa;
+            border-bottom: 1px solid #333;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #333;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: #2a2a2a;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .tag-buy {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .tag-sell {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .tag-hold {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid #10b981;
+            border-radius: 4px;
+            color: #10b981;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.stopped {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>📈 Intraday Trading Dashboard</h1>
+                <p style="color: #bfdbfe; margin-top: 5px; font-size: 14px;">Momentum-based trading system for NSE/MCX</p>
+            </div>
+            <div class="controls">
+                <button class="btn-start" onclick="startEngine()">▶ Start Trading</button>
+                <button class="btn-stop" onclick="stopEngine()">⏹ Stop Trading</button>
+            </div>
+        </header>
+
+        <!-- Status Cards -->
+        <div class="grid">
+            <div class="card">
+                <h2>Engine Status</h2>
+                <div id="engine-status" class="status-badge">
+                    <span class="loader"></span>
+                    Loading...
+                </div>
+            </div>
+            <div class="card">
+                <h2>Market Status</h2>
+                <div class="stat">
+                    <span class="stat-label">Market</span>
+                    <span id="market-name" class="stat-value">-</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Status</span>
+                    <span id="market-status" class="stat-value market-closed">CLOSED</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Time to Close</span>
+                    <span id="time-to-close" class="stat-value">-</span>
+                </div>
+            </div>
+            <div class="card">
+                <h2>Daily P&L</h2>
+                <div class="stat">
+                    <span class="stat-label">Realized P&L</span>
+                    <span id="realized-pnl" class="stat-value positive">-</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Unrealized P&L</span>
+                    <span id="unrealized-pnl" class="stat-value neutral">-</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Total P&L</span>
+                    <span id="total-pnl" class="stat-value">-</span>
+                </div>
+            </div>
+            <div class="card">
+                <h2>Risk Management</h2>
+                <div class="stat">
+                    <span class="stat-label">Daily Loss</span>
+                    <span id="daily-loss" class="stat-value negative">-</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Max Daily Loss</span>
+                    <span id="max-daily-loss" class="stat-value">-</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Active Positions</span>
+                    <span id="active-positions" class="stat-value">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Open Positions -->
+        <div class="section">
+            <h3>📊 Open Positions</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Symbol</th>
+                        <th>Side</th>
+                        <th>Qty</th>
+                        <th>Entry</th>
+                        <th>Current P&L</th>
+                        <th>P&L %</th>
+                        <th>Stop Loss</th>
+                        <th>Target</th>
+                        <th>Entry Time</th>
+                    </tr>
+                </thead>
+                <tbody id="positions-table">
+                    <tr>
+                        <td colspan="9" style="text-align: center; color: #6b7280;">No open positions</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Signals -->
+        <div class="section">
+            <h3>🎯 Current Signals</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Symbol</th>
+                        <th>Signal</th>
+                        <th>Confidence</th>
+                        <th>RSI</th>
+                        <th>SMA Short</th>
+                        <th>SMA Long</th>
+                        <th>Reason</th>
+                    </tr>
+                </thead>
+                <tbody id="signals-table">
+                    <tr>
+                        <td colspan="7" style="text-align: center; color: #6b7280;">No signals yet</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Closed Trades -->
+        <div class="section">
+            <h3>🏆 Closed Trades</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Symbol</th>
+                        <th>Side</th>
+                        <th>Entry</th>
+                        <th>Exit</th>
+                        <th>P&L</th>
+                        <th>P&L %</th>
+                        <th>Exit Time</th>
+                    </tr>
+                </thead>
+                <tbody id="trades-table">
+                    <tr>
+                        <td colspan="7" style="text-align: center; color: #6b7280;">No closed trades</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Auto-refresh status every 2 seconds
+        setInterval(updateDashboard, 2000);
+
+        async function updateDashboard() {
+            try {
+                // Fetch status
+                const statusRes = await fetch('/api/status');
+                const status = await statusRes.json();
+                updateStatus(status);
+
+                // Fetch positions
+                const posRes = await fetch('/api/positions');
+                const positions = await posRes.json();
+                updatePositions(positions.positions);
+
+                // Fetch signals
+                const sigRes = await fetch('/api/signals');
+                const signals = await sigRes.json();
+                updateSignals(signals);
+
+                // Fetch trades
+                const tradRes = await fetch('/api/trades');
+                const trades = await tradRes.json();
+                updateTrades(trades.trades);
+            } catch (error) {
+                console.error('Dashboard update error:', error);
+            }
+        }
+
+        function updateStatus(status) {
+            const badge = document.getElementById('engine-status');
+            badge.className = 'status-badge' + (status.is_running ? '' : ' stopped');
+            badge.innerHTML = `<span class="loader"></span> ${status.is_running ? 'RUNNING' : 'STOPPED'}`;
+
+            // Market info
+            document.getElementById('market-name').textContent = status.market_status.market || '-';
+            const marketStatus = status.market_status.is_open ? 'market-open' : 'market-closed';
+            document.getElementById('market-status').className = 'stat-value ' + marketStatus;
+            document.getElementById('market-status').textContent = status.market_status.is_open ? 'OPEN' : 'CLOSED';
+            document.getElementById('time-to-close').textContent = status.market_status.time_to_close ? status.market_status.time_to_close : '-';
+
+            // P&L info
+            document.getElementById('realized-pnl').textContent = `₹${status.positions.total_realized_pnl.toFixed(2)}`;
+            document.getElementById('unrealized-pnl').textContent = `₹${status.positions.total_unrealized_pnl.toFixed(2)}`;
+            document.getElementById('total-pnl').textContent = `₹${status.positions.total_daily_pnl.toFixed(2)}`;
+
+            // Risk info
+            document.getElementById('daily-loss').textContent = `₹${status.risk.daily_loss.toFixed(2)}`;
+            document.getElementById('max-daily-loss').textContent = `₹${status.risk.max_daily_loss}`;
+            document.getElementById('active-positions').textContent = `${status.risk.active_positions} / ${status.risk.max_positions}`;
+        }
+
+        function updatePositions(positions) {
+            const tbody = document.getElementById('positions-table');
+            if (positions.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: #6b7280;">No open positions</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = positions.map(pos => `
+                <tr>
+                    <td><strong>${pos.symbol}</strong></td>
+                    <td><span class="tag ${pos.side === 'BUY' ? 'tag-buy' : 'tag-sell'}">${pos.side}</span></td>
+                    <td>${pos.quantity}</td>
+                    <td>₹${pos.entry_price.toFixed(2)}</td>
+                    <td class="${pos.current_pnl >= 0 ? 'positive' : 'negative'}">₹${pos.current_pnl.toFixed(2)}</td>
+                    <td class="${pos.pnl_percent >= 0 ? 'positive' : 'negative'}">${pos.pnl_percent.toFixed(2)}%</td>
+                    <td>₹${pos.stop_loss.toFixed(2)}</td>
+                    <td>₹${pos.target.toFixed(2)}</td>
+                    <td>${new Date(pos.entry_time).toLocaleTimeString()}</td>
+                </tr>
+            `).join('');
+        }
+
+        function updateSignals(signals) {
+            const tbody = document.getElementById('signals-table');
+            const signals_array = Object.entries(signals).map(([symbol, signal]) => ({symbol, ...signal}));
+            
+            if (signals_array.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #6b7280;">No signals yet</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = signals_array.map(sig => `
+                <tr>
+                    <td><strong>${sig.symbol}</strong></td>
+                    <td><span class="tag tag-${sig.direction.toLowerCase()}">${sig.direction}</span></td>
+                    <td>${sig.confidence.toFixed(0)}%</td>
+                    <td>${sig.indicators.rsi ? sig.indicators.rsi.toFixed(2) : '-'}</td>
+                    <td>${sig.indicators.sma_short ? sig.indicators.sma_short.toFixed(2) : '-'}</td>
+                    <td>${sig.indicators.sma_long ? sig.indicators.sma_long.toFixed(2) : '-'}</td>
+                    <td style="font-size: 12px;">${sig.reason}</td>
+                </tr>
+            `).join('');
+        }
+
+        function updateTrades(trades) {
+            const tbody = document.getElementById('trades-table');
+            if (trades.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #6b7280;">No closed trades</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = trades.map(trade => `
+                <tr>
+                    <td><strong>${trade.symbol}</strong></td>
+                    <td><span class="tag ${trade.side === 'BUY' ? 'tag-buy' : 'tag-sell'}">${trade.side}</span></td>
+                    <td>₹${trade.entry_price.toFixed(2)}</td>
+                    <td>₹${trade.exit_price.toFixed(2)}</td>
+                    <td class="${trade.pnl >= 0 ? 'positive' : 'negative'}">₹${trade.pnl.toFixed(2)}</td>
+                    <td class="${trade.pnl_percent >= 0 ? 'positive' : 'negative'}">${trade.pnl_percent.toFixed(2)}%</td>
+                    <td>${new Date(trade.exit_time).toLocaleTimeString()}</td>
+                </tr>
+            `).join('');
+        }
+
+        function startEngine() {
+            fetch('/api/start', {method: 'POST'}).then(r => r.json()).then(data => {
+                alert(data.message || data.error);
+            }).catch(e => alert('Error: ' + e));
+        }
+
+        function stopEngine() {
+            fetch('/api/stop', {method: 'POST'}).then(r => r.json()).then(data => {
+                alert(data.message || data.error);
+            }).catch(e => alert('Error: ' + e));
+        }
+
+        // Initial update
+        updateDashboard();
+    </script>
+</body>
+</html>
