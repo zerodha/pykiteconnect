@@ -73,7 +73,7 @@ Since some of the dependencies uses C extensions it has to compiled before insta
 #### Debian/Ubuntu
 
 ```
-apt-get install libffi-dev python-dev python3-dev
+apt-get install libffi-dev python-dev-is-python3 python3-dev
 ```
 
 #### Centos/RHEL/Fedora
