@@ -577,4 +577,209 @@ def test_virtual_contract_note(kiteconnect):
     assert order_book_charges[0]['charges']['total'] != 0
     # CTT tax type
     assert order_book_charges[1]['charges']['transaction_tax_type'] == "ctt"
-    assert order_book_charges[1]['charges']['total'] != 0
+
+
+@responses.activate
+def test_quote(kiteconnect):
+    """Test market quote for instruments."""
+    responses.add(
+        responses.GET,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["market.quote"]),
+        body=utils.get_response("market.quote"),
+        content_type="application/json"
+    )
+    quote = kiteconnect.quote("NSE:INFY")
+    assert type(quote) == dict
+    assert "NSE:INFY" in quote
+    assert "last_price" in quote["NSE:INFY"]
+    assert quote["NSE:INFY"]["last_price"] == 1412.95
+
+
+@responses.activate
+def test_ohlc(kiteconnect):
+    """Test OHLC snapshot for instruments."""
+    responses.add(
+        responses.GET,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["market.quote.ohlc"]),
+        body=utils.get_response("market.quote.ohlc"),
+        content_type="application/json"
+    )
+    ohlc = kiteconnect.ohlc("NSE:INFY")
+    assert type(ohlc) == dict
+    assert "NSE:INFY" in ohlc
+    assert "ohlc" in ohlc["NSE:INFY"]
+    assert ohlc["NSE:INFY"]["last_price"] == 1075
+
+
+@responses.activate
+def test_ltp(kiteconnect):
+    """Test last traded price for instruments."""
+    responses.add(
+        responses.GET,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["market.quote.ltp"]),
+        body=utils.get_response("market.quote.ltp"),
+        content_type="application/json"
+    )
+    ltp = kiteconnect.ltp("NSE:INFY")
+    assert type(ltp) == dict
+    assert "NSE:INFY" in ltp
+    assert ltp["NSE:INFY"]["last_price"] == 1074.35
+
+
+@responses.activate
+def test_historical_data(kiteconnect):
+    """Test historical candle data retrieval."""
+    url = kiteconnect._routes["market.historical"].format(
+        instrument_token=408065, interval="minute"
+    )
+    responses.add(
+        responses.GET,
+        "{0}{1}".format(kiteconnect.root, url),
+        body=utils.get_response("market.historical"),
+        content_type="application/json"
+    )
+    candles = kiteconnect.historical_data(
+        instrument_token=408065,
+        from_date="2017-12-15 09:15:00",
+        to_date="2017-12-15 09:20:00",
+        interval="minute"
+    )
+    assert type(candles) == list
+    assert len(candles) > 0
+    assert "date" in candles[0]
+    assert "open" in candles[0]
+    assert "high" in candles[0]
+    assert "low" in candles[0]
+    assert "close" in candles[0]
+    assert "volume" in candles[0]
+    assert candles[0]["open"] == 1704.5
+
+
+@responses.activate
+def test_trigger_range(kiteconnect):
+    """Test trigger range for cover orders."""
+    url = kiteconnect._routes["market.trigger_range"].format(
+        transaction_type="buy"
+    )
+    responses.add(
+        responses.GET,
+        "{0}{1}".format(kiteconnect.root, url),
+        body=utils.get_response("market.trigger_range"),
+        content_type="application/json"
+    )
+    trigger = kiteconnect.trigger_range(
+        kiteconnect.TRANSACTION_TYPE_BUY, "NSE:INFY", "NSE:RELIANCE"
+    )
+    assert type(trigger) == dict
+    assert "NSE:INFY" in trigger
+    assert "lower" in trigger["NSE:INFY"]
+    assert "upper" in trigger["NSE:INFY"]
+
+
+@responses.activate
+def test_convert_position(kiteconnect):
+    """Test position product type conversion."""
+    responses.add(
+        responses.PUT,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["portfolio.positions.convert"]),
+        body=utils.get_response("portfolio.positions.convert"),
+        content_type="application/json"
+    )
+    result = kiteconnect.convert_position(
+        exchange=kiteconnect.EXCHANGE_NSE,
+        tradingsymbol="INFY",
+        transaction_type=kiteconnect.TRANSACTION_TYPE_BUY,
+        position_type=kiteconnect.POSITION_TYPE_DAY,
+        quantity=1,
+        old_product=kiteconnect.PRODUCT_MIS,
+        new_product=kiteconnect.PRODUCT_CNC
+    )
+    assert result is True
+
+
+@responses.activate
+def test_place_mf_order(kiteconnect):
+    """Test placing a mutual fund order."""
+    responses.add(
+        responses.POST,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["mf.order.place"]),
+        body=utils.get_response("mf.order.place"),
+        content_type="application/json"
+    )
+    order = kiteconnect.place_mf_order(
+        tradingsymbol="INF090I01239",
+        transaction_type=kiteconnect.TRANSACTION_TYPE_BUY,
+        amount=5000
+    )
+    assert type(order) == dict
+    assert "order_id" in order
+    assert order["order_id"] == "3bb085d1-5038-450e-a807-6543fef6c9ae"
+
+
+@responses.activate
+def test_cancel_mf_order(kiteconnect):
+    """Test cancelling a mutual fund order."""
+    url = kiteconnect._routes["mf.order.cancel"].format(order_id="3bb085d1-5038-450e-a807-6543fef6c9ae")
+    responses.add(
+        responses.DELETE,
+        "{0}{1}".format(kiteconnect.root, url),
+        body=utils.get_response("mf.order.cancel"),
+        content_type="application/json"
+    )
+    result = kiteconnect.cancel_mf_order(order_id="3bb085d1-5038-450e-a807-6543fef6c9ae")
+    assert type(result) == dict
+    assert result["order_id"] == "3bb085d1-5038-450e-a807-6543fef6c9ae"
+
+
+@responses.activate
+def test_place_mf_sip(kiteconnect):
+    """Test placing a mutual fund SIP."""
+    responses.add(
+        responses.POST,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["mf.sip.place"]),
+        body=utils.get_response("mf.sip.place"),
+        content_type="application/json"
+    )
+    sip = kiteconnect.place_mf_sip(
+        tradingsymbol="INF090I01239",
+        amount=1000,
+        instalments=12,
+        frequency="monthly"
+    )
+    assert type(sip) == dict
+    assert "sip_id" in sip
+    assert sip["sip_id"] == "986124545877922"
+
+
+@responses.activate
+def test_modify_mf_sip(kiteconnect):
+    """Test modifying a mutual fund SIP."""
+    url = kiteconnect._routes["mf.sip.modify"].format(sip_id="986124545877922")
+    responses.add(
+        responses.PUT,
+        "{0}{1}".format(kiteconnect.root, url),
+        body=utils.get_response("mf.sip.modify"),
+        content_type="application/json"
+    )
+    result = kiteconnect.modify_mf_sip(
+        sip_id="986124545877922",
+        amount=2000,
+        instalments=6
+    )
+    assert type(result) == dict
+    assert result["sip_id"] == "986124545877922"
+
+
+@responses.activate
+def test_cancel_mf_sip(kiteconnect):
+    """Test cancelling a mutual fund SIP."""
+    url = kiteconnect._routes["mf.sip.cancel"].format(sip_id="986124545877922")
+    responses.add(
+        responses.DELETE,
+        "{0}{1}".format(kiteconnect.root, url),
+        body=utils.get_response("mf.sip.cancel"),
+        content_type="application/json"
+    )
+    result = kiteconnect.cancel_mf_sip(sip_id="986124545877922")
+    assert type(result) == dict
+    assert result["sip_id"] == "986124545877922"

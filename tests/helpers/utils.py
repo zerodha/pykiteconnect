@@ -25,9 +25,16 @@ responses_path = {
     # MF api endpoints
     "mf.orders": "mf_orders.json",
     "mf.order.info": "mf_orders_info.json",
+    "mf.order.place": "mf_order_response.json",
+    "mf.order.cancel": "mf_order_cancel.json",
 
     "mf.sips": "mf_sips.json",
     "mf.sip.info": "mf_sip_info.json",
+    "mf.sip.place": "mf_sip_place.json",
+    "mf.sip.modify": "mf_sip_modify.json",
+    "mf.sip.cancel": "mf_sip_cancel.json",
+
+    "portfolio.positions.convert": "convert_position.json",
 
     "mf.holdings": "mf_holdings.json",
     "mf.instruments": "mf_instruments.csv",
