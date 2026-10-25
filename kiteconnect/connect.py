@@ -7,8 +7,8 @@
     :copyright: (c) 2021 by Zerodha Technology.
     :license: see LICENSE for details.
 """
-from six import StringIO, PY2
-from six.moves.urllib.parse import urljoin
+from io import StringIO
+from urllib.parse import urljoin
 import csv
 import json
 import dateutil.parser
@@ -860,7 +860,7 @@ class KiteConnect(object):
         # decode to string for Python 3
         d = data
         # Decode unicode data
-        if not PY2 and type(d) == bytes:
+        if type(d) == bytes:
             d = data.decode("utf-8").strip()
 
         records = []
@@ -884,7 +884,7 @@ class KiteConnect(object):
     def _parse_mf_instruments(self, data):
         # decode to string for Python 3
         d = data
-        if not PY2 and type(d) == bytes:
+        if type(d) == bytes:
             d = data.decode("utf-8").strip()
 
         records = []

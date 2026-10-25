@@ -7,7 +7,6 @@
     :copyright: (c) 2021 by Zerodha Technology Pvt. Ltd.
     :license: see LICENSE for details.
 """
-import six
 import sys
 import time
 import json
@@ -573,7 +572,7 @@ class KiteTicker(object):
         """
         try:
             self.ws.sendMessage(
-                six.b(json.dumps({"a": self._message_subscribe, "v": instrument_tokens}))
+                json.dumps({"a": self._message_subscribe, "v": instrument_tokens}).encode("utf-8")
             )
 
             for token in instrument_tokens:
@@ -592,7 +591,7 @@ class KiteTicker(object):
         """
         try:
             self.ws.sendMessage(
-                six.b(json.dumps({"a": self._message_unsubscribe, "v": instrument_tokens}))
+                json.dumps({"a": self._message_unsubscribe, "v": instrument_tokens}).encode("utf-8")
             )
 
             for token in instrument_tokens:
@@ -616,7 +615,7 @@ class KiteTicker(object):
         """
         try:
             self.ws.sendMessage(
-                six.b(json.dumps({"a": self._message_setmode, "v": [mode, instrument_tokens]}))
+                json.dumps({"a": self._message_setmode, "v": [mode, instrument_tokens]}).encode("utf-8")
             )
 
             # Update modes
@@ -701,7 +700,7 @@ class KiteTicker(object):
     def _parse_text_message(self, payload):
         """Parse text message."""
         # Decode unicode data
-        if not six.PY2 and type(payload) == bytes:
+        if type(payload) == bytes:
             payload = payload.decode("utf-8")
 
         try:
