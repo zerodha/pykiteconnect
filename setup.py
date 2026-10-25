@@ -26,6 +26,7 @@ setup(
     download_url=about["__download_url__"],
     license=about["__license__"],
     packages=["kiteconnect"],
+    package_data={"kiteconnect": ["py.typed"]},
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",

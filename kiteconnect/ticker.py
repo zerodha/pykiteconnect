@@ -15,6 +15,7 @@ import struct
 import logging
 import threading
 from datetime import datetime
+from typing import Callable, Dict, List, Optional
 from twisted.internet import reactor, ssl
 from twisted.python import log as twisted_log
 from twisted.internet.protocol import ReconnectingClientFactory
@@ -401,9 +402,10 @@ class KiteTicker(object):
     # Maximum number or retries user can set
     _maximum_reconnect_max_tries = 300
 
-    def __init__(self, api_key, access_token, debug=False, root=None,
-                 reconnect=True, reconnect_max_tries=RECONNECT_MAX_TRIES, reconnect_max_delay=RECONNECT_MAX_DELAY,
-                 connect_timeout=CONNECT_TIMEOUT):
+    def __init__(self, api_key: str, access_token: str, debug: bool = False, root: Optional[str] = None,
+                 reconnect: bool = True, reconnect_max_tries: int = RECONNECT_MAX_TRIES,
+                 reconnect_max_delay: int = RECONNECT_MAX_DELAY,
+                 connect_timeout: int = CONNECT_TIMEOUT) -> None:
         """
         Initialise websocket client instance.
 
@@ -494,7 +496,8 @@ class KiteTicker(object):
     def _user_agent(self):
         return (__title__ + "-python/").capitalize() + __version__
 
-    def connect(self, threaded=False, disable_ssl_verification=False, proxy=None):
+    def connect(self, threaded: bool = False, disable_ssl_verification: bool = False,
+                proxy: Optional[Dict[str, str]] = None) -> None:
         """
         Establish a websocket connection.
 
@@ -537,7 +540,7 @@ class KiteTicker(object):
             else:
                 reactor.run(**opts)
 
-    def is_connected(self):
+    def is_connected(self) -> bool:
         """Check if WebSocket connection is established."""
         if self.ws and self.ws.state == self.ws.STATE_OPEN:
             return True
@@ -549,23 +552,23 @@ class KiteTicker(object):
         if self.ws:
             self.ws.sendClose(code, reason)
 
-    def close(self, code=None, reason=None):
+    def close(self, code: Optional[int] = None, reason: Optional[str] = None) -> None:
         """Close the WebSocket connection."""
         self.stop_retry()
         self._close(code, reason)
 
-    def stop(self):
+    def stop(self) -> None:
         """Stop the event loop. Should be used if main thread has to be closed in `on_close` method.
         Reconnection mechanism cannot happen past this method
         """
         reactor.stop()
 
-    def stop_retry(self):
+    def stop_retry(self) -> None:
         """Stop auto retry when it is in progress."""
         if self.factory:
             self.factory.stopTrying()
 
-    def subscribe(self, instrument_tokens):
+    def subscribe(self, instrument_tokens: List[int]) -> bool:
         """
         Subscribe to a list of instrument_tokens.
 
@@ -584,7 +587,7 @@ class KiteTicker(object):
             self._close(reason="Error while subscribe: {}".format(str(e)))
             raise
 
-    def unsubscribe(self, instrument_tokens):
+    def unsubscribe(self, instrument_tokens: List[int]) -> bool:
         """
         Unsubscribe the given list of instrument_tokens.
 
@@ -606,7 +609,7 @@ class KiteTicker(object):
             self._close(reason="Error while unsubscribe: {}".format(str(e)))
             raise
 
-    def set_mode(self, mode, instrument_tokens):
+    def set_mode(self, mode: str, instrument_tokens: List[int]) -> bool:
         """
         Set streaming mode for the given list of tokens.
 
@@ -628,7 +631,7 @@ class KiteTicker(object):
             self._close(reason="Error while setting mode: {}".format(str(e)))
             raise
 
-    def resubscribe(self):
+    def resubscribe(self) -> None:
         """Resubscribe to all current subscribed tokens."""
         modes = {}
 

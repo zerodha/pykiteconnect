@@ -9,6 +9,7 @@
 """
 from six import StringIO, PY2
 from six.moves.urllib.parse import urljoin
+from typing import Any, Callable, Dict, List, Optional, Union
 import csv
 import json
 import dateutil.parser
@@ -169,14 +170,14 @@ class KiteConnect(object):
     }
 
     def __init__(self,
-                 api_key,
-                 access_token=None,
-                 root=None,
-                 debug=False,
-                 timeout=None,
-                 proxies=None,
-                 pool=None,
-                 disable_ssl=False):
+                 api_key: str,
+                 access_token: Optional[str] = None,
+                 root: Optional[str] = None,
+                 debug: bool = False,
+                 timeout: Optional[int] = None,
+                 proxies: Optional[Dict[str, str]] = None,
+                 pool: Optional[Dict[str, Any]] = None,
+                 disable_ssl: bool = False) -> None:
         """
         Initialise a new Kite Connect client instance.
 
@@ -219,7 +220,7 @@ class KiteConnect(object):
         # disable requests SSL warning
         requests.packages.urllib3.disable_warnings()
 
-    def set_session_expiry_hook(self, method):
+    def set_session_expiry_hook(self, method: Callable) -> None:
         """
         Set a callback hook for session (`TokenError` -- timeout, expiry etc.) errors.
 
@@ -239,15 +240,15 @@ class KiteConnect(object):
 
         self.session_expiry_hook = method
 
-    def set_access_token(self, access_token):
+    def set_access_token(self, access_token: str) -> None:
         """Set the `access_token` received after a successful authentication."""
         self.access_token = access_token
 
-    def login_url(self):
+    def login_url(self) -> str:
         """Get the remote login url to which a user should be redirected to initiate the login flow."""
         return "%s?api_key=%s&v=%s" % (self._default_login_uri, self.api_key, self.kite_header_version)
 
-    def generate_session(self, request_token, api_secret):
+    def generate_session(self, request_token: str, api_secret: str) -> Dict[str, Any]:
         """
         Generate user session details like `access_token` etc by exchanging `request_token`.
         Access token is automatically set if the session is retrieved successfully.
@@ -277,7 +278,7 @@ class KiteConnect(object):
 
         return resp
 
-    def invalidate_access_token(self, access_token=None):
+    def invalidate_access_token(self, access_token: Optional[str] = None) -> bool:
         """
         Kill the session by invalidating the access token.
 
@@ -289,7 +290,7 @@ class KiteConnect(object):
             "access_token": access_token
         })
 
-    def renew_access_token(self, refresh_token, api_secret):
+    def renew_access_token(self, refresh_token: str, api_secret: str) -> Dict[str, Any]:
         """
         Renew expired `refresh_token` using valid `refresh_token`.
 
@@ -310,7 +311,7 @@ class KiteConnect(object):
 
         return resp
 
-    def invalidate_refresh_token(self, refresh_token):
+    def invalidate_refresh_token(self, refresh_token: str) -> bool:
         """
         Invalidate refresh token.
 
@@ -321,7 +322,7 @@ class KiteConnect(object):
             "refresh_token": refresh_token
         })
 
-    def margins(self, segment=None):
+    def margins(self, segment: Optional[str] = None) -> Dict[str, Any]:
         """Get account balance and cash margin details for a particular segment.
 
         - `segment` is the trading segment (eg: equity or commodity)
@@ -331,30 +332,30 @@ class KiteConnect(object):
         else:
             return self._get("user.margins")
 
-    def profile(self):
+    def profile(self) -> Dict[str, Any]:
         """Get user profile details."""
         return self._get("user.profile")
 
     # orders
     def place_order(self,
-                    variety,
-                    exchange,
-                    tradingsymbol,
-                    transaction_type,
-                    quantity,
-                    product,
-                    order_type,
-                    price=None,
-                    validity=None,
-                    validity_ttl=None,
-                    disclosed_quantity=None,
-                    trigger_price=None,
-                    iceberg_legs=None,
-                    iceberg_quantity=None,
-                    auction_number=None,
-                    algo_id=None,
-                    tag=None,
-                    market_protection=None):
+                    variety: str,
+                    exchange: str,
+                    tradingsymbol: str,
+                    transaction_type: str,
+                    quantity: int,
+                    product: str,
+                    order_type: str,
+                    price: Optional[float] = None,
+                    validity: Optional[str] = None,
+                    validity_ttl: Optional[int] = None,
+                    disclosed_quantity: Optional[int] = None,
+                    trigger_price: Optional[float] = None,
+                    iceberg_legs: Optional[int] = None,
+                    iceberg_quantity: Optional[int] = None,
+                    auction_number: Optional[str] = None,
+                    algo_id: Optional[str] = None,
+                    tag: Optional[str] = None,
+                    market_protection: Optional[Union[int, float]] = None) -> str:
         """Place an order.
 
         - `market_protection` accepts `-1` for automatic market protection applied by the system as per market protection guidelines, or a value greater than `0` up to `100` representing a percentage.
@@ -372,24 +373,24 @@ class KiteConnect(object):
                           params=params)["order_id"]
 
     def place_autoslice_order(self,
-                              variety,
-                              exchange,
-                              tradingsymbol,
-                              transaction_type,
-                              quantity,
-                              product,
-                              order_type,
-                              price=None,
-                              validity=None,
-                              validity_ttl=None,
-                              disclosed_quantity=None,
-                              trigger_price=None,
-                              iceberg_legs=None,
-                              iceberg_quantity=None,
-                              auction_number=None,
-                              algo_id=None,
-                              tag=None,
-                              market_protection=None):
+                              variety: str,
+                              exchange: str,
+                              tradingsymbol: str,
+                              transaction_type: str,
+                              quantity: int,
+                              product: str,
+                              order_type: str,
+                              price: Optional[float] = None,
+                              validity: Optional[str] = None,
+                              validity_ttl: Optional[int] = None,
+                              disclosed_quantity: Optional[int] = None,
+                              trigger_price: Optional[float] = None,
+                              iceberg_legs: Optional[int] = None,
+                              iceberg_quantity: Optional[int] = None,
+                              auction_number: Optional[str] = None,
+                              algo_id: Optional[str] = None,
+                              tag: Optional[str] = None,
+                              market_protection: Optional[Union[int, float]] = None) -> Dict[str, Any]:
         """Place an order with automatic slicing for quantities exceeding freeze limits.
 
         The order is automatically split into multiple smaller orders internally when the
@@ -414,16 +415,16 @@ class KiteConnect(object):
                           params=params)
 
     def modify_order(self,
-                     variety,
-                     order_id,
-                     parent_order_id=None,
-                     quantity=None,
-                     price=None,
-                     order_type=None,
-                     trigger_price=None,
-                     validity=None,
-                     disclosed_quantity=None,
-                     market_protection=None):
+                     variety: str,
+                     order_id: str,
+                     parent_order_id: Optional[str] = None,
+                     quantity: Optional[int] = None,
+                     price: Optional[float] = None,
+                     order_type: Optional[str] = None,
+                     trigger_price: Optional[float] = None,
+                     validity: Optional[str] = None,
+                     disclosed_quantity: Optional[int] = None,
+                     market_protection: Optional[Union[int, float]] = None) -> str:
         """Modify an open order.
 
         - `market_protection` accepts `-1` for automatic market protection applied by the system as per market protection guidelines, or a value greater than `0` up to `100` representing a percentage.
@@ -439,13 +440,13 @@ class KiteConnect(object):
                          url_args={"variety": variety, "order_id": order_id},
                          params=params)["order_id"]
 
-    def cancel_order(self, variety, order_id, parent_order_id=None):
+    def cancel_order(self, variety: str, order_id: str, parent_order_id: Optional[str] = None) -> str:
         """Cancel an order."""
         return self._delete("order.cancel",
                             url_args={"variety": variety, "order_id": order_id},
                             params={"parent_order_id": parent_order_id})["order_id"]
 
-    def exit_order(self, variety, order_id, parent_order_id=None):
+    def exit_order(self, variety: str, order_id: str, parent_order_id: Optional[str] = None) -> str:
         """Exit a CO order."""
         return self.cancel_order(variety, order_id, parent_order_id=parent_order_id)
 
@@ -466,11 +467,11 @@ class KiteConnect(object):
         return _list[0] if type(data) == dict else _list
 
     # orderbook and tradebook
-    def orders(self):
+    def orders(self) -> List[Dict[str, Any]]:
         """Get list of orders."""
         return self._format_response(self._get("orders"))
 
-    def order_history(self, order_id):
+    def order_history(self, order_id: str) -> List[Dict[str, Any]]:
         """
         Get history of individual order.
 
@@ -478,7 +479,7 @@ class KiteConnect(object):
         """
         return self._format_response(self._get("order.info", url_args={"order_id": order_id}))
 
-    def trades(self):
+    def trades(self) -> List[Dict[str, Any]]:
         """
         Retrieve the list of trades executed (all or ones under a particular order).
 
@@ -487,7 +488,7 @@ class KiteConnect(object):
         """
         return self._format_response(self._get("trades"))
 
-    def order_trades(self, order_id):
+    def order_trades(self, order_id: str) -> List[Dict[str, Any]]:
         """
         Retrieve the list of trades executed for a particular order.
 
@@ -495,26 +496,26 @@ class KiteConnect(object):
         """
         return self._format_response(self._get("order.trades", url_args={"order_id": order_id}))
 
-    def positions(self):
+    def positions(self) -> Dict[str, List[Dict[str, Any]]]:
         """Retrieve the list of positions."""
         return self._get("portfolio.positions")
 
-    def holdings(self):
+    def holdings(self) -> List[Dict[str, Any]]:
         """Retrieve the list of equity holdings."""
         return self._get("portfolio.holdings")
 
-    def get_auction_instruments(self):
+    def get_auction_instruments(self) -> List[Dict[str, Any]]:
         """ Retrieves list of available instruments for a auction session """
         return self._get("portfolio.holdings.auction")
 
     def convert_position(self,
-                         exchange,
-                         tradingsymbol,
-                         transaction_type,
-                         position_type,
-                         quantity,
-                         old_product,
-                         new_product):
+                         exchange: str,
+                         tradingsymbol: str,
+                         transaction_type: str,
+                         position_type: str,
+                         quantity: int,
+                         old_product: str,
+                         new_product: str) -> bool:
         """Modify an open position's product type."""
         return self._put("portfolio.positions.convert", params={
             "exchange": exchange,
@@ -526,7 +527,7 @@ class KiteConnect(object):
             "new_product": new_product
         })
 
-    def mf_orders(self, order_id=None):
+    def mf_orders(self, order_id: Optional[str] = None) -> Union[List[Dict[str, Any]], Dict[str, Any]]:
         """Get all mutual fund orders or individual order info."""
         if order_id:
             return self._format_response(self._get("mf.order.info", url_args={"order_id": order_id}))
@@ -534,11 +535,11 @@ class KiteConnect(object):
             return self._format_response(self._get("mf.orders"))
 
     def place_mf_order(self,
-                       tradingsymbol,
-                       transaction_type,
-                       quantity=None,
-                       amount=None,
-                       tag=None):
+                       tradingsymbol: str,
+                       transaction_type: str,
+                       quantity: Optional[int] = None,
+                       amount: Optional[float] = None,
+                       tag: Optional[str] = None) -> Dict[str, Any]:
         """Place a mutual fund order."""
         return self._post("mf.order.place", params={
             "tradingsymbol": tradingsymbol,
@@ -548,11 +549,11 @@ class KiteConnect(object):
             "tag": tag
         })
 
-    def cancel_mf_order(self, order_id):
+    def cancel_mf_order(self, order_id: str) -> Dict[str, Any]:
         """Cancel a mutual fund order."""
         return self._delete("mf.order.cancel", url_args={"order_id": order_id})
 
-    def mf_sips(self, sip_id=None):
+    def mf_sips(self, sip_id: Optional[str] = None) -> Union[List[Dict[str, Any]], Dict[str, Any]]:
         """Get list of all mutual fund SIP's or individual SIP info."""
         if sip_id:
             return self._format_response(self._get("mf.sip.info", url_args={"sip_id": sip_id}))
@@ -560,13 +561,13 @@ class KiteConnect(object):
             return self._format_response(self._get("mf.sips"))
 
     def place_mf_sip(self,
-                     tradingsymbol,
-                     amount,
-                     instalments,
-                     frequency,
-                     initial_amount=None,
-                     instalment_day=None,
-                     tag=None):
+                     tradingsymbol: str,
+                     amount: float,
+                     instalments: int,
+                     frequency: str,
+                     initial_amount: Optional[float] = None,
+                     instalment_day: Optional[int] = None,
+                     tag: Optional[str] = None) -> Dict[str, Any]:
         """Place a mutual fund SIP."""
         return self._post("mf.sip.place", params={
             "tradingsymbol": tradingsymbol,
@@ -579,12 +580,12 @@ class KiteConnect(object):
         })
 
     def modify_mf_sip(self,
-                      sip_id,
-                      amount=None,
-                      status=None,
-                      instalments=None,
-                      frequency=None,
-                      instalment_day=None):
+                      sip_id: str,
+                      amount: Optional[float] = None,
+                      status: Optional[str] = None,
+                      instalments: Optional[int] = None,
+                      frequency: Optional[str] = None,
+                      instalment_day: Optional[int] = None) -> Dict[str, Any]:
         """Modify a mutual fund SIP."""
         return self._put("mf.sip.modify",
                          url_args={"sip_id": sip_id},
@@ -596,19 +597,19 @@ class KiteConnect(object):
                              "instalment_day": instalment_day
                          })
 
-    def cancel_mf_sip(self, sip_id):
+    def cancel_mf_sip(self, sip_id: str) -> Dict[str, Any]:
         """Cancel a mutual fund SIP."""
         return self._delete("mf.sip.cancel", url_args={"sip_id": sip_id})
 
-    def mf_holdings(self):
+    def mf_holdings(self) -> List[Dict[str, Any]]:
         """Get list of mutual fund holdings."""
         return self._get("mf.holdings")
 
-    def mf_instruments(self):
+    def mf_instruments(self) -> List[Dict[str, Any]]:
         """Get list of mutual fund instruments."""
         return self._parse_mf_instruments(self._get("mf.instruments"))
 
-    def instruments(self, exchange=None):
+    def instruments(self, exchange: Optional[str] = None) -> List[Dict[str, Any]]:
         """
         Retrieve the list of market instruments available to trade.
 
@@ -622,7 +623,7 @@ class KiteConnect(object):
         else:
             return self._parse_instruments(self._get("market.instruments.all"))
 
-    def quote(self, *instruments):
+    def quote(self, *instruments: Union[str, List[str]]) -> Dict[str, Any]:
         """
         Retrieve quote for list of instruments.
 
@@ -637,7 +638,7 @@ class KiteConnect(object):
         data = self._get("market.quote", params={"i": ins})
         return {key: self._format_response(data[key]) for key in data}
 
-    def ohlc(self, *instruments):
+    def ohlc(self, *instruments: Union[str, List[str]]) -> Dict[str, Any]:
         """
         Retrieve OHLC and market depth for list of instruments.
 
@@ -651,7 +652,7 @@ class KiteConnect(object):
 
         return self._get("market.quote.ohlc", params={"i": ins})
 
-    def ltp(self, *instruments):
+    def ltp(self, *instruments: Union[str, List[str]]) -> Dict[str, Any]:
         """
         Retrieve last price for list of instruments.
 
@@ -665,7 +666,9 @@ class KiteConnect(object):
 
         return self._get("market.quote.ltp", params={"i": ins})
 
-    def historical_data(self, instrument_token, from_date, to_date, interval, continuous=False, oi=False):
+    def historical_data(self, instrument_token: int, from_date: Union[datetime.datetime, str],
+                        to_date: Union[datetime.datetime, str], interval: str,
+                        continuous: bool = False, oi: bool = False) -> List[Dict[str, Any]]:
         """
         Retrieve historical data (candles) for an instrument.
 
@@ -713,7 +716,7 @@ class KiteConnect(object):
 
         return records
 
-    def trigger_range(self, transaction_type, *instruments):
+    def trigger_range(self, transaction_type: str, *instruments: Union[str, List[str]]) -> Dict[str, Any]:
         """Retrieve the buy/sell trigger range for Cover Orders."""
         ins = list(instruments)
 
@@ -725,11 +728,11 @@ class KiteConnect(object):
                          url_args={"transaction_type": transaction_type.lower()},
                          params={"i": ins})
 
-    def get_gtts(self):
+    def get_gtts(self) -> List[Dict[str, Any]]:
         """Fetch list of gtt existing in an account"""
         return self._get("gtt")
 
-    def get_gtt(self, trigger_id):
+    def get_gtt(self, trigger_id: int) -> Dict[str, Any]:
         """Fetch details of a GTT"""
         return self._get("gtt.info", url_args={"trigger_id": trigger_id})
 
@@ -768,8 +771,9 @@ class KiteConnect(object):
         return condition, gtt_orders
 
     def place_gtt(
-        self, trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders
-    ):
+        self, trigger_type: str, tradingsymbol: str, exchange: str,
+        trigger_values: List[float], last_price: float, orders: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
         """
         Place GTT order
 
@@ -793,8 +797,9 @@ class KiteConnect(object):
             "type": trigger_type})
 
     def modify_gtt(
-        self, trigger_id, trigger_type, tradingsymbol, exchange, trigger_values, last_price, orders
-    ):
+        self, trigger_id: int, trigger_type: str, tradingsymbol: str, exchange: str,
+        trigger_values: List[float], last_price: float, orders: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
         """
         Modify GTT order
 
@@ -817,11 +822,11 @@ class KiteConnect(object):
                              "orders": json.dumps(gtt_orders),
                              "type": trigger_type})
 
-    def delete_gtt(self, trigger_id):
+    def delete_gtt(self, trigger_id: int) -> Dict[str, Any]:
         """Delete a GTT order."""
         return self._delete("gtt.delete", url_args={"trigger_id": trigger_id})
 
-    def order_margins(self, params):
+    def order_margins(self, params: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """
         Calculate margins for requested order list considering the existing positions and open orders
 
@@ -829,7 +834,9 @@ class KiteConnect(object):
         """
         return self._post("order.margins", params=params, is_json=True)
 
-    def basket_order_margins(self, params, consider_positions=True, mode=None):
+    def basket_order_margins(self, params: List[Dict[str, Any]],
+                             consider_positions: bool = True,
+                             mode: Optional[str] = None) -> Dict[str, Any]:
         """
         Calculate total margins required for basket of orders including margin benefits
 
@@ -842,7 +849,7 @@ class KiteConnect(object):
                           is_json=True,
                           query_params={'consider_positions': consider_positions, 'mode': mode})
 
-    def get_virtual_contract_note(self, params):
+    def get_virtual_contract_note(self, params: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """
         Calculates detailed charges order-wise for the order book
         - `params` is list of orders to fetch charges detail
