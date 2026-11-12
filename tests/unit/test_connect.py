@@ -339,6 +339,9 @@ def test_place_mf_order_request(kiteconnect):
     request = responses.calls[0].request
     request_body = request.body.decode("utf-8") if isinstance(request.body, bytes) else request.body
     assert request.method == "POST"
+    assert request.url == "{0}{1}".format(
+        kiteconnect.root, kiteconnect._routes["mf.order.place"]
+    )
     assert parse_qs(request_body) == {
         "tradingsymbol": ["INF090I01239"],
         "transaction_type": ["BUY"],
@@ -366,6 +369,9 @@ def test_cancel_mf_order_request(kiteconnect):
 
     request = responses.calls[0].request
     assert request.method == "DELETE"
+    assert urlparse(request.url).path == kiteconnect._routes["mf.order.cancel"].format(
+        order_id=order_id
+    )
     assert request.path_url == "/mf/orders/{0}".format(order_id)
     assert result == order_id
 
@@ -420,6 +426,9 @@ def test_place_mf_sip_request(kiteconnect):
     request = responses.calls[0].request
     request_body = request.body.decode("utf-8") if isinstance(request.body, bytes) else request.body
     assert request.method == "POST"
+    assert request.url == "{0}{1}".format(
+        kiteconnect.root, kiteconnect._routes["mf.sip.place"]
+    )
     assert parse_qs(request_body) == {
         "tradingsymbol": ["INF090I01239"],
         "amount": ["5000"],
@@ -458,6 +467,9 @@ def test_modify_mf_sip_request(kiteconnect):
     request = responses.calls[0].request
     request_body = request.body.decode("utf-8") if isinstance(request.body, bytes) else request.body
     assert request.method == "PUT"
+    assert urlparse(request.url).path == kiteconnect._routes["mf.sip.modify"].format(
+        sip_id=sip_id
+    )
     assert request.path_url == "/mf/sips/{0}".format(sip_id)
     assert parse_qs(request_body) == {
         "amount": ["6000"],
@@ -487,6 +499,9 @@ def test_cancel_mf_sip_request(kiteconnect):
 
     request = responses.calls[0].request
     assert request.method == "DELETE"
+    assert urlparse(request.url).path == kiteconnect._routes["mf.sip.cancel"].format(
+        sip_id=sip_id
+    )
     assert request.path_url == "/mf/sips/{0}".format(sip_id)
     assert result == sip_id
 
@@ -540,6 +555,9 @@ def test_convert_position_request(kiteconnect):
     request = responses.calls[0].request
     request_body = request.body.decode("utf-8") if isinstance(request.body, bytes) else request.body
     assert request.method == "PUT"
+    assert request.url == "{0}{1}".format(
+        kiteconnect.root, kiteconnect._routes["portfolio.positions.convert"]
+    )
     assert parse_qs(request_body) == {
         "exchange": ["NSE"],
         "tradingsymbol": ["INFY"],
@@ -576,12 +594,14 @@ def test_market_quote_request_parameters(kiteconnect, method_name, response_key,
 
     request = responses.calls[0].request
     assert request.method == "GET"
+    assert urlparse(request.url).path == kiteconnect._routes[response_key]
     assert parse_qs(urlparse(request.url).query)["i"] == instruments
     assert result is not None
 
 
+@pytest.mark.parametrize("continuous,oi", [(True, True), (False, False)])
 @responses.activate
-def test_historical_data_request(kiteconnect):
+def test_historical_data_request(kiteconnect, continuous, oi):
     """Test historical data request parameters."""
     responses.add(
         responses.GET,
@@ -601,18 +621,22 @@ def test_historical_data_request(kiteconnect):
         "2017-12-15 09:15:00",
         "2017-12-15 09:20:00",
         "minute",
-        continuous=True,
-        oi=True
+        continuous=continuous,
+        oi=oi
     )
 
     request = responses.calls[0].request
     assert request.method == "GET"
+    assert urlparse(request.url).path == kiteconnect._routes["market.historical"].format(
+        instrument_token=408065,
+        interval="minute"
+    )
     assert parse_qs(urlparse(request.url).query) == {
         "from": ["2017-12-15 09:15:00"],
         "to": ["2017-12-15 09:20:00"],
         "interval": ["minute"],
-        "continuous": ["1"],
-        "oi": ["1"]
+        "continuous": ["1" if continuous else "0"],
+        "oi": ["1" if oi else "0"]
     }
     assert result[0]["open"] == 1704.5
 
@@ -634,7 +658,9 @@ def test_trigger_range_request(kiteconnect):
 
     request = responses.calls[0].request
     assert request.method == "GET"
-    assert request.path_url.startswith("/instruments/trigger_range/buy?")
+    assert urlparse(request.url).path == kiteconnect._routes["market.trigger_range"].format(
+        transaction_type="buy"
+    )
     assert parse_qs(urlparse(request.url).query)["i"] == ["NSE:INFY", "NSE:RELIANCE"]
     assert result is not None
 
