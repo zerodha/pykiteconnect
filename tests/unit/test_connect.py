@@ -2,6 +2,7 @@
 import pytest
 import responses
 import kiteconnect.exceptions as ex
+from urllib.parse import parse_qs, urlparse
 
 import utils
 
@@ -319,6 +320,63 @@ def test_mf_individual_order(kiteconnect):
 
 
 @responses.activate
+def test_place_mf_order_request(kiteconnect):
+    """Test mutual fund order request parameters."""
+    responses.add(
+        responses.POST,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["mf.order.place"]),
+        body=utils.get_response("mf.order.place"),
+        content_type="application/json"
+    )
+
+    order_id = kiteconnect.place_mf_order(
+        tradingsymbol="INF090I01239",
+        transaction_type="BUY",
+        amount=5000,
+        tag="mytag"
+    )
+
+    request = responses.calls[0].request
+    request_body = request.body.decode("utf-8") if isinstance(request.body, bytes) else request.body
+    assert request.method == "POST"
+    assert request.url == "{0}{1}".format(
+        kiteconnect.root, kiteconnect._routes["mf.order.place"]
+    )
+    assert parse_qs(request_body) == {
+        "tradingsymbol": ["INF090I01239"],
+        "transaction_type": ["BUY"],
+        "amount": ["5000"],
+        "tag": ["mytag"]
+    }
+    assert order_id == "3bb085d1-5038-450e-a807-6543fef6c9ae"
+
+
+@responses.activate
+def test_cancel_mf_order_request(kiteconnect):
+    """Test mutual fund order cancellation request."""
+    order_id = "3bb085d1-5038-450e-a807-6543fef6c9ae"
+    responses.add(
+        responses.DELETE,
+        "{0}{1}".format(
+            kiteconnect.root,
+            kiteconnect._routes["mf.order.cancel"].format(order_id=order_id)
+        ),
+        body=utils.get_response("mf.order.cancel"),
+        content_type="application/json"
+    )
+
+    result = kiteconnect.cancel_mf_order(order_id)
+
+    request = responses.calls[0].request
+    assert request.method == "DELETE"
+    assert urlparse(request.url).path == kiteconnect._routes["mf.order.cancel"].format(
+        order_id=order_id
+    )
+    assert request.path_url == "/mf/orders/{0}".format(order_id)
+    assert result == order_id
+
+
+@responses.activate
 def test_mf_sips(kiteconnect):
     """Test mf sips get."""
     responses.add(
@@ -346,6 +404,109 @@ def test_mf_individual_sip(kiteconnect):
 
 
 @responses.activate
+def test_place_mf_sip_request(kiteconnect):
+    """Test mutual fund SIP placement request parameters."""
+    responses.add(
+        responses.POST,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["mf.sip.place"]),
+        body=utils.get_response("mf.sip.place"),
+        content_type="application/json"
+    )
+
+    sip_id = kiteconnect.place_mf_sip(
+        tradingsymbol="INF090I01239",
+        amount=5000,
+        instalments=12,
+        frequency="monthly",
+        initial_amount=1000,
+        instalment_day=5,
+        tag="mytag"
+    )
+
+    request = responses.calls[0].request
+    request_body = request.body.decode("utf-8") if isinstance(request.body, bytes) else request.body
+    assert request.method == "POST"
+    assert request.url == "{0}{1}".format(
+        kiteconnect.root, kiteconnect._routes["mf.sip.place"]
+    )
+    assert parse_qs(request_body) == {
+        "tradingsymbol": ["INF090I01239"],
+        "amount": ["5000"],
+        "initial_amount": ["1000"],
+        "instalments": ["12"],
+        "frequency": ["monthly"],
+        "instalment_day": ["5"],
+        "tag": ["mytag"]
+    }
+    assert sip_id == "986124545877922"
+
+
+@responses.activate
+def test_modify_mf_sip_request(kiteconnect):
+    """Test mutual fund SIP modification request parameters."""
+    sip_id = "986124545877922"
+    responses.add(
+        responses.PUT,
+        "{0}{1}".format(
+            kiteconnect.root,
+            kiteconnect._routes["mf.sip.modify"].format(sip_id=sip_id)
+        ),
+        body=utils.get_response("mf.sip.modify"),
+        content_type="application/json"
+    )
+
+    result = kiteconnect.modify_mf_sip(
+        sip_id,
+        amount=6000,
+        status="active",
+        instalments=10,
+        frequency="monthly",
+        instalment_day=10
+    )
+
+    request = responses.calls[0].request
+    request_body = request.body.decode("utf-8") if isinstance(request.body, bytes) else request.body
+    assert request.method == "PUT"
+    assert urlparse(request.url).path == kiteconnect._routes["mf.sip.modify"].format(
+        sip_id=sip_id
+    )
+    assert request.path_url == "/mf/sips/{0}".format(sip_id)
+    assert parse_qs(request_body) == {
+        "amount": ["6000"],
+        "status": ["active"],
+        "instalments": ["10"],
+        "frequency": ["monthly"],
+        "instalment_day": ["10"]
+    }
+    assert result == sip_id
+
+
+@responses.activate
+def test_cancel_mf_sip_request(kiteconnect):
+    """Test mutual fund SIP cancellation request."""
+    sip_id = "986124545877922"
+    responses.add(
+        responses.DELETE,
+        "{0}{1}".format(
+            kiteconnect.root,
+            kiteconnect._routes["mf.sip.cancel"].format(sip_id=sip_id)
+        ),
+        body=utils.get_response("mf.sip.cancel"),
+        content_type="application/json"
+    )
+
+    result = kiteconnect.cancel_mf_sip(sip_id)
+
+    request = responses.calls[0].request
+    assert request.method == "DELETE"
+    assert urlparse(request.url).path == kiteconnect._routes["mf.sip.cancel"].format(
+        sip_id=sip_id
+    )
+    assert request.path_url == "/mf/sips/{0}".format(sip_id)
+    assert result == sip_id
+
+
+@responses.activate
 def test_mf_holdings(kiteconnect):
     """Test mf holdings."""
     responses.add(
@@ -369,6 +530,139 @@ def test_mf_instruments(kiteconnect):
     )
     trades = kiteconnect.mf_instruments()
     assert type(trades) == list
+
+
+@responses.activate
+def test_convert_position_request(kiteconnect):
+    """Test position conversion request parameters."""
+    responses.add(
+        responses.PUT,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["portfolio.positions.convert"]),
+        body=utils.get_response("portfolio.positions.convert"),
+        content_type="application/json"
+    )
+
+    result = kiteconnect.convert_position(
+        exchange="NSE",
+        tradingsymbol="INFY",
+        transaction_type="BUY",
+        position_type="day",
+        quantity=1,
+        old_product="MIS",
+        new_product="CNC"
+    )
+
+    request = responses.calls[0].request
+    request_body = request.body.decode("utf-8") if isinstance(request.body, bytes) else request.body
+    assert request.method == "PUT"
+    assert request.url == "{0}{1}".format(
+        kiteconnect.root, kiteconnect._routes["portfolio.positions.convert"]
+    )
+    assert parse_qs(request_body) == {
+        "exchange": ["NSE"],
+        "tradingsymbol": ["INFY"],
+        "transaction_type": ["BUY"],
+        "position_type": ["day"],
+        "quantity": ["1"],
+        "old_product": ["MIS"],
+        "new_product": ["CNC"]
+    }
+    assert result is True
+
+
+@pytest.mark.parametrize("method_name,response_key", [
+    ("quote", "market.quote"),
+    ("ohlc", "market.quote.ohlc"),
+    ("ltp", "market.quote.ltp"),
+])
+@pytest.mark.parametrize("use_legacy_list", [False, True])
+@responses.activate
+def test_market_quote_request_parameters(kiteconnect, method_name, response_key, use_legacy_list):
+    """Test quote endpoints with positional and legacy list-style arguments."""
+    responses.add(
+        responses.GET,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes[response_key]),
+        body=utils.get_response(response_key),
+        content_type="application/json"
+    )
+
+    instruments = ["NSE:INFY", "NSE:RELIANCE"]
+    result = getattr(kiteconnect, method_name)(
+        instruments if use_legacy_list else instruments[0],
+        *([] if use_legacy_list else instruments[1:])
+    )
+
+    request = responses.calls[0].request
+    assert request.method == "GET"
+    assert urlparse(request.url).path == kiteconnect._routes[response_key]
+    assert parse_qs(urlparse(request.url).query)["i"] == instruments
+    assert result is not None
+
+
+@pytest.mark.parametrize("continuous,oi", [(True, True), (False, False)])
+@responses.activate
+def test_historical_data_request(kiteconnect, continuous, oi):
+    """Test historical data request parameters."""
+    responses.add(
+        responses.GET,
+        "{0}{1}".format(
+            kiteconnect.root,
+            kiteconnect._routes["market.historical"].format(
+                instrument_token=408065,
+                interval="minute"
+            )
+        ),
+        body=utils.get_response("market.historical"),
+        content_type="application/json"
+    )
+
+    result = kiteconnect.historical_data(
+        408065,
+        "2017-12-15 09:15:00",
+        "2017-12-15 09:20:00",
+        "minute",
+        continuous=continuous,
+        oi=oi
+    )
+
+    request = responses.calls[0].request
+    assert request.method == "GET"
+    assert urlparse(request.url).path == kiteconnect._routes["market.historical"].format(
+        instrument_token=408065,
+        interval="minute"
+    )
+    assert parse_qs(urlparse(request.url).query) == {
+        "from": ["2017-12-15 09:15:00"],
+        "to": ["2017-12-15 09:20:00"],
+        "interval": ["minute"],
+        "continuous": ["1" if continuous else "0"],
+        "oi": ["1" if oi else "0"]
+    }
+    assert result[0]["open"] == 1704.5
+
+
+@responses.activate
+def test_trigger_range_request(kiteconnect):
+    """Test cover order trigger range request parameters."""
+    responses.add(
+        responses.GET,
+        "{0}{1}".format(
+            kiteconnect.root,
+            kiteconnect._routes["market.trigger_range"].format(transaction_type="buy")
+        ),
+        body=utils.get_response("market.trigger_range"),
+        content_type="application/json"
+    )
+
+    result = kiteconnect.trigger_range("BUY", "NSE:INFY", "NSE:RELIANCE")
+
+    request = responses.calls[0].request
+    assert request.method == "GET"
+    assert urlparse(request.url).path == kiteconnect._routes["market.trigger_range"].format(
+        transaction_type="buy"
+    )
+    assert parse_qs(urlparse(request.url).query)["i"] == ["NSE:INFY", "NSE:RELIANCE"]
+    assert result is not None
 
 
 @responses.activate
