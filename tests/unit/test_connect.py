@@ -578,3 +578,302 @@ def test_virtual_contract_note(kiteconnect):
     # CTT tax type
     assert order_book_charges[1]['charges']['transaction_tax_type'] == "ctt"
     assert order_book_charges[1]['charges']['total'] != 0
+
+
+# ---------------------------------------------------------------------------
+# Request assertion tests — verify HTTP method, URL, and parameters
+# ---------------------------------------------------------------------------
+
+@responses.activate
+def test_historical_data_request(kiteconnect):
+    """Test that historical_data sends correct URL and query params."""
+    url = "{0}{1}".format(
+        kiteconnect.root,
+        kiteconnect._routes["market.historical"].format(
+            instrument_token=12345, interval="minute"
+        )
+    )
+    responses.add(responses.GET, url, body=utils.get_response("market.historical"), content_type="application/json")
+
+    kiteconnect.historical_data(12345, "2021-01-01", "2021-01-31", "minute", continuous=False, oi=False)
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.method == "GET"
+    assert "12345" in responses.calls[0].request.url
+    assert "minute" in responses.calls[0].request.url
+    assert "from=2021-01-01" in responses.calls[0].request.url
+    assert "to=2021-01-31" in responses.calls[0].request.url
+    assert "continuous=0" in responses.calls[0].request.url
+    assert "oi=0" in responses.calls[0].request.url
+
+
+@responses.activate
+def test_historical_data_continuous_oi_flags(kiteconnect):
+    """Test that continuous=True and oi=True are serialized as 1."""
+    url = "{0}{1}".format(
+        kiteconnect.root,
+        kiteconnect._routes["market.historical"].format(
+            instrument_token=12345, interval="day"
+        )
+    )
+    responses.add(responses.GET, url, body=utils.get_response("market.historical"), content_type="application/json")
+
+    kiteconnect.historical_data(12345, "2021-01-01", "2021-01-31", "day", continuous=True, oi=True)
+
+    assert "continuous=1" in responses.calls[0].request.url
+    assert "oi=1" in responses.calls[0].request.url
+
+
+@responses.activate
+def test_trigger_range_request(kiteconnect):
+    """Test that trigger_range sends correct HTTP method, URL, and instruments."""
+    url = "{0}{1}".format(
+        kiteconnect.root,
+        kiteconnect._routes["market.trigger_range"].format(transaction_type="buy")
+    )
+    responses.add(responses.GET, url, body=utils.get_response("market.trigger_range"), content_type="application/json")
+
+    kiteconnect.trigger_range("BUY", "NSE:INFY", "NSE:RELIANCE")
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.method == "GET"
+    assert "buy" in responses.calls[0].request.url
+    assert "NSE%3AINFY" in responses.calls[0].request.url or "NSE:INFY" in responses.calls[0].request.url
+
+
+@responses.activate
+def test_convert_position_request(kiteconnect):
+    """Test that convert_position sends a PUT with correct body params."""
+    responses.add(
+        responses.PUT,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["portfolio.positions.convert"]),
+        body='{"status": "success", "data": true}',
+        content_type="application/json"
+    )
+
+    kiteconnect.convert_position(
+        exchange="NSE",
+        tradingsymbol="INFY",
+        transaction_type="BUY",
+        position_type="day",
+        quantity=1,
+        old_product="MIS",
+        new_product="CNC"
+    )
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.method == "PUT"
+    body = responses.calls[0].request.body
+    if not isinstance(body, str):
+        body = body.decode("utf-8")
+    assert "exchange=NSE" in body
+    assert "tradingsymbol=INFY" in body
+    assert "old_product=MIS" in body
+    assert "new_product=CNC" in body
+
+
+@responses.activate
+def test_place_mf_order_request(kiteconnect):
+    """Test that place_mf_order sends a POST with correct body params."""
+    responses.add(
+        responses.POST,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["mf.order.place"]),
+        body=utils.get_response("mf.order.info"),
+        content_type="application/json"
+    )
+
+    kiteconnect.place_mf_order(
+        tradingsymbol="INF174K01LS2",
+        transaction_type="BUY",
+        amount=5000,
+        tag="test-tag"
+    )
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.method == "POST"
+    body = responses.calls[0].request.body
+    if not isinstance(body, str):
+        body = body.decode("utf-8")
+    assert "tradingsymbol=INF174K01LS2" in body
+    assert "transaction_type=BUY" in body
+    assert "amount=5000" in body
+    assert "tag=test-tag" in body
+
+
+@responses.activate
+def test_cancel_mf_order_request(kiteconnect):
+    """Test that cancel_mf_order sends a DELETE to the correct URL."""
+    url = "{0}{1}".format(
+        kiteconnect.root,
+        kiteconnect._routes["mf.order.cancel"].format(order_id="abc123")
+    )
+    responses.add(
+        responses.DELETE,
+        url,
+        body='{"status": "success", "data": {"order_id": "abc123"}}',
+        content_type="application/json"
+    )
+
+    kiteconnect.cancel_mf_order("abc123")
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.method == "DELETE"
+    assert "abc123" in responses.calls[0].request.url
+
+
+@responses.activate
+def test_place_mf_sip_request(kiteconnect):
+    """Test that place_mf_sip sends a POST with correct body params."""
+    responses.add(
+        responses.POST,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["mf.sip.place"]),
+        body=utils.get_response("mf.sip.info"),
+        content_type="application/json"
+    )
+
+    kiteconnect.place_mf_sip(
+        tradingsymbol="INF174K01LS2",
+        amount=1000,
+        instalments=12,
+        frequency="monthly",
+        instalment_day=5,
+        tag="sip-tag"
+    )
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.method == "POST"
+    body = responses.calls[0].request.body
+    if not isinstance(body, str):
+        body = body.decode("utf-8")
+    assert "tradingsymbol=INF174K01LS2" in body
+    assert "amount=1000" in body
+    assert "instalments=12" in body
+    assert "frequency=monthly" in body
+    assert "instalment_day=5" in body
+
+
+@responses.activate
+def test_modify_mf_sip_request(kiteconnect):
+    """Test that modify_mf_sip sends a PUT to the correct SIP URL with body params."""
+    url = "{0}{1}".format(
+        kiteconnect.root,
+        kiteconnect._routes["mf.sip.modify"].format(sip_id="sip123")
+    )
+    responses.add(
+        responses.PUT,
+        url,
+        body=utils.get_response("mf.sip.info"),
+        content_type="application/json"
+    )
+
+    kiteconnect.modify_mf_sip(
+        sip_id="sip123",
+        amount=2000,
+        status="active",
+        instalments=24,
+        frequency="monthly"
+    )
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.method == "PUT"
+    assert "sip123" in responses.calls[0].request.url
+    body = responses.calls[0].request.body
+    if not isinstance(body, str):
+        body = body.decode("utf-8")
+    assert "amount=2000" in body
+    assert "status=active" in body
+    assert "instalments=24" in body
+
+
+@responses.activate
+def test_cancel_mf_sip_request(kiteconnect):
+    """Test that cancel_mf_sip sends a DELETE to the correct SIP URL."""
+    url = "{0}{1}".format(
+        kiteconnect.root,
+        kiteconnect._routes["mf.sip.cancel"].format(sip_id="sip123")
+    )
+    responses.add(
+        responses.DELETE,
+        url,
+        body='{"status": "success", "data": {"sip_id": "sip123"}}',
+        content_type="application/json"
+    )
+
+    kiteconnect.cancel_mf_sip("sip123")
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.method == "DELETE"
+    assert "sip123" in responses.calls[0].request.url
+
+
+# ---------------------------------------------------------------------------
+# Parameterized quote / ohlc / ltp tests
+# ---------------------------------------------------------------------------
+
+@pytest.mark.parametrize("instruments", [
+    ("NSE:INFY",),
+    ("NSE:INFY", "NSE:RELIANCE"),
+    (["NSE:INFY"],),
+    (["NSE:INFY", "NSE:RELIANCE"],),
+])
+@responses.activate
+def test_quote_request(kiteconnect, instruments):
+    """Test quote() with both positional and legacy list-style arguments."""
+    responses.add(
+        responses.GET,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["market.quote"]),
+        body=utils.get_response("market.quote"),
+        content_type="application/json"
+    )
+
+    kiteconnect.quote(*instruments)
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.method == "GET"
+    assert "NSE" in responses.calls[0].request.url
+
+
+@pytest.mark.parametrize("instruments", [
+    ("NSE:INFY",),
+    ("NSE:INFY", "NSE:RELIANCE"),
+    (["NSE:INFY"],),
+    (["NSE:INFY", "NSE:RELIANCE"],),
+])
+@responses.activate
+def test_ohlc_request(kiteconnect, instruments):
+    """Test ohlc() with both positional and legacy list-style arguments."""
+    responses.add(
+        responses.GET,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["market.quote.ohlc"]),
+        body=utils.get_response("market.quote.ohlc"),
+        content_type="application/json"
+    )
+
+    kiteconnect.ohlc(*instruments)
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.method == "GET"
+    assert "NSE" in responses.calls[0].request.url
+
+
+@pytest.mark.parametrize("instruments", [
+    ("NSE:INFY",),
+    ("NSE:INFY", "NSE:RELIANCE"),
+    (["NSE:INFY"],),
+    (["NSE:INFY", "NSE:RELIANCE"],),
+])
+@responses.activate
+def test_ltp_request(kiteconnect, instruments):
+    """Test ltp() with both positional and legacy list-style arguments."""
+    responses.add(
+        responses.GET,
+        "{0}{1}".format(kiteconnect.root, kiteconnect._routes["market.quote.ltp"]),
+        body=utils.get_response("market.quote.ltp"),
+        content_type="application/json"
+    )
+
+    kiteconnect.ltp(*instruments)
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.method == "GET"
+    assert "NSE" in responses.calls[0].request.url
